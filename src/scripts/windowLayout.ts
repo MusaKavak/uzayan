@@ -1,10 +1,20 @@
 import { appWindow, currentMonitor, LogicalPosition, LogicalSize } from "@tauri-apps/api/window"
-import { settings } from "../data/settings"
+import { Settings } from "../data/settings"
 
 export async function setWindowOnStartup() {
+
     await appWindow.setDecorations(false)
-    await setWindowSize(settings.BarWidth, settings.BarHeight)
-    await setWindowPosition(settings.WindowPositionFromLeft, settings.IsWindowOnBottom)
+    await appWindow.setAlwaysOnTop(true)
+
+    await setWindowSize(
+        Settings.settings.BarWidth,
+        Settings.settings.BarHeightWhenClosed
+    )
+
+    await setWindowPosition(
+        Settings.settings.WindowPositionFromLeft,
+        Settings.settings.IsWindowOnBottom
+    )
 }
 
 async function setWindowSize(width: number, height: number) {
@@ -13,18 +23,22 @@ async function setWindowSize(width: number, height: number) {
 }
 
 async function setWindowPosition(x: number, isOnBottom: boolean) {
-
-    var y = 0
+    let y = 0
 
     if (isOnBottom) {
         const size = (await currentMonitor())?.size
         if (size != null) {
-            y = size.height - settings.BarHeight
+            y = size.height - Settings.settings.BarHeightWhenClosed
         } else throw Error("Current Screen Is Not Defined")
     }
+    //This feature is not working sometimes at first run. So run it two times (Tauri version: 1.2)
+    const position = new LogicalPosition(x, y)
+    await appWindow.setPosition(position)
+    setTimeout(() => appWindow.setPosition(position), 100);
 
-    await appWindow.setPosition(new LogicalPosition(x, y))
+    //This method doesn't just work on startup, it also works when user preferences change so update settings
+    Settings.settings.WindowPositionFromLeft = x
+    Settings.settings.IsWindowOnBottom = isOnBottom
 
-    settings.WindowPositionFromLeft = x
-    settings.IsWindowOnBottom = isOnBottom
+    return
 }
