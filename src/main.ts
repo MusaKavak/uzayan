@@ -1,9 +1,8 @@
-import { setWindowOnStartup } from "./scripts/windowLayout";
 import "./styles/body.style.css";
 
 async function main() {
     // Settings.getSettingsFromLocalStorage()
-    await setWindowOnStartup()
+    //  await setWindowOnStartup()
 }
 
 window.onload = main;

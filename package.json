@@ -2,7 +2,6 @@
   "name": "uzayan",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -14,7 +13,8 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.2.2",
-    "vite": "^4.0.0",
-    "typescript": "^4.8.2"
+    "@types/node": "^18.11.18",
+    "typescript": "^4.8.2",
+    "vite": "^4.0.0"
   }
 }
