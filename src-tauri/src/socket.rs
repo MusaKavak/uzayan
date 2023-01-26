@@ -1,21 +1,32 @@
-use std::io::Result;
-use std::net::UdpSocket;
+use std::{net::UdpSocket, thread};
 
-pub fn init_socket() -> Result<()> {
-    println!("Initializing Socket... ");
-    let socket = UdpSocket::bind("0.0.0.0:34724").expect("Couldn't bind socket to the adress");
-    listen_socket(socket);
-    Ok(())
+use tauri::{command, Window};
+
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    message: String,
 }
 
-fn listen_socket(socket: UdpSocket) {
-    loop {
+#[command]
+pub fn init_socket(window: Window) {
+    println!("Initializing Socket... ");
+    let socket = UdpSocket::bind("0.0.0.0:34724").expect("Couldn't bind socket to the adress");
+
+    thread::spawn(move || loop {
         let mut buf = [0; 999999];
         let (amt, src) = socket.recv_from(&mut buf).expect("Didn't recieve data");
         let buf = &mut buf[..amt];
         let data = String::from_utf8(buf.to_vec()).expect("Can't Convert Data");
-        println!("New Message From {} with {:?} data", src, data)
-    }
+        println!("New Message From {} with {:?} data", src, data);
+        window
+            .emit(
+                "udp",
+                Payload {
+                    message: String::from("EventFromUdpSocket"),
+                },
+            )
+            .unwrap()
+    });
 }
 
 // let buf = &mut buf[..amt];
