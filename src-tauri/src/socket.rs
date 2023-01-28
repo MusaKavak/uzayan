@@ -25,7 +25,8 @@ pub fn init_socket(window: Window) {
                     message: String::from("EventFromUdpSocket"),
                 },
             )
-            .unwrap()
+            .unwrap();
+        socket.send_to(buf, &src).expect("Can't Send Message");
     });
 }
 
