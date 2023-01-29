@@ -3,7 +3,7 @@ import { listen } from '@tauri-apps/api/event'
 
 export class Socket {
     async inititialize() {
-        invoke("init_socket")
+        // invoke("init_socket")
 
         await listen('udp', (event) => {
             console.log(event)

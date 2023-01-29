@@ -1,29 +1,31 @@
-export class Settings {
+export class Public {
     static settings: ISettings = {
         BarWidth: 500,
         BarHeightWhenClosed: 7,
         WindowPositionFromLeft: 100,
-        IsWindowOnBottom: false
+        IsWindowOnBottom: false,
+        WindowOpeningDuration: 500
     }
 
-    static getSettingsFromLocalStorage() {
-        const settingsFromStorage = JSON.parse(localStorage.getItem("settings") || "") as ISettings | undefined
-        console.log(settingsFromStorage)
+    static isWindowOpening = false
+    static isWindowOpen = false
 
-        if (settingsFromStorage != undefined) {
-            this.settings = settingsFromStorage
-            console.log(this.settings)
-        }
+    static getSettingsFromLocalStorage() {
+        //const string = localStorage.getItem("settings")
+        //if (string != null && string.length > 10) this.settings = JSON.parse(string)
     }
 
     static updateSettings() {
         localStorage.setItem("settings", JSON.stringify(this.settings))
     }
+
 }
+
 
 interface ISettings {
     BarWidth: number
     BarHeightWhenClosed: number
     WindowPositionFromLeft: number
-    IsWindowOnBottom: boolean
+    IsWindowOnBottom: boolean,
+    WindowOpeningDuration: number
 }
