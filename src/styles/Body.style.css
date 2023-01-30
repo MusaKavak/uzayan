@@ -14,9 +14,8 @@ html {
 body {
     width: 100%;
     min-height: 0px;
-    max-height: 7px;
     transition: .5s;
-    background-image: linear-gradient(180deg, black, red);
+    background-color: rgba(0, 0, 0, 0.7);
     position: relative;
     overflow: hidden;
 }

@@ -1,11 +1,16 @@
+class Settings {
+    constructor(
+        public BarWidth: number = 500,
+        public BarHeightWhenClosed: number = 7,
+        public WindowPositionFromLeft: number = 100,
+        public WindowOpeningDuration: number = 500,
+        public IsWindowCentered: boolean = false,
+    ) { }
+}
+
 export class Public {
-    static settings: ISettings = {
-        BarWidth: 500,
-        BarHeightWhenClosed: 7,
-        WindowPositionFromLeft: 100,
-        IsWindowOnBottom: false,
-        WindowOpeningDuration: 500
-    }
+    static settings: Settings = new Settings()
+
 
     static isWindowOpening = false
     static isWindowOpen = false
@@ -21,11 +26,3 @@ export class Public {
 
 }
 
-
-interface ISettings {
-    BarWidth: number
-    BarHeightWhenClosed: number
-    WindowPositionFromLeft: number
-    IsWindowOnBottom: boolean,
-    WindowOpeningDuration: number
-}
