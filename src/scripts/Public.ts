@@ -1,7 +1,7 @@
 class Settings {
     constructor(
         public BarWidth: number = 500,
-        public BarHeightWhenClosed: number = 7,
+        public BarHeightWhenClosed: number = 8,
         public WindowPositionFromLeft: number = 100,
         public WindowOpeningDuration: number = 500,
         public IsWindowCentered: boolean = false,

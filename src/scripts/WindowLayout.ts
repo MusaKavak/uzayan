@@ -22,6 +22,8 @@ export class WindowLayout {
     async setWindowSize(width: number = Public.settings.BarWidth, height: number = Public.settings.BarHeightWhenClosed) {
         this.size.width = width
         this.size.height = height
+        await appWindow.setMinSize(this.size)
+        await appWindow.setMaxSize(this.size)
         await appWindow.setSize(this.size)
     }
 
@@ -42,7 +44,6 @@ export class WindowLayout {
     }
 
     setListeners() {
-        console.log("d")
         this.body.onmouseenter = this.openWindow.bind(this)
         this.body.onmouseleave = this.closeWindow.bind(this)
     }
@@ -53,12 +54,10 @@ export class WindowLayout {
             Public.isWindowOpening = true
             this.setWindowSize(undefined, 800)
             setTimeout(() => {
-                console.log("open")
                 Public.isWindowOpening = false
                 Public.isWindowOpen = true
                 this.body.classList.remove("window-opening")
                 this.body.classList.add("window-open")
-                this.setWindowSize(undefined, this.body.offsetHeight)
                 this.callbacks.windowOpened()
             }, Public.settings.WindowOpeningDuration);
         }
@@ -68,8 +67,8 @@ export class WindowLayout {
         Public.isWindowOpen = false
         console.log("close")
         Public.isWindowOpening = false
+        this.body.classList.remove("window-opening", "window-open")
         setTimeout(() => {
-            this.body.classList.remove("window-opening", "window-open")
             this.setWindowSize()
             this.callbacks.windowClosed()
         }, Public.settings.WindowOpeningDuration);
