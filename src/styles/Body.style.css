@@ -15,45 +15,38 @@ html {
     --clr-border: rgba(255, 255, 255, 0.7);
 
     --sz-window-height-when-closed: 8px;
-    --sz-window-height: 500px;
-    --sz-window-location-when-closed:
-        calc(var(--sz-window-height) - var(--sz-window-height-when-closed) * -1);
-}
-
-body {
-    position: relative;
-    width: 100vw;
-    height: var(--sz-window-height-when-closed);
-}
-
-body.window-opening {
-    height: var(--sz-window-height);
-}
-
-body.window-open {
-    height: var(--sz-window-height);
 }
 
 #container {
     width: 100%;
+    min-height: var(--sz-window-height-when-closed);
+    position: relative;
+    background-color: var(--clr-background);
+    transition: 1s;
+    overflow: hidden;
+    padding-bottom: var(--sz-window-height-when-closed);
+}
+
+#bar {
+    width: 100%;
     height: var(--sz-window-height-when-closed);
     position: absolute;
-    bottom: 15px;
-    background-color: var(--clr-background);
+    bottom: 0;
     border-bottom: 2px solid var(--clr-border);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    transition: 0.5s;
+}
+
+.container {
+    max-height: 0;
     overflow: hidden;
+    transition: 0.5s;
 }
 
-
-/* 
-.window-opening>#container {
-    height: 500px;
+.window-opening .container {
+    max-height: 200px;
 }
 
-
-.window-open>#container {
-    height: 500px;
-} */
+.window-open .container {
+    max-height: 200px;
+}

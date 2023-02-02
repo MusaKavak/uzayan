@@ -1,7 +1,6 @@
 import { Socket } from "./connection/Socket";
 import { Public } from "./scripts/Public";
 import { WindowLayout } from "./scripts/WindowLayout";
-import "./styles/Body.style.css";
 import { WindowLayoutMethods } from "./types/Callbacks";
 
 async function Main() {

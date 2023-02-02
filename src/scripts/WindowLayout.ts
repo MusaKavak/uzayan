@@ -65,7 +65,6 @@ export class WindowLayout {
 
     async closeWindow() {
         Public.isWindowOpen = false
-        console.log("close")
         Public.isWindowOpening = false
         this.body.classList.remove("window-opening", "window-open")
         setTimeout(() => {
