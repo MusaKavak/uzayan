@@ -18,14 +18,7 @@ pub fn init_socket(window: Window) {
         let buf = &mut buf[..amt];
         let data = String::from_utf8(buf.to_vec()).expect("Can't Convert Data");
         println!("New Message From {} with {:?} data", src, data);
-        window
-            .emit(
-                "udp",
-                Payload {
-                    message: String::from("EventFromUdpSocket"),
-                },
-            )
-            .unwrap();
+        window.emit("udp", data).unwrap();
         socket.send_to(buf, &src).expect("Can't Send Message");
     });
 }
