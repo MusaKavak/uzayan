@@ -1,14 +1,28 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
-import { type } from 'os'
+import { UdpSocketListenerCallbacks } from '../types/Callbacks'
+import { AndroidType } from '../types/AndroidTypes'
 
 export class Socket {
+
+    constructor(private callbacks: UdpSocketListenerCallbacks) { }
+
     async inititialize() {
-        invoke("init_socket")
+        //invoke("init_socket")
         await listen<string>('udp', (event) => {
-            console.log(JSON.parse(event.payload))
+            const { message, emitObject } = JSON.parse(event.payload) as EmitObject
+            switch (message) {
+                case "MediaSessions": { this.callbacks.mediaSessions(emitObject as []) }
+                case "SingleMediaSession": { this.callbacks.singleMediaSession(emitObject) }
+                default: break;
+            }
         })
     }
+}
+
+type EmitObject = {
+    message: String,
+    emitObject: AndroidType
 }
 
 // use tauri::{event::{Event, WINDOW_EVENT_RESUMED}, Tauri};

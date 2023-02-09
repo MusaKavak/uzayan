@@ -1,7 +1,11 @@
-export interface SocketListenerMethods {
+import { AndroidMediaSession } from "./AndroidTypes"
+
+export interface UdpSocketListenerCallbacks {
+    mediaSessions(sessions: AndroidMediaSession[]): void
+    singleMediaSession(session: AndroidMediaSession): void
 }
 
-export interface WindowLayoutMethods {
+export interface WindowLayoutCallbacks {
     windowOpened(): void
     windowClosed(): void
 }

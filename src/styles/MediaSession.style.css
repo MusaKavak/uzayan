@@ -1,0 +1,32 @@
+#media-session-container {
+    overflow: hidden;
+}
+
+#media-session-slider {
+    padding: .3rem 0;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.session {
+    width: 100%;
+    overflow: hidden;
+    padding: .3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .3rem;
+    flex-shrink: 0;
+}
+
+.session-image {
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+}
+
+.session-info {
+    flex-grow: 1;
+    height: 4rem;
+}
