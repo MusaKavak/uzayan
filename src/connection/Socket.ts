@@ -1,47 +1,33 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
-import { UdpSocketListenerCallbacks } from '../types/Callbacks'
-import { AndroidType } from '../types/AndroidTypes'
+import { MediaSessionManager } from '../scripts/MediaSessionManager'
+import { ConnectionObject } from '../types/ConnectionObject'
 
 export class Socket {
 
-    constructor(private callbacks: UdpSocketListenerCallbacks) { }
+    constructor(
+        private mediaSessionManager: MediaSessionManager
+    ) { this.inititialize() }
 
-    async inititialize() {
+    private async inititialize() {
         invoke("listen_socket")
         await listen<string>('udp', (event) => {
-            const { message, emitObject } = JSON.parse(event.payload) as EmitObject
-            switch (message) {
-                case "MediaSessions": { this.callbacks.mediaSessions(emitObject as []) }
-                case "SingleMediaSession": { this.callbacks.singleMediaSession(emitObject) }
-                default: break;
-            }
+            const message = JSON.parse(event.payload) as ConnectionObject
+            this.call(message)
         })
+    }
+
+    private async call(message: ConnectionObject) {
+        switch (message.message) {
+            case "MediaSessions": this.mediaSessionManager.createMediaSessions(message.input as [])
+            case "SingleMediaSession": this.mediaSessionManager.updateMediaSession(message.input)
+            default: break;
+        }
+    }
+
+    async send(message: string, input: any, address: string) {
+        const data = JSON.stringify({ message, input })
+        invoke("send_message", { data, address })
     }
 }
 
-type EmitObject = {
-    message: String,
-    emitObject: AndroidType
-}
-
-// use tauri::{event::{Event, WINDOW_EVENT_RESUMED}, Tauri};
-
-// fn main() {
-//     Tauri::builder()
-//         .build()
-//         .run(|webview, _| {
-//             webview.set_listener(|_webview, event| {
-//                 match event {
-//                     Event::WindowEvent { event, .. } => match event {
-//                         WINDOW_EVENT_RESUMED => {
-//                             println!("PC woke up from sleep");
-//                             // Run the function after the PC wakes up from sleep
-//                         },
-//                         _ => {}
-//                     },
-//                     _ => {}
-//                 }
-//             });
-//         });
-// }

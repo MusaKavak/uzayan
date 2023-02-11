@@ -1,14 +1,13 @@
 import { appWindow, currentMonitor, LogicalPosition, LogicalSize } from "@tauri-apps/api/window"
-import { WindowLayoutCallbacks } from "../types/Callbacks"
 import { Public } from "./Public"
 
 export class WindowLayoutManager {
     private size = new LogicalSize(0, 0)
     private position = new LogicalPosition(0, 0)
 
-    constructor(private callbacks: WindowLayoutCallbacks, private body: HTMLElement) { }
+    constructor(private body: HTMLElement) { this.setWindowOnStartup() }
 
-    async setWindowOnStartup() {
+    private async setWindowOnStartup() {
         //KDE Plasma not allowing window size less than 200 when resizable false
         //await appWindow.setResizable(false)
 
@@ -43,7 +42,7 @@ export class WindowLayoutManager {
         Public.settings.WindowPositionFromLeft = x
     }
 
-    setListeners() {
+    private setListeners() {
         this.body.onmouseenter = this.openWindow.bind(this)
         this.body.onmouseleave = this.closeWindow.bind(this)
     }
@@ -58,7 +57,6 @@ export class WindowLayoutManager {
                 Public.isWindowOpen = true
                 this.body.classList.remove("window-opening")
                 this.body.classList.add("window-open")
-                this.callbacks.windowOpened()
             }, Public.settings.WindowOpeningDuration);
         }
     }
@@ -69,7 +67,6 @@ export class WindowLayoutManager {
         this.body.classList.remove("window-opening", "window-open")
         setTimeout(() => {
             this.setWindowSize()
-            this.callbacks.windowClosed()
         }, Public.settings.WindowOpeningDuration);
     }
 

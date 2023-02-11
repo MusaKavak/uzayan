@@ -20,12 +20,12 @@ pub fn listen_socket(window: Window) {
 }
 
 #[command]
-pub fn send_message() {
-    thread::spawn(|| {
+pub fn send_message(data: String, address: String) {
+    thread::spawn(move || {
         SOCKET
             .send_to(
-                "testmessage".as_bytes(),
-                "192.168.1.110:5000"
+                data.as_bytes(),
+                address
                     .parse::<SocketAddr>()
                     .expect("Can't convert String to SocketAddress"),
             )

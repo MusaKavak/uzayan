@@ -1,9 +1,9 @@
-import { AndroidMediaSession } from "../types/AndroidTypes";
+import { MediaSession } from "../types/MediaSession";
 
 export class MediaSessionManager {
   private container: HTMLElement | null = document.getElementById("media-session-slider")
 
-  createMediaSessions(sessions: AndroidMediaSession[]) {
+  createMediaSessions(sessions: MediaSession[]) {
     if (this.container != null) {
       this.container.innerHTML = ""
       sessions.sort((a, b) => {
@@ -15,7 +15,7 @@ export class MediaSessionManager {
   }
 
 
-  updateMediaSession(session: AndroidMediaSession) {
+  updateMediaSession(session: MediaSession) {
     this.setImage(session.token, session.albumArt, session.albumName)
     const title = document.getElementById(`tl-${session.token}`)
     const artist = document.getElementById(`a-${session.token}`)
@@ -25,7 +25,7 @@ export class MediaSessionManager {
     }
   }
 
-  private createSessionElement(session: AndroidMediaSession) {
+  private createSessionElement(session: MediaSession) {
     const token = session.token
     const element = `
         <div class="session" id="t-${token}">
