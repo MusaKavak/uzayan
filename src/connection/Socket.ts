@@ -8,7 +8,7 @@ export class Socket {
     constructor(private callbacks: UdpSocketListenerCallbacks) { }
 
     async inititialize() {
-        //invoke("init_socket")
+        invoke("listen_socket")
         await listen<string>('udp', (event) => {
             const { message, emitObject } = JSON.parse(event.payload) as EmitObject
             switch (message) {

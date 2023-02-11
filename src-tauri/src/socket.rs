@@ -1,26 +1,41 @@
+use std::net::SocketAddr;
 use std::{net::UdpSocket, thread};
-
 use tauri::{command, Window};
 
-#[derive(Clone, serde::Serialize)]
-struct Payload {
-    message: String,
+lazy_static! {
+    static ref SOCKET: UdpSocket =
+        UdpSocket::bind("0.0.0.0:34724").expect("Could't bind to socket!!");
 }
 
 #[command]
-pub fn init_socket(window: Window) {
-    println!("Initializing Socket... ");
-    let socket = UdpSocket::bind("0.0.0.0:34724").expect("Couldn't bind socket to the adress");
-
+pub fn listen_socket(window: Window) {
     thread::spawn(move || loop {
-        let mut buf = [0; 999999];
-        let (amt, src) = socket.recv_from(&mut buf).expect("Didn't recieve data");
+        let mut buf = [0; 40000];
+        let (amt, src) = SOCKET.recv_from(&mut buf).expect("Didn't recieve data");
         let buf = &mut buf[..amt];
         let data = String::from_utf8(buf.to_vec()).expect("Can't Convert Data");
         println!("New Message From {} with {:?} data", src, data);
         window.emit("udp", data).unwrap();
-        socket.send_to(buf, &src).expect("Can't Send Message");
     });
+}
+
+#[command]
+pub fn send_message() {
+    thread::spawn(|| {
+        SOCKET
+            .send_to(
+                "testmessage".as_bytes(),
+                "192.168.1.110:5000"
+                    .parse::<SocketAddr>()
+                    .expect("Can't convert String to SocketAddress"),
+            )
+            .expect("Can't Send Message");
+    });
+}
+
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+    message: String,
 }
 
 // let buf = &mut buf[..amt];
