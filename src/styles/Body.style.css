@@ -17,12 +17,12 @@ html {
     --sz-window-height-when-closed: 8px;
 }
 
-#container {
+#body {
     width: 100%;
     min-height: var(--sz-window-height-when-closed);
     position: relative;
     background-color: var(--clr-background);
-    transition: 1s;
+
     overflow: hidden;
     padding-bottom: var(--sz-window-height-when-closed);
 }

@@ -3,7 +3,7 @@
 }
 
 #media-session-slider {
-    padding: .3rem 0;
+    padding: 0 .3rem;
     position: relative;
     display: flex;
     flex-wrap: wrap;
@@ -12,7 +12,7 @@
 .session {
     width: 100%;
     overflow: hidden;
-    padding: .3rem;
+    padding: 0 .3rem;
     display: flex;
     align-items: center;
     justify-content: space-between;

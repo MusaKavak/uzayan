@@ -39,7 +39,7 @@ export class MediaSessionManager {
             <div class="session-title" id="tl-${token}">${session.title || '-'}</div>
             <div class="session-artist" id="a-${token}">${session.artist || '-'}</div>
           </div>
-          <div class="controls ${session.isPlaying == true ? '' : 'playing'}" id="c-${token}">
+          <div class="controls ${session.isPlaying ? 'playing' : ''}" id="c-${token}">
               <div class="previous">
                 <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                   <path fill="#000000"

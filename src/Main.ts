@@ -1,5 +1,6 @@
 import { Socket } from "./connection/Socket";
 import { MediaSessionManager } from "./scripts/MediaSessionManager";
+import { OptionsManager } from "./scripts/OptionsManager";
 import { Public } from "./scripts/Public";
 import { WindowLayoutManager } from "./scripts/WindowLayoutManager";
 
@@ -11,14 +12,12 @@ function socketcallback(message: string, input: any, address: string) {
 
 async function Main() {
     Public.getSettingsFromLocalStorage()
+    const optionsManager = new OptionsManager(socketcallback)
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager(socketcallback)
     socket = new Socket(mediaSessionManager)
-    sync()
+    optionsManager.sync()
 }
 
-function sync() {
-    socketcallback("MediaSessionsRequest", "", "192.168.1.105:34724")
-}
 
 window.onload = Main;
