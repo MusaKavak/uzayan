@@ -12,8 +12,13 @@ function socketcallback(message: string, input: any, address: string) {
 async function Main() {
     Public.getSettingsFromLocalStorage()
     const windowLayoutManager = new WindowLayoutManager(document.body)
-    const mediaSessionManager = new MediaSessionManager()
+    const mediaSessionManager = new MediaSessionManager(socketcallback)
     socket = new Socket(mediaSessionManager)
+    sync()
+}
+
+function sync() {
+    socketcallback("MediaSessionsRequest", "", "192.168.1.105:34724")
 }
 
 window.onload = Main;

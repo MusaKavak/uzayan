@@ -1,4 +1,4 @@
-export class MediaSession {
+export type MediaSession = {
     albumArt?: string
     albumName?: string
     artist?: string
@@ -6,6 +6,6 @@ export class MediaSession {
     isPlaying?: boolean
     packageName?: string
     title?: string
-    token?: number
+    token: string
 }
 

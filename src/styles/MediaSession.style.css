@@ -18,6 +18,7 @@
     justify-content: space-between;
     gap: .3rem;
     flex-shrink: 0;
+    position: relative;
 }
 
 .session-image {
@@ -29,4 +30,51 @@
 .session-info {
     flex-grow: 1;
     height: 4rem;
+}
+
+.controls {
+    height: 2.5rem;
+    display: flex;
+    flex-wrap: nowrap;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.controls div {
+    height: 100%;
+    cursor: pointer;
+}
+
+.controls svg {
+    height: 100%;
+    width: auto;
+}
+
+.controls path {
+    stroke: white;
+}
+
+.controls .previous path,
+.controls .next path {
+    fill: white;
+}
+
+.controls .play-pause .pause {
+    position: absolute;
+    transition: 0.5s;
+    top: 100%;
+}
+
+.controls.playing .play-pause .pause {
+    top: 0;
+}
+
+.controls .play-pause .play {
+    transition: 0.5s;
+    opacity: 1;
+}
+
+.controls.playing .play-pause .play {
+    opacity: 0;
 }

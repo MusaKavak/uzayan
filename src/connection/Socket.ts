@@ -27,6 +27,7 @@ export class Socket {
 
     async send(message: string, input: any, address: string) {
         const data = JSON.stringify({ message, input })
+        console.log("w")
         invoke("send_message", { data, address })
     }
 }
