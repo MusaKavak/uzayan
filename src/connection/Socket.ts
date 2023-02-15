@@ -2,11 +2,13 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
 import { MediaSessionManager } from '../scripts/MediaSessionManager'
 import { ConnectionObject } from '../types/ConnectionObject'
+import NotificationManager from '../scripts/NotificationManager'
 
 export class Socket {
 
     constructor(
-        private mediaSessionManager: MediaSessionManager
+        private mediaSessionManager: MediaSessionManager,
+        private notificationManger: NotificationManager
     ) { this.inititialize() }
 
     private async inititialize() {
@@ -19,8 +21,9 @@ export class Socket {
 
     private async call(message: ConnectionObject) {
         switch (message.message) {
-            case "MediaSessions": this.mediaSessionManager.createMediaSessions(message.input as [])
-            case "SingleMediaSession": this.mediaSessionManager.updateMediaSession(message.input)
+            case "MediaSessions": { this.mediaSessionManager.createMediaSessions(message.input as []); break }
+            case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.input); break }
+            case "Notification": { this.notificationManger.pushNotification(message.input); break }
             default: break;
         }
     }

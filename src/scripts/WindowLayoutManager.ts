@@ -48,7 +48,7 @@ export class WindowLayoutManager {
     }
 
     async openWindow() {
-        if (!Public.isWindowOpen && !Public.isWindowOpening) {
+        if (!Public.isWindowOpen || !Public.isWindowOpening) {
             this.body.classList.add("window-opening")
             Public.isWindowOpening = true
             this.setWindowSize(undefined, 800)
@@ -70,5 +70,19 @@ export class WindowLayoutManager {
         }, Public.settings.WindowOpeningDuration);
     }
 
-
+    async openWindowForNotification(container: HTMLElement | null) {
+        const contition = !Public.isWindowOpen || !Public.isWindowOpening
+        if (contition) {
+            this.setWindowSize(undefined, 800)
+            container?.classList.add("show")
+            setTimeout(() => {
+                container?.classList.remove("show")
+                setTimeout(() => {
+                    if (contition) {
+                        this.setWindowSize()
+                    }
+                }, 500);
+            }, 4500);
+        }
+    }
 }

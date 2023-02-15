@@ -1,0 +1,50 @@
+#recent-notification-container {
+    overflow: scroll;
+    max-height: 0;
+}
+
+#recent-notification-container.show {
+    max-height: 60vh;
+}
+
+.notification {
+    width: 100%;
+    padding: 0 .6rem;
+    margin: .3rem 0;
+    display: flex;
+    gap: .3rem;
+    animation: bounce 5s forwards;
+    overflow: hidden;
+}
+
+.notification .large-icon {
+    width: 4rem;
+    height: 4rem;
+}
+
+.notification .notification-body {
+    flex-grow: 1;
+}
+
+.notification .notification-text {
+    width: 100%;
+    word-break: break-all;
+}
+
+@keyframes bounce {
+    0% {
+        max-height: 0;
+    }
+
+    10% {
+        max-height: 200px;
+    }
+
+    90% {
+        max-height: 200px;
+    }
+
+    to {
+        max-height: 0;
+    }
+}
