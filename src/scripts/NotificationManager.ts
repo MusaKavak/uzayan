@@ -3,6 +3,7 @@ import { WindowLayoutManager } from "./WindowLayoutManager";
 
 export default class NotificationManager {
     private container = document.getElementById("recent-notification-container")
+    private notificationBucket: Notification[] = []
 
     constructor(private windowLayoutManager: WindowLayoutManager) { }
 
@@ -19,9 +20,19 @@ export default class NotificationManager {
                 <div class="notification-text">${nf.text}</div>
             </div>
         `
-        this.windowLayoutManager.openWindowForNotification(this.container)
+        this.windowLayoutManager.openWindowForNotification()
         this.container?.insertAdjacentElement("beforeend", element)
         this.unbounceNotification(element)
+
+        this.notificationBucket.push(nf)
+    }
+
+    removeNotification(key: String | null) {
+        this.notificationBucket = this.notificationBucket.filter(n => {
+            if (n.key == null || n.key == key) return false
+            else return true
+        })
+        console.table(this.notificationBucket)
     }
 
     private unbounceNotification(element: HTMLElement) {

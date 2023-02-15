@@ -3,7 +3,7 @@
     max-height: 0;
 }
 
-#recent-notification-container.show {
+.notification-avaliable #recent-notification-container {
     max-height: 60vh;
 }
 

@@ -64,25 +64,26 @@ export class WindowLayoutManager {
     async closeWindow() {
         Public.isWindowOpen = false
         Public.isWindowOpening = false
-        this.body.classList.remove("window-opening", "window-open")
+        this.body.classList.remove("window-opening", "window-open", "notification-avaliable")
         setTimeout(() => {
+            this.body.classList.remove("window-opening", "window-open", "notification-avaliable")
             this.setWindowSize()
         }, Public.settings.WindowOpeningDuration);
     }
 
-    async openWindowForNotification(container: HTMLElement | null) {
-        const contition = !Public.isWindowOpen || !Public.isWindowOpening
-        if (contition) {
-            this.setWindowSize(undefined, 800)
-            container?.classList.add("show")
+    private timeout: NodeJS.Timeout | undefined
+    async openWindowForNotification() {
+        this.setWindowSize(undefined, 800)
+        this.body.classList.add("notification-avaliable")
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+            this.body.classList.remove("notification-avaliable")
             setTimeout(() => {
-                container?.classList.remove("show")
-                setTimeout(() => {
-                    if (contition) {
-                        this.setWindowSize()
-                    }
-                }, 500);
-            }, 4500);
-        }
+                if (!Public.isWindowOpen && !Public.isWindowOpen) {
+                    this.setWindowSize()
+                }
+            }, 500);
+        }, 4500);
+
     }
 }
