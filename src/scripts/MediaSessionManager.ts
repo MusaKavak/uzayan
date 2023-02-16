@@ -1,10 +1,9 @@
+import { Socket } from "../connection/Socket";
 import { MediaSession } from "../types/MediaSession";
 import { MediaSessionControl } from "../types/MediaSessionControl";
 
 export class MediaSessionManager {
   private container: HTMLElement | null = document.getElementById("media-session-slider")
-
-  constructor(private send: (message: string, input: any, address: string) => void) { }
 
   createMediaSessions(sessions: MediaSession[]) {
     if (sessions.length == 0) {
@@ -96,6 +95,6 @@ export class MediaSessionManager {
   }
 
   private sendAction(token: string | undefined, action: string) {
-    this.send("MediaSessionControl", { token, action } as MediaSessionControl, "192.168.1.105:34724")
+    Socket.send("MediaSessionControl", { token, action } as MediaSessionControl, "192.168.1.105:34724")
   }
 }

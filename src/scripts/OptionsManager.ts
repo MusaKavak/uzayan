@@ -1,6 +1,7 @@
-export class OptionsManager {
+import { Socket } from "../connection/Socket"
 
-    constructor(private send: (message: string, input: any, address: string) => void) {
+export class OptionsManager {
+    constructor() {
         this.setListeners()
     }
 
@@ -10,7 +11,7 @@ export class OptionsManager {
     }
 
     sync() {
-        this.send("MediaSessionsRequest", "", "192.168.1.105:34724")
+        Socket.send("MediaSessionsRequest", "", "192.168.1.105:34724")
 
     }
 

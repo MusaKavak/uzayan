@@ -1,3 +1,4 @@
+import { Socket } from "../connection/Socket";
 import { Notification } from "../types/Notification";
 import { WindowLayoutManager } from "./WindowLayoutManager";
 
@@ -8,14 +9,15 @@ export default class NotificationManager {
     constructor(private windowLayoutManager: WindowLayoutManager) { }
 
     pushNotification(nf: Notification) {
+        console.log(nf.actions)
         const element = this.createNotificationElement(nf)
-        this.windowLayoutManager.openWindowForNotification()
-        this.container?.appendChild(element)
-        this.unbounceNotification(element)
+        this.notificationTab?.appendChild(element)
 
-        const permanentElement = element.cloneNode(true) as Element
-        permanentElement.classList.remove("temporary")
-        this.notificationTab?.appendChild(permanentElement)
+        const headsUp = element.cloneNode(true) as Element
+        headsUp.classList.add("teporary")
+        this.windowLayoutManager.openWindowForNotification()
+        this.container?.appendChild(headsUp)
+        this.unbounceNotification(headsUp)
     }
 
     removeNotification(key: String | null) {
@@ -27,28 +29,55 @@ export default class NotificationManager {
         })
     }
 
-    private createNotificationElement(nf: Notification): HTMLElement {
-        const largeIcon =
-            nf.largeIcon != null
-                ? `<img class="large-icon" src="data:image/jpg;base64, ${nf.largeIcon}"/>`
-                : ''
-        const element = document.createElement("div")
-        element.classList.add("notification", "temporary")
-        element.setAttribute("id", "k-" + nf.key)
-        element.innerHTML = `
-            ${largeIcon}
-            <div class="notification-body" >
-                <div class="notification-title">${nf.title}</div>
-                <div class="notification-text">${nf.text}</div>
-            </div>
-        `
-        return element
-    }
 
-    private unbounceNotification(element: HTMLElement) {
+    private unbounceNotification(element: Element) {
         setTimeout(() => {
             element.remove()
         }, 5000);
 
+    }
+
+    private createNotificationElement(nf: Notification): HTMLElement {
+        const notification = this.e("notification", "k-" + nf.key)
+        const notificationBody = this.e("notification-body")
+        const title = this.e("notification-title")
+        const text = this.e("notification-text")
+        const actions = this.e("notification-actions")
+
+        title.textContent = nf.title || "-"
+        text.textContent = nf.text || "-"
+
+        nf.actions?.forEach(a => actions.appendChild(this.createAction(a, nf.key)))
+
+        notificationBody.appendChild(title)
+        notificationBody.appendChild(text)
+        notificationBody.appendChild(actions)
+
+        if (nf.largeIcon != undefined) {
+            const img = this.e("notification-large-icon", undefined, "img")
+            img.setAttribute("src", "data:image/jpg;base64, " + nf.largeIcon)
+            notification.appendChild(img)
+        }
+
+        notification.appendChild(notificationBody)
+
+        return notification
+    }
+
+    private createAction(a: string, key?: string): HTMLElement {
+        const action = this.e("notification-action", undefined, "button")
+        action.textContent = a
+        action.addEventListener("click", function () {
+            console.log("Sending Action" + a + "\n from" + key)
+            Socket.send("NotificationAction", { key, action: a }, "192.168.1.105:34724")
+        })
+        return action
+    }
+
+    private e(c?: string, id?: string, type: string = "div"): HTMLElement {
+        const element = document.createElement(type)
+        if (c != null) element.setAttribute("class", c)
+        if (id != null) element.setAttribute("id", id)
+        return element
     }
 }

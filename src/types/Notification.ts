@@ -4,5 +4,6 @@ export type Notification = {
     largeIcon?: string
     packageName?: string
     title?: string
-    text?: string
+    text?: string,
+    actions?: string[]
 }

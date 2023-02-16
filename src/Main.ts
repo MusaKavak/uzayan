@@ -5,19 +5,13 @@ import { OptionsManager } from "./scripts/OptionsManager";
 import { Public } from "./scripts/Public";
 import { WindowLayoutManager } from "./scripts/WindowLayoutManager";
 
-var socket: Socket | undefined
-
-function socketcallback(message: string, input: any, address: string) {
-    socket?.send(message, input, address)
-}
-
 async function Main() {
     Public.getSettingsFromLocalStorage()
-    const optionsManager = new OptionsManager(socketcallback)
+    const optionsManager = new OptionsManager()
     const windowLayoutManager = new WindowLayoutManager(document.body)
-    const mediaSessionManager = new MediaSessionManager(socketcallback)
+    const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
-    socket = new Socket(mediaSessionManager, notificationManager)
+    new Socket(mediaSessionManager, notificationManager)
     optionsManager.sync()
 }
 
