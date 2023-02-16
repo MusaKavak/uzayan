@@ -1,0 +1,27 @@
+#tabs-container {
+    width: 100%;
+    padding: 0 .6rem;
+    display: flex;
+    overflow: hidden;
+}
+
+#tabs-container .tab {
+    height: 4.2rem;
+    margin: .3rem 0;
+    flex-grow: 1;
+}
+
+#tabs-container .tab svg {
+    height: 100%;
+    width: auto;
+}
+
+#tabs-container .tab svg path {
+    stroke: white;
+    stroke-width: 1px;
+}
+
+#tabs-body-container {
+    width: 100%;
+    padding: 0 .3rem;
+}

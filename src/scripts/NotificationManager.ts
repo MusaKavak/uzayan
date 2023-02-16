@@ -3,15 +3,37 @@ import { WindowLayoutManager } from "./WindowLayoutManager";
 
 export default class NotificationManager {
     private container = document.getElementById("recent-notification-container")
-    private notificationBucket: Notification[] = []
+    private notificationTab = document.getElementById("notification-tab-body")
 
     constructor(private windowLayoutManager: WindowLayoutManager) { }
 
     pushNotification(nf: Notification) {
-        const largeIcon = nf.largeIcon != null ? `<img class="large-icon" src="data:image/jpg;base64, ${nf.largeIcon}"/>` : ""
+        const element = this.createNotificationElement(nf)
+        this.windowLayoutManager.openWindowForNotification()
+        this.container?.appendChild(element)
+        this.unbounceNotification(element)
 
+        const permanentElement = element.cloneNode(true) as Element
+        permanentElement.classList.remove("temporary")
+        this.notificationTab?.appendChild(permanentElement)
+    }
+
+    removeNotification(key: String | null) {
+        const id = "k-" + key
+        document.querySelectorAll("#notification-tab-body .notification").forEach(nf => {
+            if (nf.id == id) {
+                nf.remove()
+            }
+        })
+    }
+
+    private createNotificationElement(nf: Notification): HTMLElement {
+        const largeIcon =
+            nf.largeIcon != null
+                ? `<img class="large-icon" src="data:image/jpg;base64, ${nf.largeIcon}"/>`
+                : ''
         const element = document.createElement("div")
-        element.classList.add("notification")
+        element.classList.add("notification", "temporary")
         element.setAttribute("id", "k-" + nf.key)
         element.innerHTML = `
             ${largeIcon}
@@ -20,19 +42,7 @@ export default class NotificationManager {
                 <div class="notification-text">${nf.text}</div>
             </div>
         `
-        this.windowLayoutManager.openWindowForNotification()
-        this.container?.insertAdjacentElement("beforeend", element)
-        this.unbounceNotification(element)
-
-        this.notificationBucket.push(nf)
-    }
-
-    removeNotification(key: String | null) {
-        this.notificationBucket = this.notificationBucket.filter(n => {
-            if (n.key == null || n.key == key) return false
-            else return true
-        })
-        console.table(this.notificationBucket)
+        return element
     }
 
     private unbounceNotification(element: HTMLElement) {

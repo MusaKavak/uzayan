@@ -13,8 +13,11 @@
     margin: .3rem 0;
     display: flex;
     gap: .3rem;
-    animation: bounce 5s forwards;
     overflow: hidden;
+}
+
+.notification.temporary {
+    animation: bounce 5s forwards;
 }
 
 .notification .large-icon {

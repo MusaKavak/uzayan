@@ -25,6 +25,8 @@ html {
 
     overflow: hidden;
     padding-bottom: var(--sz-window-height-when-closed);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 #bar {
