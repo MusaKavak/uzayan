@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api"
 import { Socket } from "../connection/Socket"
 
 export class OptionsManager {
@@ -11,7 +12,8 @@ export class OptionsManager {
     }
 
     sync() {
-        Socket.send("MediaSessionsRequest", "", "192.168.1.105:34724")
+        Socket.send("MediaSessionsRequest", "")
+        Socket.send("NotificationsRequest", "")
 
     }
 

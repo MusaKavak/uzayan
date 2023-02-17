@@ -29,10 +29,10 @@ export class Socket {
         }
     }
 
-    static async send(message: string, input: any, address: string) {
+    static async send(message: string, input: any) {
         const data = JSON.stringify({ message, input })
         console.log("w")
-        invoke("send_message", { data, address })
+        invoke("send_message", { data, address: "192.168.1.101:34724" })
     }
 }
 

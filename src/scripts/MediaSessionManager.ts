@@ -95,6 +95,6 @@ export class MediaSessionManager {
   }
 
   private sendAction(token: string | undefined, action: string) {
-    Socket.send("MediaSessionControl", { token, action } as MediaSessionControl, "192.168.1.105:34724")
+    Socket.send("MediaSessionControl", { token, action } as MediaSessionControl)
   }
 }

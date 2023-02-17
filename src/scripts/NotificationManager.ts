@@ -69,7 +69,7 @@ export default class NotificationManager {
         action.textContent = a
         action.addEventListener("click", function () {
             console.log("Sending Action" + a + "\n from" + key)
-            Socket.send("NotificationAction", { key, action: a }, "192.168.1.105:34724")
+            Socket.send("NotificationAction", { key, action: a })
         })
         return action
     }
