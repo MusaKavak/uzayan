@@ -1080,6 +1080,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "if-addrs"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26b24dd0826eee92c56edcda7ff190f2cf52115c49eadb2c2da8063e2673a8c2"
+dependencies = [
+ "libc",
+ "windows-sys",
+]
+
+[[package]]
 name = "ignore"
 version = "0.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3058,6 +3068,7 @@ dependencies = [
 name = "uzayan"
 version = "0.0.0"
 dependencies = [
+ "if-addrs",
  "lazy_static",
  "serde",
  "serde_json",

@@ -12,9 +12,8 @@ async function Main() {
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
-    const connectionState = new ConnectionState()
+    const connectionState = new ConnectionState(optionsManager)
     new Socket(connectionState, mediaSessionManager, notificationManager)
-    optionsManager.sync()
 }
 
 
