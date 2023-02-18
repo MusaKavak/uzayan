@@ -3,24 +3,27 @@ import { listen } from '@tauri-apps/api/event'
 import { MediaSessionManager } from '../scripts/MediaSessionManager'
 import { ConnectionObject } from '../types/ConnectionObject'
 import NotificationManager from '../scripts/NotificationManager'
+import { ConnectionState } from './ConnectionState'
 
 export class Socket {
 
     constructor(
+        private connectionState: ConnectionState,
         private mediaSessionManager: MediaSessionManager,
         private notificationManger: NotificationManager
     ) { this.inititialize() }
 
     private async inititialize() {
         invoke("listen_socket")
-        await listen<string>('udp', (event) => {
-            const message = JSON.parse(event.payload) as ConnectionObject
-            this.call(message)
+        await listen<{ data: string, address: string }>('udp', (event) => {
+            const message = JSON.parse(event.payload.data) as ConnectionObject
+            this.call(message, event.payload.address)
         })
     }
 
-    private async call(message: ConnectionObject) {
+    private async call(message: ConnectionObject, address: string) {
         switch (message.message) {
+            case "TestConnection": { this.connectionState.testTheConnection(address); break }
             case "MediaSessions": { this.mediaSessionManager.createMediaSessions(message.input as []); break }
             case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.input); break }
             case "Notification": { this.notificationManger.pushNotification(message.input); break }
@@ -29,10 +32,10 @@ export class Socket {
         }
     }
 
-    static async send(message: string, input: any) {
+    static async send(message: string, input: any, address: string = "192.168.1.101:34724") {
         const data = JSON.stringify({ message, input })
         console.log("w")
-        invoke("send_message", { data, address: "192.168.1.101:34724" })
+        invoke("send_message", { data, address })
     }
 }
 

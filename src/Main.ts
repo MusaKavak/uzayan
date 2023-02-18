@@ -1,4 +1,5 @@
 import { Socket } from "./connection/Socket";
+import { ConnectionState } from "./connection/ConnectionState";
 import { MediaSessionManager } from "./scripts/MediaSessionManager";
 import NotificationManager from "./scripts/NotificationManager";
 import { OptionsManager } from "./scripts/OptionsManager";
@@ -11,7 +12,8 @@ async function Main() {
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
-    new Socket(mediaSessionManager, notificationManager)
+    const connectionState = new ConnectionState()
+    new Socket(connectionState, mediaSessionManager, notificationManager)
     optionsManager.sync()
 }
 
