@@ -4,26 +4,29 @@ import { OptionsManager } from "../scripts/OptionsManager"
 import { Socket } from "./Socket"
 
 export class ConnectionState {
-    connectedAddress: string = "192.168.1.101:34724"
+    connectedAddress: string | undefined
     canvas = document.getElementById("qrcode-canvas")
+    pairCode = "123414"
 
     constructor(
         private optionsManaer: OptionsManager
     ) {
         this.showQrCode()
         this.getConnectedClientsFromLocalStore()
-        this.sendTestMessages()
+        this.sendTestMessage()
     }
 
     getConnectedClientsFromLocalStore() {
-        const string = localStorage.getItem("connectedClient")
+        const string = localStorage.getItem("ConnectedIp")
         if (string != null && string.length > 0) {
             this.connectedAddress = string
         }
     }
 
-    sendTestMessages() {
-        Socket.send("TestConnection", "", this.connectedAddress)
+    sendTestMessage() {
+        if (this.connectedAddress != undefined) {
+            Socket.send("TestConnection", "", this.connectedAddress)
+        }
     }
 
     testTheConnection(address: string) {
@@ -37,9 +40,20 @@ export class ConnectionState {
         }
     }
 
+    pair(address: string, code: string) {
+        console.log(address)
+        console.log(code)
+        if (code == this.pairCode) {
+            this.connectedAddress = address
+            this.sendTestMessage()
+            this.removeQrCode()
+            localStorage.setItem("ConnectedIp", address)
+        }
+    }
+
     removeQrCode() {
         document.body.classList.remove("show-connection-state")
-        this.canvas = document.createElement("canvas")
+        this.canvas?.remove()
     }
 
     showQrCode() {
@@ -47,7 +61,7 @@ export class ConnectionState {
             invoke("get_ip_address").then((address) => {
                 console.log(address)
                 document.body.classList.add("show-connection-state")
-                qrcode.toCanvas(this.canvas, address + ":34724")
+                qrcode.toCanvas(this.canvas, `http://uzayan-pair?ip=${address}&code=${this.pairCode}`)
             })
         }
     }
