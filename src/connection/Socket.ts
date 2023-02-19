@@ -29,6 +29,7 @@ export class Socket {
             case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.input); break }
             case "Notification": { this.notificationManger.pushNotification(message.input); break }
             case "RemoveNotification": { this.notificationManger.removeNotification(message.input); break }
+            case "Notifications": { this.notificationManger.syncNotifications(message.input); break }
             default: break;
         }
     }

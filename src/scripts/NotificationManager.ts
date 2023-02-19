@@ -9,9 +9,8 @@ export default class NotificationManager {
     constructor(private windowLayoutManager: WindowLayoutManager) { }
 
     pushNotification(nf: Notification) {
-        console.log(nf.actions)
         const element = this.createNotificationElement(nf)
-        this.notificationTab?.appendChild(element)
+        this.addToNotificationTab(element)
 
         const headsUp = element.cloneNode(true) as Element
         headsUp.classList.add("teporary")
@@ -20,21 +19,31 @@ export default class NotificationManager {
         this.unbounceNotification(headsUp)
     }
 
+    syncNotifications(nfs: Notification[]) {
+        if (this.notificationTab != null) {
+            this.notificationTab.innerHTML = ""
+            nfs.forEach(nf => {
+                this.addToNotificationTab(
+                    this.createNotificationElement(nf)
+                )
+            })
+        }
+    }
+
+    addToNotificationTab(element: Element) {
+        this.notificationTab?.appendChild(element)
+    }
+
     removeNotification(key: String | null) {
         const id = "k-" + key
         document.querySelectorAll("#notification-tab-body .notification").forEach(nf => {
-            if (nf.id == id) {
-                nf.remove()
-            }
+            if (nf.id == id) nf.remove()
         })
     }
 
 
     private unbounceNotification(element: Element) {
-        setTimeout(() => {
-            element.remove()
-        }, 5000);
-
+        setTimeout(() => element.remove(), 5000);
     }
 
     private createNotificationElement(nf: Notification): HTMLElement {
