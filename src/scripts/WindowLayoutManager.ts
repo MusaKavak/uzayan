@@ -48,27 +48,20 @@ export class WindowLayoutManager {
     }
 
     async openWindow() {
-        if (!Public.isWindowOpen || !Public.isWindowOpening) {
-            this.body.classList.add("window-opening")
-            Public.isWindowOpening = true
-            this.setWindowSize(undefined, 800)
-            setTimeout(() => {
-                Public.isWindowOpening = false
-                Public.isWindowOpen = true
-                this.body.classList.remove("window-opening")
-                this.body.classList.add("window-open")
-            }, Public.settings.WindowOpeningDuration);
-        }
+        setTimeout(() => {
+            this.setWindowSize(undefined, 500)
+            this.body.classList.add("window-open")
+        }, Public.settings.WindowOpenDelay);
     }
 
     async closeWindow() {
-        Public.isWindowOpen = false
-        Public.isWindowOpening = false
-        this.body.classList.remove("window-opening", "window-open", "notification-avaliable")
         setTimeout(() => {
-            this.body.classList.remove("window-opening", "window-open", "notification-avaliable")
-            this.setWindowSize()
-        }, Public.settings.WindowOpeningDuration);
+            this.body.classList.remove("window-open")
+            setTimeout(() => {
+                this.setWindowSize()
+            }, Public.settings.WindowOpeningDuration);
+        }, Public.settings.WindowOpenDelay);
+
     }
 
     private timeout: NodeJS.Timeout | undefined

@@ -4,6 +4,7 @@ class Settings {
         public BarHeightWhenClosed: number = 8,
         public WindowPositionFromLeft: number = 100,
         public WindowOpeningDuration: number = 500,
+        public WindowOpenDelay: number = 500,
         public IsWindowCentered: boolean = false,
     ) { }
 }
