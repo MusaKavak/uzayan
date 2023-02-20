@@ -3,7 +3,7 @@ import { MediaSession } from "../types/MediaSession";
 import { MediaSessionControl } from "../types/MediaSessionControl";
 
 export class MediaSessionManager {
-  private container: HTMLElement | null = document.getElementById("media-session-slider")
+  private container: HTMLElement | null = document.getElementById("media-session-container")
 
   createMediaSessions(sessions: MediaSession[]) {
     if (sessions.length == 0) {

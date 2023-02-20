@@ -1,30 +1,30 @@
 #media-session-container {
-    overflow: hidden;
-}
-
-#media-session-slider {
-    padding: 0 .3rem;
-    position: relative;
+    padding: var(--gap);
     display: flex;
     flex-wrap: wrap;
+    gap: var(--gap);
 }
 
 .session {
     width: 100%;
     overflow: hidden;
-    padding: 0 .3rem;
+    padding: var(--gap) var(--gap) 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: .3rem;
-    flex-shrink: 0;
+    gap: var(--gap);
     position: relative;
+}
+
+.session:nth-child(2n) {
+    border-top: 1px solid var(--clr-accent);
 }
 
 .session-image {
     width: 4rem;
     height: 4rem;
     object-fit: cover;
+    border-radius: 5px;
 }
 
 .session-info {
@@ -33,12 +33,16 @@
 }
 
 .controls {
-    height: 2.5rem;
+    height: 2.1rem;
     display: flex;
     flex-wrap: nowrap;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: var(--gap);
+    right: var(--gap);
+    gap: var(--gap);
+    border-radius: 15px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
 }
 
 .controls div {
@@ -52,12 +56,12 @@
 }
 
 .controls path {
-    stroke: white;
+    stroke: var(--clr-primary);
 }
 
 .controls .previous path,
 .controls .next path {
-    fill: white;
+    fill: var(--clr-primary);
 }
 
 .controls .play-pause .pause {

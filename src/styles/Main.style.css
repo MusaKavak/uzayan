@@ -11,10 +11,15 @@
 html {
     width: 100vw;
     height: 100vh;
-    --clr-background: rgba(0, 0, 0, 0.7);
-    --clr-border: rgba(255, 255, 255, 0.7);
+    --clr-background: #34343B;
+    --clr-baclground-accent: #2e2e33;
+    --clr-primary: #EAEAEA;
+    --clr-accent: #7C4DFF;
 
     --sz-window-height-when-closed: 8px;
+
+    --gap: 0.5rem;
+    --box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.4);
 }
 
 #body {
@@ -22,7 +27,7 @@ html {
     min-height: var(--sz-window-height-when-closed);
     position: relative;
     background-color: var(--clr-background);
-
+    padding: 0 .7rem;
     overflow: hidden;
     padding-bottom: var(--sz-window-height-when-closed);
     border-bottom-left-radius: 5px;
@@ -33,8 +38,9 @@ html {
     width: 100%;
     height: var(--sz-window-height-when-closed);
     position: absolute;
+    left: 0;
     bottom: 0;
-    border-bottom: 2px solid var(--clr-border);
+    border-bottom: 2px solid var(--clr-primary);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
@@ -42,13 +48,14 @@ html {
 .container {
     max-height: 0;
     overflow: hidden;
-    transition: 0.5s;
-}
-
-.window-opening .container {
-    max-height: 200px;
+    transition: .5s ease-in-out;
 }
 
 .window-open .container {
-    max-height: 200px;
+    max-height: 100vh;
+}
+
+.window-open .card:has(*) {
+    border-radius: 15px;
+    box-shadow: var(--box-shadow)
 }
