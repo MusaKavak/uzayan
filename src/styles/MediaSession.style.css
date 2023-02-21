@@ -3,82 +3,87 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap);
+    overflow: scroll;
 }
 
 .session {
     width: 100%;
-    overflow: hidden;
-    padding: var(--gap) var(--gap) 0;
+    padding: 0 var(--gap);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: var(--gap);
     position: relative;
-}
-
-.session:nth-child(2n) {
-    border-top: 1px solid var(--clr-accent);
 }
 
 .session-image {
     width: 4rem;
     height: 4rem;
-    object-fit: cover;
-    border-radius: 5px;
 }
 
 .session-info {
-    flex-grow: 1;
     height: 4rem;
+    flex-grow: 1;
+    line-break: anywhere;
 }
 
-.controls {
-    height: 2.1rem;
-    display: flex;
-    flex-wrap: nowrap;
-    position: absolute;
-    bottom: var(--gap);
-    right: var(--gap);
-    gap: var(--gap);
+.session-info>div {}
+
+.session-controls {
+    width: 100%;
+}
+
+.session-progress-bar {
+    width: 100%;
+    height: 2rem;
     border-radius: 15px;
-    box-shadow: var(--box-shadow);
-    overflow: hidden;
+    margin-bottom: var(--gap);
+    background-color: red;
 }
 
-.controls div {
+.session-actions {
+    width: 100%;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap);
+}
+
+.session-actions div {
     height: 100%;
-    cursor: pointer;
 }
 
-.controls svg {
+.session-actions svg {
     height: 100%;
     width: auto;
 }
 
-.controls path {
+.session-actions svg path {
     stroke: var(--clr-primary);
-}
-
-.controls .previous path,
-.controls .next path {
+    stroke-width: 0;
     fill: var(--clr-primary);
 }
 
-.controls .play-pause .pause {
+.actions-play-pause div {
+    transition: var(--transition);
+}
+
+.action-pause {
     position: absolute;
-    transition: 0.5s;
     top: 100%;
 }
 
-.controls.playing .play-pause .pause {
+.session-controls.playing .action-play {
+    opacity: 0;
+}
+
+.session-controls.playing .action-pause {
     top: 0;
 }
 
-.controls .play-pause .play {
-    transition: 0.5s;
-    opacity: 1;
-}
-
-.controls.playing .play-pause .play {
-    opacity: 0;
+.actions-play-pause {
+    overflow: hidden;
+    position: relative;
 }

@@ -20,6 +20,7 @@ html {
 
     --gap: 0.5rem;
     --box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.4);
+    --transition: 0.5s
 }
 
 #body {

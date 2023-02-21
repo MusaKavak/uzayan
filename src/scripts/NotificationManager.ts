@@ -1,5 +1,6 @@
 import { Socket } from "../connection/Socket";
 import { Notification } from "../types/Notification";
+import { Public } from "./Public";
 import { WindowLayoutManager } from "./WindowLayoutManager";
 
 export default class NotificationManager {
@@ -47,46 +48,59 @@ export default class NotificationManager {
     }
 
     private createNotificationElement(nf: Notification): HTMLElement {
-        const notification = this.e("notification", "k-" + nf.key)
-        const notificationBody = this.e("notification-body")
-        const title = this.e("notification-title")
-        const text = this.e("notification-text")
-        const actions = this.e("notification-actions")
-
-        title.textContent = nf.title || "-"
-        text.textContent = nf.text || "-"
-
-        nf.actions?.forEach(a => actions.appendChild(this.createAction(a, nf.key)))
-
-        notificationBody.appendChild(title)
-        notificationBody.appendChild(text)
-        notificationBody.appendChild(actions)
-
-        if (nf.largeIcon != undefined) {
-            const img = this.e("notification-large-icon", undefined, "img")
-            img.setAttribute("src", "data:image/jpg;base64, " + nf.largeIcon)
-            notification.appendChild(img)
-        }
-
-        notification.appendChild(notificationBody)
-
-        return notification
-    }
-
-    private createAction(a: string, key?: string): HTMLElement {
-        const action = this.e("notification-action", undefined, "button")
-        action.textContent = a
-        action.addEventListener("click", function () {
-            console.log("Sending Action" + a + "\n from" + key)
-            Socket.send("NotificationAction", { key, action: a })
+        return Public.createElement({
+            clss: "notification",
+            id: "notification-" + nf.key,
+            children: [
+                this.getLargeIcon(nf.largeIcon),
+                this.getNotificationBody(nf),
+                this.getNotificationActions(nf),
+            ]
         })
-        return action
+    }
+    getNotificationActions(nf: Notification): HTMLElement | undefined {
+        const actionList = nf.actions?.map(a => this.getAction(a, nf.key))
+        return Public.createElement({
+            clss: "notification-actions",
+            children: actionList
+        })
     }
 
-    private e(c?: string, id?: string, type: string = "div"): HTMLElement {
-        const element = document.createElement(type)
-        if (c != null) element.setAttribute("class", c)
-        if (id != null) element.setAttribute("id", id)
-        return element
+    private getAction(action?: string, key?: string): HTMLElement | undefined {
+        const callback = () => {
+            console.log("Sending Action" + action + "\n from" + key)
+            Socket.send("NotificationAction", { key, action })
+        }
+        return Public.createElement({
+            clss: "notification-action",
+            type: "button",
+            content: action,
+            listener: {
+                event: "click",
+                callback
+            }
+        })
+    }
+
+    getNotificationBody(nf: Notification): HTMLElement | undefined {
+        return Public.createElement({
+            clss: "notification-body",
+            children: [
+                Public.createElement({ clss: "notification-title", content: nf.title }),
+                Public.createElement({ clss: "notification-text", content: nf.text })
+            ]
+        })
+    }
+
+    getLargeIcon(largeIcon: string | undefined): HTMLElement | undefined {
+        if (largeIcon != undefined) {
+            const icon = Public.createElement({
+                clss: "notification-large-icon",
+                type: "img"
+            })
+            icon.setAttribute("src", largeIcon ? Public.base64head + largeIcon : "")
+            return icon
+        }
+        return
     }
 }

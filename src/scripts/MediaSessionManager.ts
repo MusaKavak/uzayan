@@ -1,8 +1,11 @@
+import { SessionSvg } from "../assets/session.svg";
 import { Socket } from "../connection/Socket";
 import { MediaSession } from "../types/MediaSession";
-import { MediaSessionControl } from "../types/MediaSessionControl";
+import { MediaSessionState } from "../types/MediaSessionState";
+import { Public } from "./Public";
 
 export class MediaSessionManager {
+  private svg = new SessionSvg()
   private container: HTMLElement | null = document.getElementById("media-session-container")
 
   createMediaSessions(sessions: MediaSession[]) {
@@ -15,86 +18,129 @@ export class MediaSessionManager {
     }
   }
 
+  updateMediaSessionState(state: MediaSessionState) {
+    const controls = document.getElementById("session-control-" + state.token)
+    const progressBar = document.getElementById("session-progress-bar-" + state.token)
+
+    if (state.isActive) controls?.classList.add("playing")
+    else controls?.classList.remove("playing")
+
+    if (progressBar != null && state.position != undefined && state.duration != undefined) {
+      const startRatio = (100 * state.position) / state.duration
+      const duration = (state.duration - state.position) / 1000
+      progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${duration}s;`)
+    }
+  }
 
   updateMediaSession(session: MediaSession) {
-    this.setImage(session.token, session.albumArt, session.albumName)
-    const title = document.getElementById(`tl-${session.token}`)
-    const artist = document.getElementById(`a-${session.token}`)
-    const controls = document.getElementById(`c-${session.token}`)
-    if (title != null && artist != null) {
-      title.textContent = session.title || '-'
-      artist.textContent = session.artist || '-'
-    }
-    if (session.isPlaying) controls?.classList.add("playing")
-    else controls?.classList.remove("playing")
+    const token = session.token
+
+    const sessionImage = document.getElementById("session-image-" + token)
+    const title = document.getElementById("session-title-" + token)
+    const artist = document.getElementById("session-artist-" + token)
+
+    sessionImage?.setAttribute(
+      "src",
+      session.albumArt != null ? Public.base64head + session.albumArt : ""
+    )
+    sessionImage?.setAttribute("title", session.albumName || "")
+    if (title != null) title.textContent = session.title || ""
+    if (artist != null) artist.textContent = session.artist || ""
+
+    this.updateMediaSessionState({
+      isActive: session.isPlaying,
+      position: session.position,
+      duration: session.duration,
+      token
+    })
   }
 
   private createSessionElement(session: MediaSession) {
     const token = session.token
-    const element = `
-        <div class="session" id="t-${token}">
-          <img class="session-image" id="i-${token}">
-          <div class="session-info">
-            <div class="session-title" id="tl-${token}">${session.title || '-'}</div>
-            <div class="session-artist" id="a-${token}">${session.artist || '-'}</div>
-          </div>
-          <div class="controls ${session.isPlaying ? 'playing' : ''}" id="c-${token}">
-              <div class="previous">
-                <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#000000"
-                    d="M609.408 149.376 277.76 489.6a32 32 0 0 0 0 44.672l331.648 340.352a29.12 29.12 0 0 0 41.728 0 30.592 30.592 0 0 0 0-42.752L339.264 511.936l311.872-319.872a30.592 30.592 0 0 0 0-42.688 29.12 29.12 0 0 0-41.728 0z" />
-                </svg>
-              </div>
-              <div class="play-pause">
-                <div class="play"><svg width="800px" height="800px" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M4 11.9999V8.43989C4 4.01989 7.13 2.2099 10.96 4.4199L14.05 6.1999L17.14 7.9799C20.97 10.1899 20.97 13.8099 17.14 16.0199L14.05 17.7999L10.96 19.5799C7.13 21.7899 4 19.9799 4 15.5599V11.9999Z"
-                      stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg></div>
-                <div class="pause">
-                  <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M10.65 19.11V4.89C10.65 3.54 10.08 3 8.64 3H5.01C3.57 3 3 3.54 3 4.89V19.11C3 20.46 3.57 21 5.01 21H8.64C10.08 21 10.65 20.46 10.65 19.11Z"
-                      stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path
-                      d="M21 19.11V4.89C21 3.54 20.43 3 18.99 3H15.36C13.93 3 13.35 3.54 13.35 4.89V19.11C13.35 20.46 13.92 21 15.36 21H18.99C20.43 21 21 20.46 21 19.11Z"
-                      stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </div>
-              </div>
-              <div class="next">
-                <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#000000"
-                    d="M340.864 149.312a30.592 30.592 0 0 0 0 42.752L652.736 512 340.864 831.872a30.592 30.592 0 0 0 0 42.752 29.12 29.12 0 0 0 41.728 0L714.24 534.336a32 32 0 0 0 0-44.672L382.592 149.376a29.12 29.12 0 0 0-41.728 0z" />
-                </svg>
-              </div>
-            </div>
-        </div>
-        `
-    this.container?.insertAdjacentHTML("beforeend", element)
-    this.setImage(token, session.albumArt, session.albumName)
-    this.setControls(token)
+    const element = Public.createElement({
+      clss: "session",
+      id: "session-" + token,
+      children: [
+        this.getImage(session.albumArt, session.albumName, token),
+        this.getSessionInfo(session),
+        this.getSessionControls(session)
+      ]
+    })
+
+    this.container?.appendChild(element)
   }
 
-  private setImage(token: string | undefined, art: string | undefined, name: string | undefined) {
-    const image = document.getElementById(`i-${token}`)
-    image?.setAttribute("src", art ? "data:image/jpg;base64, " + art : "")
-    image?.setAttribute("title", name || "")
+  getSessionControls(session: MediaSession): HTMLElement | undefined {
+    return Public.createElement({
+      clss: "session-controls",
+      id: "session-control-" + session.token,
+      children: [
+        this.getProgressBar(session),
+        this.getActions(session.token)
+      ]
+    })
   }
 
-  private setControls(token: string | undefined) {
-    const controls = document.getElementById("c-" + token)
-    if (controls != null) {
-      controls.children[0].addEventListener("click", () => this.sendAction(token, "3"))
-      controls.children[1].children[0].addEventListener("click", () => this.sendAction(token, "1"))
-      controls.children[1].children[1].addEventListener("click", () => this.sendAction(token, "0"))
-      controls.children[2].addEventListener("click", () => this.sendAction(token, "2"))
+  getActions(token: string): HTMLElement | undefined {
+    return Public.createElement({
+      clss: "session-actions",
+      children: [
+        this.getAction("action-previous", this.svg.previous, "skipToPrevious", token),
+        Public.createElement({
+          clss: "actions-play-pause", children: [
+            this.getAction("action-play", this.svg.play, "play", token),
+            this.getAction("action-pause", this.svg.pause, "pause", token)
+          ]
+        }),
+        this.getAction("action-next", this.svg.next, "skipToNext", token)
+      ]
+    })
+  }
+
+  getAction(clss: string, icon: string, action: string, token: string): HTMLElement | undefined {
+    const callback = () => { this.sendAction(token, action) }
+    const actionElement = Public.createElement({
+      clss, listener: {
+        event: "click",
+        callback
+      }
+    })
+    actionElement.innerHTML = icon
+    return actionElement
+  }
+
+  getProgressBar(session: MediaSession): HTMLElement | undefined {
+    if (session.duration != undefined && session.position != undefined) {
+      const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + session.token })
+      const startRatio = (100 * session.position) / session.duration
+      const duration = (session.duration - session.position) / 1000
+      progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${duration}s;`)
+      return progressBar
     }
+    return
+  }
+
+  getSessionInfo(session: MediaSession): HTMLElement | undefined {
+    return Public.createElement({
+      clss: "session-info",
+      children: [
+        Public.createElement({ clss: "session-title", id: "session-title-" + session.token, content: session.title }),
+        Public.createElement({ clss: "session-artist", id: "session-artist-" + session.token, content: session.artist })
+      ]
+    })
+  }
+
+  private getImage(art: string | undefined, albumName: string | undefined, token: string): HTMLElement | undefined {
+    const image = Public.createElement({
+      clss: "session-image",
+      id: "session-image-" + token,
+      type: "img", title: albumName
+    })
+    image.setAttribute("src", art ? Public.base64head + art : "")
+    return image
   }
 
   private sendAction(token: string | undefined, action: string) {
-    Socket.send("MediaSessionControl", { token, action } as MediaSessionControl)
+    Socket.send("MediaSessionControl", { token, action })
   }
 }

@@ -12,9 +12,8 @@ class Settings {
 export class Public {
     static settings: Settings = new Settings()
 
+    static base64head = "data:image/jpg;base64, "
 
-    static isWindowOpening = false
-    static isWindowOpen = false
 
     static getSettingsFromLocalStorage() {
         //const string = localStorage.getItem("settings")
@@ -23,6 +22,32 @@ export class Public {
 
     static updateSettings() {
         localStorage.setItem("settings", JSON.stringify(this.settings))
+    }
+
+    static createElement(
+        specs: {
+            clss?: string,
+            id?: string,
+            title?: string,
+            type?: string,
+            content?: string,
+            children?: Array<HTMLElement | undefined>
+            listener?: { event: string, callback: () => void }
+        }
+    ): HTMLElement {
+        const element = document.createElement(specs.type || "div")
+        if (specs.clss != undefined) element.setAttribute("class", specs.clss)
+        if (specs.id != undefined) element.setAttribute("id", specs.id)
+        if (specs.title != undefined) element.setAttribute("title", specs.title)
+        if (specs.content != undefined) element.textContent = specs.content
+        if (specs.children != undefined) specs.children.forEach(
+            c => { if (c != undefined) element.appendChild(c) }
+        )
+        if (specs.listener != undefined) element.addEventListener(
+            specs.listener.event,
+            specs.listener.callback
+        )
+        return element
     }
 
 }
