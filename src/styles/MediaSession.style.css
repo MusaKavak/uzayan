@@ -8,18 +8,26 @@
 
 .session {
     width: 100%;
-    padding: 0 var(--gap);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--gap);
     position: relative;
+    padding-top: var(--gap);
+    border-top: 1px solid var(--clr-accent);
+}
+
+.session:first-child {
+    border: none;
+    padding-top: 0;
 }
 
 .session-image {
     width: 4rem;
     height: 4rem;
+    box-shadow: var(--box-shadow);
+    object-fit: cover;
 }
 
 .session-info {
@@ -28,18 +36,8 @@
     line-break: anywhere;
 }
 
-.session-info>div {}
-
 .session-controls {
     width: 100%;
-}
-
-.session-progress-bar {
-    width: 100%;
-    height: 2rem;
-    border-radius: 15px;
-    margin-bottom: var(--gap);
-    background-color: red;
 }
 
 .session-actions {
@@ -86,4 +84,39 @@
 .actions-play-pause {
     overflow: hidden;
     position: relative;
+}
+
+.session-progress-bar {
+    width: 100%;
+    height: 2rem;
+    border-radius: 15px;
+    margin-bottom: var(--gap);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.session-progress-bar::after {
+    content: '';
+    position: absolute;
+    width: var(--startPoint);
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: var(--clr-accent);
+    border-right: 2px solid var(--clr-baclground-accent);
+}
+
+.session-controls.playing .session-progress-bar::after {
+    animation: progress-bar var(--duration) linear forwards;
+}
+
+@keyframes progress-bar {
+    from {
+        width: var(--startPoint);
+    }
+
+    to {
+        width: 100%;
+    }
 }

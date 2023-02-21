@@ -26,9 +26,11 @@ export class MediaSessionManager {
     else controls?.classList.remove("playing")
 
     if (progressBar != null && state.position != undefined && state.duration != undefined) {
+      const newProgressBar = this.getProgressBar(state.position, state.duration, state.token)
       const startRatio = (100 * state.position) / state.duration
       const duration = (state.duration - state.position) / 1000
-      progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${duration}s;`)
+      newProgressBar?.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${duration}s;`)
+      if (newProgressBar != undefined) progressBar.replaceWith(newProgressBar)
     }
   }
 
@@ -75,7 +77,7 @@ export class MediaSessionManager {
       clss: "session-controls",
       id: "session-control-" + session.token,
       children: [
-        this.getProgressBar(session),
+        this.getProgressBar(session.position, session.duration, session.token),
         this.getActions(session.token)
       ]
     })
@@ -109,12 +111,12 @@ export class MediaSessionManager {
     return actionElement
   }
 
-  getProgressBar(session: MediaSession): HTMLElement | undefined {
-    if (session.duration != undefined && session.position != undefined) {
-      const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + session.token })
-      const startRatio = (100 * session.position) / session.duration
-      const duration = (session.duration - session.position) / 1000
-      progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${duration}s;`)
+  getProgressBar(position?: number, duration?: number, token?: string): HTMLElement | undefined {
+    if (duration != undefined && position != undefined) {
+      const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + token })
+      const startRatio = (100 * position) / duration
+      const remainDuration = (duration - position) / 1000
+      progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${remainDuration}s;`)
       return progressBar
     }
     return
