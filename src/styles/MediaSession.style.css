@@ -104,7 +104,12 @@
     top: 0;
     left: 0;
     background-color: var(--clr-accent);
-    border-right: 2px solid var(--clr-baclground-accent);
+    transition: var(--transition);
+}
+
+.session-progress-bar:hover::after {
+    border-right: 5px solid var(--clr-accent-second);
+
 }
 
 .session-controls.playing .session-progress-bar::after {

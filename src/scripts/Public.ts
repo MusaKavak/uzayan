@@ -31,6 +31,7 @@ export class Public {
             title?: string,
             type?: string,
             content?: string,
+            innerHtml?: string,
             children?: Array<HTMLElement | undefined>
             listener?: { event: string, callback: () => void }
         }
@@ -40,6 +41,7 @@ export class Public {
         if (specs.id != undefined) element.setAttribute("id", specs.id)
         if (specs.title != undefined) element.setAttribute("title", specs.title)
         if (specs.content != undefined) element.textContent = specs.content
+        if (specs.innerHtml != undefined) element.innerHTML = specs.innerHtml
         if (specs.children != undefined) specs.children.forEach(
             c => { if (c != undefined) element.appendChild(c) }
         )

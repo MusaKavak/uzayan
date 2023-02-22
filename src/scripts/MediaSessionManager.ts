@@ -9,9 +9,7 @@ export class MediaSessionManager {
   private container: HTMLElement | null = document.getElementById("media-session-container")
 
   createMediaSessions(sessions: MediaSession[]) {
-    if (sessions.length == 0) {
-      document.querySelectorAll(".controls").forEach(e => e.classList.remove("playing"))
-    } else if (this.container != null) {
+    if (this.container != null) {
       this.container.innerHTML = ""
       sessions.sort((a, b) => a.token > b.token ? 1 : -1)
       sessions.forEach(s => this.createSessionElement(s))
@@ -74,7 +72,7 @@ export class MediaSessionManager {
 
   getSessionControls(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
-      clss: "session-controls",
+      clss: `session-controls ${session.isPlaying ? 'playing' : ''}`,
       id: "session-control-" + session.token,
       children: [
         this.getProgressBar(session.position, session.duration, session.token),
@@ -94,21 +92,21 @@ export class MediaSessionManager {
             this.getAction("action-pause", this.svg.pause, "pause", token)
           ]
         }),
-        this.getAction("action-next", this.svg.next, "skipToNext", token)
+        this.getAction("action-next", this.svg.next, "skipToNext", token),
       ]
     })
   }
 
   getAction(clss: string, icon: string, action: string, token: string): HTMLElement | undefined {
     const callback = () => { this.sendAction(token, action) }
-    const actionElement = Public.createElement({
-      clss, listener: {
+    return Public.createElement({
+      clss,
+      listener: {
         event: "click",
         callback
-      }
+      },
+      innerHtml: icon
     })
-    actionElement.innerHTML = icon
-    return actionElement
   }
 
   getProgressBar(position?: number, duration?: number, token?: string): HTMLElement | undefined {
@@ -116,12 +114,23 @@ export class MediaSessionManager {
       const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + token })
       const startRatio = (100 * position) / duration
       const remainDuration = (duration - position) / 1000
+
+      progressBar.addEventListener("click", (ev: MouseEvent) => {
+        const rect = progressBar.getBoundingClientRect()
+        const x = ev.clientX - rect.left
+        const xPercent = (x / rect.width) * 100
+        if (xPercent > 0 && xPercent < 100) {
+          const position = Math.floor((xPercent / 100) * duration)
+          console.log(position)
+          this.sendAction(token, "seekTo", position.toString())
+        }
+      })
+
       progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${remainDuration}s;`)
       return progressBar
     }
     return
   }
-
   getSessionInfo(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
       clss: "session-info",
@@ -142,7 +151,7 @@ export class MediaSessionManager {
     return image
   }
 
-  private sendAction(token: string | undefined, action: string) {
-    Socket.send("MediaSessionControl", { token, action })
+  private sendAction(token: string | undefined, action: string, value: any = 0) {
+    Socket.send("MediaSessionControl", { token, action, value })
   }
 }
