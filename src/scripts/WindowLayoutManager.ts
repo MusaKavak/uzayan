@@ -47,32 +47,40 @@ export class WindowLayoutManager {
         this.body.onmouseleave = this.closeWindow.bind(this)
     }
 
+    isWindowOpen = false
+
     async openWindow() {
         setTimeout(() => {
-            this.setWindowSize(undefined, 500)
-            this.body.classList.add("window-open")
+            if (!this.isWindowOpen) {
+                this.isWindowOpen = true
+                this.setWindowSize(undefined, 600)
+                this.body.classList.add("window-open")
+            }
         }, Public.settings.WindowOpenDelay);
     }
 
     async closeWindow() {
         setTimeout(() => {
-            this.body.classList.remove("window-open")
-            setTimeout(() => {
-                this.setWindowSize()
-            }, Public.settings.WindowOpeningDuration);
+            if (this.isWindowOpen) {
+                this.body.classList.remove("window-open")
+                setTimeout(() => {
+                    this.setWindowSize()
+                    this.isWindowOpen = false
+                }, Public.settings.WindowOpeningDuration);
+            }
         }, Public.settings.WindowOpenDelay);
 
     }
 
     private timeout: NodeJS.Timeout | undefined
     async openWindowForNotification() {
-        this.setWindowSize(undefined, 800)
+        this.setWindowSize(undefined, 600)
         this.body.classList.add("notification-avaliable")
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
             this.body.classList.remove("notification-avaliable")
             setTimeout(() => {
-                if (!Public.isWindowOpen && !Public.isWindowOpen) {
+                if (!this.isWindowOpen) {
                     this.setWindowSize()
                 }
             }, 500);

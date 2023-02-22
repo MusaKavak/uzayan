@@ -20,44 +20,60 @@ html {
     --sz-window-height-when-closed: 8px;
 
     --gap: 0.7rem;
-    --box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.4);
-    --transition: 0.5s
+    --box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.5);
+    --transition: .5s
+}
+
+::-webkit-scrollbar {
+    width: 1px;
+    height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--clr-accent);
+    /* border-bottom: 50px solid blue; */
+    height: 100px;
 }
 
 #body {
     width: 100%;
+    max-height: 100vh;
     min-height: var(--sz-window-height-when-closed);
     position: relative;
     background-color: var(--clr-background);
-    padding: 0 .7rem;
-    overflow: hidden;
-    padding-bottom: var(--sz-window-height-when-closed);
+    padding: 0 var(--gap);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+    overflow: scroll;
+    border-bottom: 2px solid var(--clr-primary);
 }
 
 #bar {
     width: 100%;
     height: var(--sz-window-height-when-closed);
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
-    border-bottom: 2px solid var(--clr-primary);
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
+
 
 .container {
     max-height: 0;
+    transition: var(--transition) ease-in-out;
+    height: min-content;
+    flex-shrink: 0;
     overflow: hidden;
-    transition: .5s ease-in-out;
-}
-
-.window-open .container {
-    max-height: 100vh;
-}
-
-.window-open .card:has(*) {
     border-radius: 15px;
-    box-shadow: var(--box-shadow)
+}
+
+.window-open .container:has(*) {
+    margin-top: var(--gap);
+    padding: var(--gap);
+    box-shadow: var(--box-shadow);
+    max-height: 50vh;
 }

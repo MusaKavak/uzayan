@@ -1,5 +1,4 @@
 #media-session-container {
-    padding: var(--gap);
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap);

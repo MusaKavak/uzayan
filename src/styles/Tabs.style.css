@@ -1,27 +1,31 @@
 #tabs-container {
-    width: 100%;
-    padding: 0 .6rem;
     display: flex;
-    overflow: hidden;
+    justify-content: space-between;
+    gap: var(--gap);
 }
 
 #tabs-container .tab {
-    height: 4.2rem;
-    margin: .3rem 0;
+    height: 3.5rem;
     flex-grow: 1;
 }
 
 #tabs-container .tab svg {
     height: 100%;
-    width: auto;
+    width: 100%;
 }
 
 #tabs-container .tab svg path {
-    stroke: white;
+    stroke: var(--clr-primary);
+    fill: var(--clr-primary);
     stroke-width: 1px;
 }
 
 #tabs-body-container {
     width: 100%;
-    padding: 0 .3rem;
+}
+
+#tabs-body-container>.tab-body {
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
 }
