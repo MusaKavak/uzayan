@@ -12,10 +12,13 @@
 
 .notification {
     width: 100%;
-    padding: 0 .6rem;
-    margin: .3rem 0;
+    margin-top: var(--gap);
     display: flex;
-    gap: .3rem;
+    position: relative;
+    gap: var(--gap);
+    padding: var(--gap);
+    box-shadow: var(--box-shadow);
+    border-radius: 15px;
     overflow: hidden;
 }
 
@@ -23,18 +26,52 @@
     animation: bounce 5s forwards;
 }
 
-.notification .large-icon {
+.notification-large-icon {
     width: 4rem;
     height: 4rem;
+    border-radius: 50%;
 }
 
-.notification .notification-body {
+.notification-body {
     flex-grow: 1;
 }
 
-.notification .notification-text {
-    width: 100%;
-    word-break: break-all;
+.notification-actions:has(*) {
+    background-color: var(--clr-background);
+    /* bottom: calc(-1 * var(--gap)); */
+    /* right: var(--gap); */
+    bottom: -100%;
+    right: 0;
+    position: absolute;
+    height: calc(3 * var(--gap));
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.notification-action {
+    color: var(--clr-primary);
+    background-color: transparent;
+    outline: transparent;
+    border: none;
+    transition: var(--transition);
+    padding: var(--gap);
+    cursor: pointer;
+}
+
+.notification-action:hover {
+    background-color: var(--clr-baclground-accent);
+    filter: brightness(200%);
+}
+
+.notification:hover .notification-actions {
+    bottom: 0;
+}
+
+.notification.temporary .notification-actions {
+    bottom: 0;
 }
 
 @keyframes bounce {

@@ -1,3 +1,4 @@
+import { Socket } from "../connection/Socket"
 import { Public } from "./Public"
 
 export class TabsManager {
@@ -31,7 +32,7 @@ export class TabsManager {
     }
 
     private invokeAction(action?: string | null) {
-        console.log(action)
+        if (action == "GetNotifications") Socket.send("NotificationsRequest", "")
     }
 
     private setClass(active: number) {
