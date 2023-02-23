@@ -47,12 +47,10 @@ export class WindowLayoutManager {
         this.body.onmouseleave = this.closeWindow.bind(this)
     }
 
-    isWindowOpen = false
-
     async openWindow() {
         setTimeout(() => {
-            if (!this.isWindowOpen) {
-                this.isWindowOpen = true
+            if (!Public.isWindowOpen) {
+                Public.isWindowOpen = true
                 this.setWindowSize(undefined, 600)
                 this.body.classList.add("window-open")
             }
@@ -61,11 +59,11 @@ export class WindowLayoutManager {
 
     async closeWindow() {
         setTimeout(() => {
-            if (this.isWindowOpen) {
+            if (Public.isWindowOpen) {
                 this.body.classList.remove("window-open")
                 setTimeout(() => {
                     this.setWindowSize()
-                    this.isWindowOpen = false
+                    Public.isWindowOpen = false
                 }, Public.settings.WindowOpeningDuration);
             }
         }, Public.settings.WindowOpenDelay);
@@ -80,7 +78,7 @@ export class WindowLayoutManager {
         this.timeout = setTimeout(() => {
             this.body.classList.remove("notification-avaliable")
             setTimeout(() => {
-                if (!this.isWindowOpen) {
+                if (!Public.isWindowOpen) {
                     this.setWindowSize()
                 }
             }, 500);

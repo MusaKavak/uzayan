@@ -31,32 +31,56 @@
     </div>
     <div id="recent-notification-container" class="container"></div>
     <div id="tabs-container" class="container">
-      <div id="notification-tab" class="tab">
-        <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9499 4.07997 18.2599 5.37997 18.6999C9.68997 20.1399 14.34 20.1399 18.65 18.6999C19.86 18.2999 20.39 16.8699 19.73 15.7699L18.58 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z"
-            stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" />
-          <path
-            d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z"
-            stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-          <path
-            d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601"
-            stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" />
-        </svg>
+      <div id="tab-icons">
+        <div id="notification-tab" action="GetNotifications" class="tab stroke">
+          <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9499 4.07997 18.2599 5.37997 18.6999C9.68997 20.1399 14.34 20.1399 18.65 18.6999C19.86 18.2999 20.39 16.8699 19.73 15.7699L18.58 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z"
+              stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" />
+            <path
+              d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z"
+              stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path
+              d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601"
+              stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" />
+          </svg>
+        </div>
+        <div id="images-tab" action="GetImages" class="tab fill">
+          <svg fill="#000000" width="800px" height="800px" viewBox="0 -6 46 46" xmlns="http://www.w3.org/2000/svg">
+            <path id="_18.Pictures-Day" data-name="18.Pictures-Day"
+              d="M43,41H5a4,4,0,0,1-4-4V11A4,4,0,0,1,5,7H43a4,4,0,0,1,4,4V37A4,4,0,0,1,43,41Zm2-30a2,2,0,0,0-2-2H5a2,2,0,0,0-2,2V37a2,2,0,0,0,2,2H43a2,2,0,0,0,2-2ZM41.334,34.715,35,28.381,31.381,32l3.334,3.334a.977.977,0,0,1-1.381,1.381L19,22.381,6.666,34.715a.977.977,0,0,1-1.381-1.381l12.905-12.9a.9.9,0,0,1,.095-.144.918.918,0,0,1,1.525.144L30,30.619l4.19-4.19a1.023,1.023,0,0,1,.1-.144,1.05,1.05,0,0,1,1.43,0,1.023,1.023,0,0,1,.1.144l6.9,6.905a.977.977,0,0,1-1.381,1.381ZM29,19a4,4,0,1,1,4-4A4,4,0,0,1,29,19Zm0-6a2,2,0,1,0,2,2A2,2,0,0,0,29,13Z"
+              transform="translate(-1 -7)" fill-rule="evenodd" />
+          </svg>
+        </div>
+        <div id="files-tab" action="GetFiles" class="tab fill">
+          <svg width="800px" height="800px" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <path fill="#000000"
+              d="m80 38 4.243-4.243A6 6 0 0 0 80 32v6Zm16 16-4.243 4.243A6 6 0 0 0 96 60v-6Zm58 94H38v12h116v-12ZM28 138V54H16v84h12Zm10-94h42V32H38v12Zm37.757-1.757 16 16 8.486-8.486-16-16-8.486 8.486ZM164 70v68h12V70h-12ZM96 60h58V48H96v12Zm-58 88c-5.523 0-10-4.477-10-10H16c0 12.15 9.85 22 22 22v-12Zm116 12c12.15 0 22-9.85 22-22h-12c0 5.523-4.477 10-10 10v12Zm22-90c0-12.15-9.85-22-22-22v12c5.523 0 10 4.477 10 10h12ZM28 54c0-5.523 4.477-10 10-10V32c-12.15 0-22 9.85-22 22h12Z" />
+          </svg>
+
+        </div>
+        <div id="messages-tab" action="GetMessages" class="tab stroke">
+          <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M7 4C4.79086 4 3 5.79073 3 7.9997V13.2642C3 15.4732 4.79086 17.2639 7 17.2639L7 19.8998C7 19.9834 7.09639 20.0301 7.16197 19.9783L10.6 17.2639H17C19.2091 17.2639 21 15.4732 21 13.2642V7.99971C21 5.79073 19.2091 4 17 4H7Z"
+              stroke="#000000" stroke-width="2" stroke-linecap="round" />
+            <path
+              d="M9 11C9 11.5523 8.55228 12 8 12C7.44772 12 7 11.5523 7 11C7 10.4477 7.44772 10 8 10C8.55228 10 9 10.4477 9 11Z" />
+            <path
+              d="M13 11C13 11.5523 12.5523 12 12 12C11.4477 12 11 11.5523 11 11C11 10.4477 11.4477 10 12 10C12.5523 10 13 10.4477 13 11Z" />
+            <path
+              d="M17 11C17 11.5523 16.5523 12 16 12C15.4477 12 15 11.5523 15 11C15 10.4477 15.4477 10 16 10C16.5523 10 17 10.4477 17 11Z" />
+          </svg>
+        </div>
       </div>
-      <div id="images-tab" class="tab ">
-        <svg fill="#000000" width="800px" height="800px" viewBox="0 -6 46 46" xmlns="http://www.w3.org/2000/svg">
-          <path id="_18.Pictures-Day" data-name="18.Pictures-Day"
-            d="M43,41H5a4,4,0,0,1-4-4V11A4,4,0,0,1,5,7H43a4,4,0,0,1,4,4V37A4,4,0,0,1,43,41Zm2-30a2,2,0,0,0-2-2H5a2,2,0,0,0-2,2V37a2,2,0,0,0,2,2H43a2,2,0,0,0,2-2ZM41.334,34.715,35,28.381,31.381,32l3.334,3.334a.977.977,0,0,1-1.381,1.381L19,22.381,6.666,34.715a.977.977,0,0,1-1.381-1.381l12.905-12.9a.9.9,0,0,1,.095-.144.918.918,0,0,1,1.525.144L30,30.619l4.19-4.19a1.023,1.023,0,0,1,.1-.144,1.05,1.05,0,0,1,1.43,0,1.023,1.023,0,0,1,.1.144l6.9,6.905a.977.977,0,0,1-1.381,1.381ZM29,19a4,4,0,1,1,4-4A4,4,0,0,1,29,19Zm0-6a2,2,0,1,0,2,2A2,2,0,0,0,29,13Z"
-            transform="translate(-1 -7)" fill-rule="evenodd" />
-        </svg>
+      <div id="tab-body">
+        <div id="notification-tab-body" class="tab-body"></div>
+        <div id="images-tab-body" class="tab-body">Images Tab Body</div>
+        <div id="files-tab-body" class="tab-body">Files Tab Body</div>
+        <div id="messages-tab-body" class="tab-body">Messages Tab Body</div>
       </div>
     </div>
-    <div id="tabs-body-container" class="container">
-      <div id="notification-tab-body" class="tab-body"></div>
-      <div id="images-tab-body" class="tab-body"></div>
-    </div>
-    <!-- <div id="bar"></div> -->
   </div>
 </body>
 

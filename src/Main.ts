@@ -5,6 +5,7 @@ import NotificationManager from "./scripts/NotificationManager";
 import { OptionsManager } from "./scripts/OptionsManager";
 import { Public } from "./scripts/Public";
 import { WindowLayoutManager } from "./scripts/WindowLayoutManager";
+import { TabsManager } from "./scripts/TabsManager";
 
 async function Main() {
     Public.getSettingsFromLocalStorage()
@@ -12,6 +13,7 @@ async function Main() {
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
+    const tabsManager = new TabsManager()
     const connectionState = new ConnectionState(optionsManager)
     new Socket(connectionState, mediaSessionManager, notificationManager)
 }

@@ -11,9 +11,8 @@ class Settings {
 
 export class Public {
     static settings: Settings = new Settings()
-
     static base64head = "data:image/jpg;base64, "
-
+    static isWindowOpen = false
 
     static getSettingsFromLocalStorage() {
         //const string = localStorage.getItem("settings")
