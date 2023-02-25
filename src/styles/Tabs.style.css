@@ -1,7 +1,7 @@
 #tabs-container {
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
+    padding: var(--gap) 0;
 }
 
 #tab-icons {
@@ -9,55 +9,46 @@
     display: flex;
     justify-content: space-between;
     gap: var(--gap);
-}
-
-#tab-icons .tab {
-    height: 2.5rem;
     flex-grow: 1;
 }
 
-#tabs-container .tab svg {
+.tab {
+    height: 2.5rem;
+    flex-grow: 1;
+    --color: var(--clr-primary)
+}
+
+.tab.active {
+    --color: var(--clr-accent)
+}
+
+.tab svg {
     height: 100%;
     width: 100%;
 }
 
-.fill svg path {
-    fill: var(--clr-primary);
+.fill path {
+    fill: var(--color);
     transition: var(--transition)
 }
 
-.active.fill svg path {
-    fill: var(--clr-accent);
-}
-
-.stroke svg path {
-    stroke: var(--clr-primary);
+.stroke path {
+    stroke: var(--color);
     stroke-width: 0.7px;
     transition: var(--transition)
-}
-
-.active.stroke svg path {
-    stroke: var(--clr-accent);
-    stroke-width: 0.7px;
-}
-
-#tab-body {
-    width: 100%;
-    border-radius: 15px;
-    display: flex;
-    overflow: hidden;
-    max-height: 0;
-    transition: var(--transition);
-}
-
-#tab-body.active {
-    max-height: 1000vh;
 }
 
 .tab-body {
-    padding: var(--gap);
     width: 100%;
     flex-shrink: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.tab-body.active {
+    padding: var(--gap);
+    max-height: 500px;
 }
 
 #tabs-body-container>.tab-body {

@@ -1,34 +1,33 @@
 import { Socket } from "../connection/Socket"
-import { Public } from "./Public"
 
 export class TabsManager {
-    tabIcons = document.getElementById("tab-icons")?.children
-    tabBody = document.getElementById("tab-body")
+    private tabIcons = document.querySelectorAll(".tab")
+    private tabBodies = document.querySelectorAll(".tab-body")
+    private currentActive = -1
 
     constructor() {
         this.setListeners()
     }
 
     private setListeners() {
-        const length = this.tabIcons?.length || 0
-        for (let i = 0; i < length; i++) {
-            const item = this.tabIcons?.item(i)
-            item?.addEventListener("mouseenter", () => {
-                if (this.tabIcons != undefined && Public.isWindowOpen) {
-                    this.invokeAction(item.getAttribute("action"))
-                    this.setClass(i)
-                    this.tabBody?.classList.add("active")
-                    this.tabBody?.scrollTo({
-                        behavior: "smooth",
-                        left: (this.tabBody?.clientWidth || 0) * i
-                    })
-                }
+        this.tabIcons.forEach((t, i) => {
+            t.addEventListener("click", () => {
+                this.deactivateCurrent()
+                //If it is already active, deactivate the tab.
+                if (this.currentActive != i) {
+                    this.invokeAction(t.getAttribute("action"))
+                    t.classList.add("active")
+                    this.tabBodies[i]?.classList.add("active")
+                    this.currentActive = i
+                } else this.currentActive = -1
             })
-        }
-        document.body.addEventListener("mouseleave", () => {
-            this.setClass(-1)
-            this.tabBody?.classList.remove("active")
         })
+        document.body.addEventListener("mouseleave", () => this.deactivateCurrent())
+    }
+
+    private deactivateCurrent() {
+        this.tabIcons[this.currentActive]?.classList.remove("active")
+        this.tabBodies[this.currentActive]?.classList.remove("active")
     }
 
     private invokeAction(action?: string | null) {
@@ -36,10 +35,4 @@ export class TabsManager {
         if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: 3 })
     }
 
-    private setClass(active: number) {
-        for (let i = 0; i < (this.tabIcons?.length || 0); i++) {
-            if (i == active) this.tabIcons?.item(i)?.classList.add("active")
-            else this.tabIcons?.item(i)?.classList.remove("active")
-        }
-    }
 }

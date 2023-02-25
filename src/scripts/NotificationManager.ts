@@ -4,8 +4,8 @@ import { Public } from "./Public";
 import { WindowLayoutManager } from "./WindowLayoutManager";
 
 export default class NotificationManager {
-    private container = document.getElementById("recent-notification-container")
-    private notificationTab = document.getElementById("notification-tab-body")
+    private container = document.getElementById("recent-notifications-container")
+    private notificationTab = document.getElementById("notifications-tab-body")
 
     constructor(private windowLayoutManager: WindowLayoutManager) { }
 
@@ -37,7 +37,7 @@ export default class NotificationManager {
 
     removeNotification(key: String | null) {
         const id = "k-" + key
-        document.querySelectorAll("#notification-tab-body .notification").forEach(nf => {
+        document.querySelectorAll("#notifications-tab-body .notification").forEach(nf => {
             if (nf.id == id) nf.remove()
         })
     }

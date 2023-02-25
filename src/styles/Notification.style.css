@@ -1,9 +1,9 @@
-#recent-notification-container {
+#recent-notifications-container {
     overflow: scroll;
     max-height: 0;
 }
 
-.notification-avaliable #recent-notification-container {
+.notification-avaliable #recent-notifications-container {
     max-height: 60vh;
     box-shadow: var(--box-shadow);
     margin-top: var(--gap);
