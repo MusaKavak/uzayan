@@ -6,6 +6,7 @@ import { OptionsManager } from "./scripts/OptionsManager";
 import { Public } from "./scripts/Public";
 import { WindowLayoutManager } from "./scripts/WindowLayoutManager";
 import { TabsManager } from "./scripts/TabsManager";
+import { ImageManager } from "./scripts/ImageManager";
 
 async function Main() {
     Public.getSettingsFromLocalStorage()
@@ -13,9 +14,10 @@ async function Main() {
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
-    const tabsManager = new TabsManager()
+    new TabsManager()
+    const imageManager = new ImageManager()
     const connectionState = new ConnectionState(optionsManager)
-    new Socket(connectionState, mediaSessionManager, notificationManager)
+    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager)
 }
 
 

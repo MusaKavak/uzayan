@@ -33,6 +33,7 @@ export class TabsManager {
 
     private invokeAction(action?: string | null) {
         if (action == "GetNotifications") Socket.send("NotificationsRequest", "")
+        if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: 3 })
     }
 
     private setClass(active: number) {
