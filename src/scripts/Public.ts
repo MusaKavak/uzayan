@@ -31,20 +31,22 @@ export class Public {
             type?: string,
             content?: string,
             innerHtml?: string,
+            src?: string,
             children?: Array<HTMLElement | undefined>
             listener?: { event: string, callback: () => void }
         }
     ): HTMLElement {
         const element = document.createElement(specs.type || "div")
-        if (specs.clss != undefined) element.setAttribute("class", specs.clss)
-        if (specs.id != undefined) element.setAttribute("id", specs.id)
-        if (specs.title != undefined) element.setAttribute("title", specs.title)
-        if (specs.content != undefined) element.textContent = specs.content
-        if (specs.innerHtml != undefined) element.innerHTML = specs.innerHtml
-        if (specs.children != undefined) specs.children.forEach(
-            c => { if (c != undefined) element.appendChild(c) }
+        if (specs.clss) element.setAttribute("class", specs.clss)
+        if (specs.id) element.setAttribute("id", specs.id)
+        if (specs.title) element.setAttribute("title", specs.title)
+        if (specs.content) element.textContent = specs.content
+        if (specs.innerHtml) element.innerHTML = specs.innerHtml
+        if (specs.src) element.setAttribute("src", specs.src)
+        if (specs.children) specs.children.forEach(
+            c => { if (c) element.appendChild(c) }
         )
-        if (specs.listener != undefined) element.addEventListener(
+        if (specs.listener) element.addEventListener(
             specs.listener.event,
             specs.listener.callback
         )

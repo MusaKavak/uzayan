@@ -1,6 +1,7 @@
 export type ImageThumbnail = {
-    id?: String,
-    value?: String,
-    name?: String,
-    isReduced?: Boolean
+    id?: string,
+    value?: string,
+    name?: string,
+    date?: number
+    index?: number
 }
