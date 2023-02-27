@@ -1,4 +1,5 @@
 import { Socket } from "../connection/Socket"
+import { Public } from "./Public"
 
 export class TabsManager {
     private tabIcons = document.querySelectorAll(".tab")
@@ -32,7 +33,7 @@ export class TabsManager {
 
     private invokeAction(action?: string | null) {
         if (action == "GetNotifications") Socket.send("NotificationsRequest", "")
-        if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: 10 })
+        if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: Public.settings.ImageCountPerRequest })
     }
 
 }

@@ -1,23 +1,23 @@
 import { ImageThumbnail } from "../types/ImageThumbnail";
 import { unix, locale } from "dayjs"
 import { Public } from "./Public";
+import { Socket } from "../connection/Socket";
 export class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
     lastDateContainer: HTMLElement | undefined
+    loadMoreButton = this.getLoadMoreButton()
+    lastImageIndex = 0
 
     constructor() {
         locale("tr")
-        this.imagesTab?.addEventListener("scroll", (e) => {
-            // console.log(this.imagesTab?.offsetHeight)
-            // console.log(this.imagesTab?.scrollTop)
-        })
+        this.imagesTab?.appendChild(this.loadMoreButton)
     }
 
     setThumbnail(image: ImageThumbnail) {
         var date = this.getImageDate(image.date)
-        if (image.index == 0 && this.imagesTab != undefined) {
+        if (image.index == 0) {
             console.log("cleaning")
-            this.imagesTab.innerHTML = ""
+            this.clearImageContainer()
             this.lastDateContainer = undefined
         }
         if (
@@ -25,6 +25,29 @@ export class ImageManager {
             != (date?.dayString || false)
         ) this.lastDateContainer = this.getDateContainer(date)
         this.lastDateContainer?.appendChild(this.getThumbnail(image))
+        if (image.index) this.lastImageIndex = image.index
+    }
+
+    private clearImageContainer() {
+        document.querySelectorAll(".image-date-container")?.forEach(c => c.remove())
+    }
+
+    private loadMore() {
+        const start = this.lastImageIndex || 0
+        console.log(this.lastImageIndex)
+        console.log(start)
+        Socket.send("ImageThumbnailRequest", { start, length: Public.settings.ImageCountPerRequest })
+    }
+
+    private getLoadMoreButton(): HTMLElement {
+        return Public.createElement({
+            id: "load-more-image-button",
+            content: "Load More",
+            listener: {
+                event: "click",
+                callback: this.loadMore.bind(this)
+            }
+        })
     }
 
     private getDateContainer(date: ImageDate | undefined): HTMLElement {
@@ -34,7 +57,7 @@ export class ImageManager {
             innerHtml: `<div class="date-container-header">${date?.dayString}</div>`
         })
         container.setAttribute("date", date?.dayString || "")
-        this.imagesTab?.appendChild(container)
+        this.loadMoreButton.insertAdjacentElement("beforebegin", container)
 
         return container
     }

@@ -1,8 +1,14 @@
-#images-tab-body {}
+#images-tab-body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
 .image-date-container {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
+    flex-shrink: 0;
     gap: var(--gap);
     margin-bottom: var(--gap);
     box-shadow: var(--box-shadow);
@@ -18,4 +24,17 @@
     width: 60px;
     height: 60px;
     object-fit: cover;
+}
+
+#load-more-image-button {
+    background-color: var(--clr-background);
+    padding: var(--gap);
+    box-shadow: var(--box-shadow);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#load-more-image-button:hover {
+    background-color: var(--clr-baclground-accent);
 }

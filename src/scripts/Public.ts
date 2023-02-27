@@ -1,11 +1,12 @@
 class Settings {
     constructor(
         public BarWidth: number = 500,
-        public BarHeightWhenClosed: number = 500,
+        public BarHeightWhenClosed: number = 9,
         public WindowPositionFromLeft: number = 100,
         public WindowOpeningDuration: number = 500,
         public WindowOpenDelay: number = 500,
         public IsWindowCentered: boolean = false,
+        public ImageCountPerRequest: number = 10,
     ) { }
 }
 
