@@ -1,67 +1,49 @@
 #tabs-container {
     display: flex;
-    flex-direction: column;
-    flex-flow: column;
-    padding: var(--gap) 0;
+    border-radius: 15px;
+    overflow: hidden;
+    padding: 0;
 }
 
-#tab-icons {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    gap: var(--gap);
+.tab {
+    background-color: var(--clr-background);
     flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--gap);
+    transition: var(--transition);
 }
 
-#tab-bodies {
-    flex-grow: 0;
-    flex-shrink: 1;
-    overflow: scroll;
+.tab:hover {
+    background-color: var(--clr-baclground-accent);
+}
+
+.tab.active {
+    background-color: var(--clr-baclground-accent);
+    filter: brightness(200%);
+}
+
+#tab-bodies-container {
+    overflow: hidden;
+    margin: 0;
+    max-height: 0;
+    transition: var(--transition);
+}
+
+#tab-bodies-container:has(.active) {
+    max-height: 50vh;
 }
 
 .tab-body {
     width: 100%;
-    height: 100%;
+    transition: var(--transition);
     max-height: 0;
     overflow: hidden;
-    transition: var(--transition);
 }
 
 .tab-body.active {
+    max-height: 50vh;
     padding: var(--gap);
-    max-height: 100%;
-    overflow: scroll;
-    background-image: linear-gradient(red, blue);
-}
-
-#tabs-body-container>.tab-body {
-    height: 100%;
-    width: 100%;
-    overflow: scroll;
-}
-
-.tab {
-    height: 2.5rem;
-    flex-grow: 1;
-    --color: var(--clr-primary)
-}
-
-.tab.active {
-    --color: var(--clr-accent)
-}
-
-.tab svg {
-    height: 100%;
-    width: 100%;
-}
-
-.fill path {
-    fill: var(--color);
-    transition: var(--transition)
-}
-
-.stroke path {
-    stroke: var(--color);
-    stroke-width: 0.7px;
-    transition: var(--transition)
+    overflow: auto;
 }

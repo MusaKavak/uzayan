@@ -22,7 +22,7 @@ export class TabsManager {
                 } else this.currentActive = -1
             })
         })
-        document.body.addEventListener("mouseleave", () => this.deactivateCurrent())
+        document.body.addEventListener("mouseleave", () => { this.deactivateCurrent(); this.currentActive = -1 })
     }
 
     private deactivateCurrent() {

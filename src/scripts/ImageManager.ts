@@ -8,8 +8,8 @@ export class ImageManager {
     constructor() {
         locale("tr")
         this.imagesTab?.addEventListener("scroll", (e) => {
-            console.log(this.imagesTab?.scrollHeight)
-            console.log(this.imagesTab?.scrollTop)
+            // console.log(this.imagesTab?.offsetHeight)
+            // console.log(this.imagesTab?.scrollTop)
         })
     }
 
