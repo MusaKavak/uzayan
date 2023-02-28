@@ -1,7 +1,7 @@
 import { appWindow, currentMonitor, LogicalPosition, LogicalSize } from "@tauri-apps/api/window"
 import { Public } from "./Public"
 
-export class WindowLayoutManager {
+export default class WindowLayoutManager {
     private size = new LogicalSize(0, 0)
     private position = new LogicalPosition(0, 0)
 

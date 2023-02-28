@@ -1,7 +1,7 @@
 import { Socket } from "../connection/Socket"
 import { Public } from "./Public"
 
-export class TabsManager {
+export default class TabsManager {
     private tabIcons = document.querySelectorAll(".tab")
     private tabBodies = document.querySelectorAll(".tab-body")
     private currentActive = -1

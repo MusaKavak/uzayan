@@ -4,7 +4,7 @@ import { MediaSession } from "../types/MediaSession";
 import { MediaSessionState } from "../types/MediaSessionState";
 import { Public } from "./Public";
 
-export class MediaSessionManager {
+export default class MediaSessionManager {
   private svg = new SessionSvg()
   private container: HTMLElement | null = document.getElementById("media-session-container")
 
@@ -70,7 +70,7 @@ export class MediaSessionManager {
     this.container?.appendChild(element)
   }
 
-  getSessionControls(session: MediaSession): HTMLElement | undefined {
+  private getSessionControls(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
       clss: `session-controls ${session.isPlaying ? 'playing' : ''}`,
       id: "session-control-" + session.token,
@@ -81,7 +81,7 @@ export class MediaSessionManager {
     })
   }
 
-  getActions(token: string): HTMLElement | undefined {
+  private getActions(token: string): HTMLElement | undefined {
     return Public.createElement({
       clss: "session-actions",
       children: [
@@ -97,7 +97,7 @@ export class MediaSessionManager {
     })
   }
 
-  getAction(clss: string, icon: string, action: string, token: string): HTMLElement | undefined {
+  private getAction(clss: string, icon: string, action: string, token: string): HTMLElement | undefined {
     const callback = () => { this.sendAction(token, action) }
     return Public.createElement({
       clss,
@@ -109,7 +109,7 @@ export class MediaSessionManager {
     })
   }
 
-  getProgressBar(position?: number, duration?: number, token?: string): HTMLElement | undefined {
+  private getProgressBar(position?: number, duration?: number, token?: string): HTMLElement | undefined {
     if (duration != undefined && position != undefined) {
       const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + token })
       const startRatio = (100 * position) / duration
@@ -131,7 +131,7 @@ export class MediaSessionManager {
     }
     return
   }
-  getSessionInfo(session: MediaSession): HTMLElement | undefined {
+  private getSessionInfo(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
       clss: "session-info",
       children: [

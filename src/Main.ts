@@ -1,12 +1,12 @@
 import { Socket } from "./connection/Socket";
 import { ConnectionState } from "./connection/ConnectionState";
-import { MediaSessionManager } from "./scripts/MediaSessionManager";
+import MediaSessionManager from "./scripts/MediaSessionManager";
 import NotificationManager from "./scripts/NotificationManager";
-import { OptionsManager } from "./scripts/OptionsManager";
+import OptionsManager from "./scripts/OptionsManager";
 import { Public } from "./scripts/Public";
-import { WindowLayoutManager } from "./scripts/WindowLayoutManager";
-import { TabsManager } from "./scripts/TabsManager";
-import { ImageManager } from "./scripts/ImageManager";
+import WindowLayoutManager from "./scripts/WindowLayoutManager";
+import TabsManager from "./scripts/TabsManager";
+import ImageManager from "./scripts/ImageManager";
 
 async function Main() {
     Public.getSettingsFromLocalStorage()

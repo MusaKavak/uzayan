@@ -2,7 +2,7 @@ import { ImageThumbnail } from "../types/ImageThumbnail";
 import { unix, locale } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";
-export class ImageManager {
+export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
     lastDateContainer: HTMLElement | undefined
     loadMoreButton = this.getLoadMoreButton()

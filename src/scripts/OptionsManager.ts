@@ -1,6 +1,6 @@
 import { Socket } from "../connection/Socket"
 
-export class OptionsManager {
+export default class OptionsManager {
     constructor() {
         this.setListeners()
     }

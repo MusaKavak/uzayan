@@ -1,7 +1,7 @@
 import { Socket } from "../connection/Socket";
 import { Notification } from "../types/Notification";
 import { Public } from "./Public";
-import { WindowLayoutManager } from "./WindowLayoutManager";
+import WindowLayoutManager from "./WindowLayoutManager";
 
 export default class NotificationManager {
     private container = document.getElementById("recent-notifications-container")
@@ -31,7 +31,7 @@ export default class NotificationManager {
         }
     }
 
-    addToNotificationTab(element: Element) {
+    private addToNotificationTab(element: Element) {
         this.notificationTab?.appendChild(element)
     }
 
@@ -58,7 +58,8 @@ export default class NotificationManager {
             ]
         })
     }
-    getNotificationActions(nf: Notification): HTMLElement | undefined {
+
+    private getNotificationActions(nf: Notification): HTMLElement | undefined {
         const actionList = nf.actions?.map(a => this.getAction(a, nf.key))
         return Public.createElement({
             clss: "notification-actions",
@@ -82,7 +83,7 @@ export default class NotificationManager {
         })
     }
 
-    getNotificationBody(nf: Notification): HTMLElement | undefined {
+    private getNotificationBody(nf: Notification): HTMLElement | undefined {
         return Public.createElement({
             clss: "notification-body",
             children: [
@@ -92,7 +93,7 @@ export default class NotificationManager {
         })
     }
 
-    getLargeIcon(largeIcon: string | undefined): HTMLElement | undefined {
+    private getLargeIcon(largeIcon: string | undefined): HTMLElement | undefined {
         if (largeIcon != undefined) {
             const icon = Public.createElement({
                 clss: "notification-large-icon",
