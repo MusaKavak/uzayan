@@ -2,33 +2,21 @@ use std::net::SocketAddr;
 use std::{net::UdpSocket, thread};
 use tauri::{command, Window};
 
+const CHUNK_SIZE: usize = 2000;
+
 lazy_static! {
     static ref SOCKET: UdpSocket =
         UdpSocket::bind("0.0.0.0:34724").expect("Could't bind to socket!!");
 }
 
-#[derive(Clone, serde::Serialize)]
-struct UdpMessage {
-    data: String,
-    address: String,
-}
-
 #[command]
 pub fn listen_socket(window: Window) {
     thread::spawn(move || loop {
-        let mut buf = [0; 65000];
+        let mut buf = [0; CHUNK_SIZE];
         let (amt, address) = SOCKET.recv_from(&mut buf).expect("Didn't recieve data");
         let buf = &mut buf[..amt];
-        let data = String::from_utf8(buf.to_vec()).expect("Can't Convert Data");
-        println!("New Message From {} with {:?} data", address, data);
         window
-            .emit(
-                "udp",
-                UdpMessage {
-                    data,
-                    address: address.to_string(),
-                },
-            )
+            .emit("UdpMessage", get_message_payload(buf, address))
             .unwrap();
     });
 }
@@ -48,12 +36,53 @@ pub fn send_message(data: String, address: String) {
 }
 
 #[derive(Clone, serde::Serialize)]
-struct Payload {
-    message: String,
+struct UdpMessagePayload {
+    header: ChunkHeader,
+    body: String,
+    address: String,
 }
 
-// let buf = &mut buf[..amt];
-// let data = String::from_utf8(buf.to_vec()).expect("Can't conver to string");
-// println!("New Message from {} and data {:?}", src, data);
+#[derive(Clone, serde::Serialize)]
+struct ChunkHeader {
+    packet_id: String,
+    count_of_chunks: String,
+    current_chunk: String,
+}
 
-// socket.send_to(buf, &src)?;
+fn get_message_payload(arr: &[u8], address: SocketAddr) -> UdpMessagePayload {
+    let mut vec = arr.to_vec();
+    let mut get_value = || {
+        let pos = vec
+            .iter()
+            .position(|&b| b == 64)
+            .expect("Can't find the sperator(@)!")
+            + 1;
+        let mut value: Vec<u8> = Vec::new();
+        for _i in 0..pos {
+            value.push(vec[0]);
+            vec.remove(0);
+        }
+        value.pop();
+        return String::from_utf8(value).expect("Can't convert to string!");
+    };
+
+    let id = get_value();
+    let coc = get_value();
+    let cc = get_value();
+
+    let body = String::from_utf8(vec)
+        .expect("Can't convert the body to string!")
+        .trim_end_matches("\u{0}")
+        .to_owned();
+
+    println!("Received the {}/{} of the Packet: {}", cc, coc, id);
+    UdpMessagePayload {
+        header: ChunkHeader {
+            packet_id: id,
+            count_of_chunks: coc,
+            current_chunk: cc,
+        },
+        body,
+        address: address.to_string(),
+    }
+}

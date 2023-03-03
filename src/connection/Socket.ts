@@ -1,10 +1,10 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
-import { MediaSessionManager } from '../scripts/MediaSessionManager'
+import MediaSessionManager from '../scripts/MediaSessionManager'
 import { ConnectionObject } from '../types/ConnectionObject'
 import NotificationManager from '../scripts/NotificationManager'
 import { ConnectionState } from './ConnectionState'
-import { ImageManager } from '../scripts/ImageManager'
+import ImageManager from '../scripts/ImageManager'
 
 export class Socket {
 
@@ -15,13 +15,21 @@ export class Socket {
         private imageManager: ImageManager
     ) { this.inititialize() }
 
+    private pendingPackets: { [key: string]: string } = {}
+
     private async inititialize() {
         invoke("listen_socket")
-        await listen<{ data: string, address: string }>('udp', (event) => {
-            const message = JSON.parse(event.payload.data) as ConnectionObject
-            this.call(message, event.payload.address)
+        await listen<UdpSocketMessage>('UdpMessage', (event) => {
+            const p = event.payload
+            this.pendingPackets[p.header.packet_id] = (this.pendingPackets[p.header.packet_id] || "") + event.payload.body
+            if (p.header.count_of_chunks == p.header.current_chunk) {
+                const message = JSON.parse(this.pendingPackets[p.header.packet_id]) as ConnectionObject
+                this.pendingPackets[p.header.packet_id] = ""
+                this.call(message, event.payload.address)
+            }
         })
     }
+
 
     private async call(message: ConnectionObject, address: string) {
         switch (message.message) {
@@ -45,3 +53,12 @@ export class Socket {
     }
 }
 
+type UdpSocketMessage = {
+    header: {
+        packet_id: string,
+        count_of_chunks: string,
+        current_chunk: string
+    },
+    body: string,
+    address: string
+}
