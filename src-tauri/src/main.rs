@@ -4,6 +4,7 @@
 )]
 
 mod socket;
+mod tcp;
 mod tools;
 
 #[macro_use]
@@ -14,6 +15,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             socket::listen_socket,
             socket::send_message,
+            tcp::connect,
+            tcp::emit_message,
+            tcp::listen_for_connections,
             tools::get_ip_address
         ])
         .run(tauri::generate_context!())

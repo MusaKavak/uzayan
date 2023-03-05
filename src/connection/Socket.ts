@@ -18,16 +18,24 @@ export class Socket {
     private pendingPackets: { [key: string]: string } = {}
 
     private async inititialize() {
-        invoke("listen_socket")
-        await listen<UdpSocketMessage>('UdpMessage', (event) => {
-            const p = event.payload
-            this.pendingPackets[p.header.packet_id] = (this.pendingPackets[p.header.packet_id] || "") + event.payload.body
-            if (p.header.count_of_chunks == p.header.current_chunk) {
-                const message = JSON.parse(this.pendingPackets[p.header.packet_id]) as ConnectionObject
-                this.pendingPackets[p.header.packet_id] = ""
-                this.call(message, event.payload.address)
-            }
-        })
+        invoke("listen_for_connections")
+        invoke("connect", { address: "192.168.1.101:34724" })
+
+        setInterval(() => {
+            invoke("emit_message", { message: "Hellooo\n" })
+        }, 5000);
+
+
+        // invoke("listen_socket")
+        // await listen<UdpSocketMessage>('UdpMessage', (event) => {
+        //     const p = event.payload
+        //     this.pendingPackets[p.header.packet_id] = (this.pendingPackets[p.header.packet_id] || "") + event.payload.body
+        //     if (p.header.count_of_chunks == p.header.current_chunk) {
+        //         const message = JSON.parse(this.pendingPackets[p.header.packet_id]) as ConnectionObject
+        //         this.pendingPackets[p.header.packet_id] = ""
+        //         this.call(message, event.payload.address)
+        //     }
+        // })
     }
 
 
