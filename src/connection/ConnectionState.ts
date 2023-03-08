@@ -4,57 +4,53 @@ import OptionsManager from "../scripts/OptionsManager"
 import { Socket } from "./Socket"
 
 export class ConnectionState {
-    connectedAddress: string | undefined
-    connectetAddressPort: string | undefined
     canvas = document.getElementById("qrcode-canvas")
     pairCode = "123414"
 
     constructor(
         private optionsManaer: OptionsManager
     ) {
-        this.getConnectedClientsFromLocalStore()
-        this.sendTestMessage()
+        this.sendTestMessageToLastConnectedDevice()
     }
 
-    getConnectedClientsFromLocalStore() {
-        const ip = localStorage.getItem("ConnectedIp")
-        if (ip != null && ip.length > 0) {
-            this.connectedAddress = ip
-        }
-        const port = localStorage.getItem("ConnectedIpPort")
-        if (port != null && port.length > 0) {
-            this.connectetAddressPort = port
-        }
-    }
+    async sendTestMessageToLastConnectedDevice() {
+        const ip = localStorage.getItem("ConnectedDeviceIp")
+        const port = localStorage.getItem("ConnectedDevicePort")
 
-    sendTestMessage() {
-        if (this.connectedAddress && this.connectetAddressPort) {
-            Socket.connect(this.connectedAddress, this.connectetAddressPort)
-            Socket.send("TestConnection", "")
+        if ((ip != null && ip.length > 0)
+            && (port != null && port.length > 0)) {
+            if (await Socket.connect(ip, port)) {
+                Socket.send("TestConnection", "")
+            }
         }
+
     }
 
     testTheConnection(address: string) {
-        if (address == this.connectedAddress) {
-            this.removeQrCode()
-            this.optionsManaer.sync()
-            console.log("Connected To: " + address)
-        } else {
-            console.log("Wrong Ip Address")
-            console.log("Current: " + address + " Expected: " + this.connectedAddress)
+        this.removeQrCode()
+        this.optionsManaer.sync()
+        console.log("Connected To: " + address)
+    }
+
+    async pair(address: string, input: { port: number, code: string }) {
+        if (input.code == this.pairCode) {
+            if (await Socket.connect(address, input.port)) {
+                setTimeout(() => {
+                    Socket.send("TestConnection", null)
+                }, 500);
+                this.removeQrCode()
+                localStorage.setItem("ConnectedDeviceIp", address)
+                localStorage.setItem("ConnectedDevicePort", input.port.toString())
+            }
         }
     }
 
-    pair(address: string, code: string, port: string = "34724") {
-        console.log(address)
-        console.log(code)
-        if (code == this.pairCode) {
-            Socket.connect(address, port)
-            this.connectedAddress = address
-            this.sendTestMessage()
-            this.removeQrCode()
-            localStorage.setItem("ConnectedIp", address)
-            localStorage.setItem("ConnectedIpPort", port)
+    showQrCode(port: string) {
+        if (this.canvas != null) {
+            invoke("get_ip_address").then((address) => {
+                document.body.classList.add("show-connection-state")
+                qrcode.toCanvas(this.canvas, `http://uzayan-pair?ip=${address}&port=${port}&code=${this.pairCode}`)
+            })
         }
     }
 
@@ -62,16 +58,4 @@ export class ConnectionState {
         document.body.classList.remove("show-connection-state")
         this.canvas?.remove()
     }
-
-    showQrCode(port: string) {
-        if (this.canvas != null) {
-            invoke("get_ip_address").then((address) => {
-                console.log(address)
-                document.body.classList.add("show-connection-state")
-                qrcode.toCanvas(this.canvas, `http://uzayan-pair?ip=${address}&port=${port}&code=${this.pairCode}`)
-            })
-        }
-    }
-
-
 }

@@ -3,9 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-mod socket;
 mod tcp;
 mod tools;
+mod udp;
 
 #[macro_use]
 extern crate lazy_static;
@@ -13,11 +13,9 @@ extern crate lazy_static;
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            socket::listen_socket,
-            socket::send_message,
+            udp::listen_socket,
             tcp::connect,
             tcp::emit_message,
-            tcp::listen_for_connections,
             tools::get_ip_address
         ])
         .run(tauri::generate_context!())

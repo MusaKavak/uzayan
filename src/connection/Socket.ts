@@ -17,21 +17,28 @@ export class Socket {
 
     private async inititialize() {
         await listen<string>("SocketPort", (payload) => {
-            console.log(payload)
             this.connectionState.showQrCode(payload.payload)
         })
-        invoke("listen_for_connections")
+
+        await listen<Payload>("UdpMessage", (event) => {
+            const connectionObject = JSON.parse(event.payload.input) as ConnectionObject
+            if (connectionObject.event == "Pair")
+                this.connectionState.pair(event.payload.address, connectionObject.input)
+        })
+
 
         await listen<Payload>('TcpMessage', (event) => {
             const json = JSON.parse(event.payload.input)
             this.call(json, event.payload.address)
         })
+
+        await invoke("listen_socket")
     }
 
     private async call(message: ConnectionObject, address: string) {
-        switch (message.message) {
+        console.log(message.event)
+        switch (message.event) {
             case "TestConnection": { this.connectionState.testTheConnection(address); break }
-            case "Pair": { this.connectionState.pair(address, message.input); break }
             case "MediaSessions": { this.mediaSessionManager.createMediaSessions(message.input as []); break }
             case "MediaSessionState": { this.mediaSessionManager.updateMediaSessionState(message.input); break }
             case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.input); break }
@@ -44,13 +51,13 @@ export class Socket {
     }
 
     static async send(event: string, input: any) {
-        const message = JSON.stringify({ message: event, input })
+        const message = (JSON.stringify({ message: event, input })) + "\n"
         console.log(".")
         await invoke("emit_message", { message })
     }
 
-    static async connect(address: string, port: string) {
-        await invoke("connect", { address: `${address}:${port}` })
+    static async connect(address: string, port: string | number): Promise<boolean> {
+        return await invoke("connect", { address: `${address}:${port}` }) || false
     }
 }
 

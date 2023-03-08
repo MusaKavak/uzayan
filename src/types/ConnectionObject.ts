@@ -1,5 +1,5 @@
 export type ConnectionObject = {
-    message?: string
+    event?: string
     input?: any
 }
 

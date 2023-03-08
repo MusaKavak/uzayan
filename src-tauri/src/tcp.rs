@@ -1,8 +1,11 @@
 use std::io::{BufRead, BufReader, Write};
-use std::net::{TcpListener, TcpStream};
+use std::net::TcpStream;
 use std::thread;
 
 use tauri::{command, Window};
+
+static mut STREAM: Option<TcpStream> = None;
+static mut APP: Option<Window> = None;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -10,22 +13,22 @@ struct Payload {
     address: String,
 }
 
-static mut STREAM: Option<TcpStream> = None;
-static mut APP: Option<Window> = None;
-
-lazy_static! {
-    static ref LISTENER: TcpListener =
-        TcpListener::bind("0.0.0.0:34724").expect("Can't Bind The Listener");
-}
-
 #[command]
-pub fn connect(address: String) {
+pub fn connect(window: Window, address: String) -> bool {
     unsafe {
-        let stream = TcpStream::connect(address).expect("Can't Connect");
-        stream
-            .set_nonblocking(true)
-            .expect("set_nonblocking call failed");
-        STREAM = Some(stream);
+        APP = Some(window);
+        match TcpStream::connect(&address) {
+            Ok(stream) => {
+                STREAM = Some(stream);
+                listen_for_messages();
+                println!("Connected To: {}", address);
+                return true;
+            }
+            Err(_) => {
+                println!("Connection Refused From: {}", address);
+                return false;
+            }
+        };
     };
 }
 
@@ -43,51 +46,34 @@ pub fn emit_message(message: String) {
     };
 }
 
-#[command]
-pub fn listen_for_connections(window: Window) {
-    unsafe {
-        let addr = LISTENER.local_addr().unwrap().port().to_string();
-        window.emit("SocketPort", addr).unwrap();
-        APP = Some(window);
-    };
+unsafe fn listen_for_messages() {
     thread::spawn(|| {
-        for stream in LISTENER.incoming() {
-            match stream {
-                Ok(stream) => {
-                    println!("New Client Connected");
-                    thread::spawn(|| listen_for_messages(stream));
+        match &mut STREAM {
+            Some(stream) => {
+                let address = stream.peer_addr().unwrap().ip().to_string();
+
+                let mut reader = BufReader::new(stream);
+                let mut line = String::new();
+
+                reader.read_line(&mut line).expect("Can't read the line");
+                while !line.is_empty() {
+                    println!("Received New Line ({})", line.len());
+                    send_event(line, address.clone());
+                    line = String::new();
+                    reader.read_line(&mut line).expect("Can't read the line");
                 }
-                Err(_) => println!("Error while new client try to connect"),
+                println!("Disconnected From Server");
             }
-        }
+            None => {}
+        };
     });
 }
 
-fn listen_for_messages(stream: TcpStream) {
-    let address = stream.peer_addr().unwrap().ip().to_string();
-
-    let mut reader = BufReader::new(stream);
-    let mut line = String::new();
-
-    reader.read_line(&mut line).expect("Can't read the line");
-    while !line.is_empty() {
-        println!("Received Line: {}", line);
-        unsafe {
-            match &APP {
-                Some(window) => window
-                    .emit(
-                        "TcpMessage",
-                        Payload {
-                            input: line,
-                            address: address.clone(),
-                        },
-                    )
-                    .unwrap(),
-                None => {}
-            };
-        };
-        line = String::new();
-        reader.read_line(&mut line).expect("Can't read the line");
-    }
-    println!("Client disconnected!");
+unsafe fn send_event(input: String, address: String) {
+    match &APP {
+        Some(window) => window
+            .emit("TcpMessage", Payload { input, address })
+            .unwrap(),
+        None => {}
+    };
 }
