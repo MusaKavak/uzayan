@@ -9,9 +9,7 @@ export class ConnectionState {
 
     constructor(
         private optionsManaer: OptionsManager
-    ) {
-        this.sendTestMessageToLastConnectedDevice()
-    }
+    ) { }
 
     async sendTestMessageToLastConnectedDevice() {
         const ip = localStorage.getItem("ConnectedDeviceIp")
@@ -20,16 +18,14 @@ export class ConnectionState {
         if ((ip != null && ip.length > 0)
             && (port != null && port.length > 0)) {
             if (await Socket.connect(ip, port)) {
+                console.log("w")
                 Socket.send("TestConnection", "")
+                this.removeQrCode()
+                this.optionsManaer.sync()
+                console.log("Connected To: " + ip)
             }
         }
 
-    }
-
-    testTheConnection(address: string) {
-        this.removeQrCode()
-        this.optionsManaer.sync()
-        console.log("Connected To: " + address)
     }
 
     async pair(address: string, input: { port: number, code: string }) {

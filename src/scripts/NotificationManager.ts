@@ -69,7 +69,6 @@ export default class NotificationManager {
 
     private getAction(action?: string, key?: string): HTMLElement | undefined {
         const callback = () => {
-            console.log("Sending Action" + action + "\n from" + key)
             Socket.send("NotificationAction", { key, action })
         }
         return Public.createElement({

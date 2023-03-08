@@ -16,7 +16,6 @@ export default class ImageManager {
     setThumbnail(image: ImageThumbnail) {
         var date = this.getImageDate(image.date)
         if (image.index == 0) {
-            console.log("cleaning")
             this.clearImageContainer()
             this.lastDateContainer = undefined
         }
@@ -34,8 +33,6 @@ export default class ImageManager {
 
     private loadMore() {
         const start = this.lastImageIndex || 0
-        console.log(this.lastImageIndex)
-        console.log(start)
         Socket.send("ImageThumbnailRequest", { start, length: Public.settings.ImageCountPerRequest })
     }
 
@@ -51,7 +48,6 @@ export default class ImageManager {
     }
 
     private getDateContainer(date: ImageDate | undefined): HTMLElement {
-        console.log("creating date container")
         const container = Public.createElement({
             clss: "image-date-container",
             innerHtml: `<div class="date-container-header">${date?.dayString}</div>`

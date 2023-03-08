@@ -121,7 +121,6 @@ export default class MediaSessionManager {
         const xPercent = (x / rect.width) * 100
         if (xPercent > 0 && xPercent < 100) {
           const position = Math.floor((xPercent / 100) * duration)
-          console.log(position)
           this.sendAction(token, "seekTo", position.toString())
         }
       })

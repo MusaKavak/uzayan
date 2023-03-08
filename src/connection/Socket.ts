@@ -18,6 +18,7 @@ export class Socket {
     private async inititialize() {
         await listen<string>("SocketPort", (payload) => {
             this.connectionState.showQrCode(payload.payload)
+            this.connectionState.sendTestMessageToLastConnectedDevice()
         })
 
         await listen<Payload>("UdpMessage", (event) => {
@@ -29,16 +30,14 @@ export class Socket {
 
         await listen<Payload>('TcpMessage', (event) => {
             const json = JSON.parse(event.payload.input)
-            this.call(json, event.payload.address)
+            this.call(json)
         })
 
         await invoke("listen_socket")
     }
 
-    private async call(message: ConnectionObject, address: string) {
-        console.log(message.event)
+    private async call(message: ConnectionObject) {
         switch (message.event) {
-            case "TestConnection": { this.connectionState.testTheConnection(address); break }
             case "MediaSessions": { this.mediaSessionManager.createMediaSessions(message.input as []); break }
             case "MediaSessionState": { this.mediaSessionManager.updateMediaSessionState(message.input); break }
             case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.input); break }
