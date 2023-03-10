@@ -1,17 +1,19 @@
 import { ImageThumbnail } from "../types/ImageThumbnail";
-import { unix, locale } from "dayjs"
+import { unix } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";
 import { invoke } from "@tauri-apps/api";
-import { ConnectionObject } from "../types/ConnectionObject";
+import FileManager from "./FileManager";
+
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
     lastDateContainer: HTMLElement | undefined
     loadMoreButton = this.getLoadMoreButton()
     lastImageIndex = 0
 
-    constructor() {
-        locale("tr")
+    constructor(
+        private fileManager: FileManager
+    ) {
         this.imagesTab?.appendChild(this.loadMoreButton)
     }
 
@@ -61,11 +63,6 @@ export default class ImageManager {
     }
 
     private getThumbnail(image: ImageThumbnail): HTMLElement {
-        const callback = async () => {
-            if (image.id == undefined) return
-            const message = JSON.stringify({ message: "FullSizeImageRequest", input: { id: image.id } })
-            invoke("connect_for_large_file_transaction", { message: message + "\n", address: Socket.connectedServer })
-        }
         return Public.createElement({
             type: "img",
             src: Public.base64head + (image.value || ""),
@@ -73,7 +70,7 @@ export default class ImageManager {
             clss: "image-thumbnail",
             listener: {
                 event: "click",
-                callback
+                callback: this.getThumnailCallback(image.id, image.name)
             }
         })
     }
@@ -95,6 +92,17 @@ export default class ImageManager {
             }
         }
         return
+    }
+
+    private getThumnailCallback(id?: String, name?: String): () => void {
+        return async () => {
+            if (id == undefined) return
+            const location = await this.fileManager.getDownloadFileLocation()
+            if (location == undefined) return
+            const message = JSON.stringify({ message: "FullSizeImageRequest", input: { id } })
+            console.log(location)
+            //    invoke("connect_for_large_file_transaction", { message: message + "\n", address: Socket.connectedServer, name: name || id })
+        }
     }
 }
 

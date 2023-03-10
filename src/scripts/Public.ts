@@ -7,6 +7,8 @@ class Settings {
         public WindowOpenDelay: number = 500,
         public IsWindowCentered: boolean = false,
         public ImageCountPerRequest: number = 10,
+        public RememberDownloadLocation: boolean = false,
+        public DonwloadFileLocation?: string
     ) { }
 }
 
