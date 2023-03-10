@@ -55,8 +55,11 @@ export class Socket {
         await invoke("emit_message", { message })
     }
 
+    static connectedServer = ""
     static async connect(address: string, port: string | number): Promise<boolean> {
-        return await invoke("connect", { address: `${address}:${port}` }) || false
+        const response = await invoke<boolean>("connect", { address: `${address}:${port}` })
+        if (response) this.connectedServer = `${address}:${port}`
+        return response
     }
 }
 

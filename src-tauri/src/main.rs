@@ -16,6 +16,7 @@ fn main() {
             udp::listen_socket,
             tcp::connect,
             tcp::emit_message,
+            tcp::connect_for_large_file_transaction,
             tools::get_ip_address
         ])
         .run(tauri::generate_context!())

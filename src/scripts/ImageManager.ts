@@ -2,6 +2,8 @@ import { ImageThumbnail } from "../types/ImageThumbnail";
 import { unix, locale } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";
+import { invoke } from "@tauri-apps/api";
+import { ConnectionObject } from "../types/ConnectionObject";
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
     lastDateContainer: HTMLElement | undefined
@@ -59,11 +61,20 @@ export default class ImageManager {
     }
 
     private getThumbnail(image: ImageThumbnail): HTMLElement {
+        const callback = async () => {
+            if (image.id == undefined) return
+            const message = JSON.stringify({ message: "FullSizeImageRequest", input: { id: image.id } })
+            invoke("connect_for_large_file_transaction", { message: message + "\n", address: Socket.connectedServer })
+        }
         return Public.createElement({
             type: "img",
             src: Public.base64head + (image.value || ""),
             title: image.name,
-            clss: "image-thumbnail"
+            clss: "image-thumbnail",
+            listener: {
+                event: "click",
+                callback
+            }
         })
     }
 

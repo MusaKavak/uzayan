@@ -1,4 +1,4 @@
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::net::TcpStream;
 use std::thread;
 
@@ -76,4 +76,35 @@ unsafe fn send_event(input: String, address: String) {
             .unwrap(),
         None => {}
     };
+}
+
+#[command]
+pub fn connect_for_large_file_transaction(message: String, address: String) {
+    unsafe {
+        thread::spawn(move || match &mut TcpStream::connect(address) {
+            Ok(stream) => {
+                stream.write(message.as_bytes()).unwrap();
+                stream.flush().unwrap();
+                listen_large_file(stream)
+            }
+            Err(_) => println!("Can't Connect For Large File Transaction"),
+        });
+    };
+}
+
+unsafe fn listen_large_file(stream: &mut TcpStream) {
+    println!("Listening for large file");
+    let mut buffer = [0u8; 4000];
+
+    loop {
+        let bytes_read = stream.read(&mut buffer).expect("Can't Read");
+
+        if bytes_read == 0 {
+            break;
+        }
+
+        println!("Received Buffer: {:?} size: {}", buffer, bytes_read);
+    }
+
+    println!("Large File Stream Ends");
 }
