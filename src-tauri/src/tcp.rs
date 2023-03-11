@@ -1,5 +1,7 @@
+use std::fs::File;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::net::TcpStream;
+use std::path::{Path, PathBuf};
 use std::thread;
 
 use tauri::{command, Window};
@@ -79,32 +81,67 @@ unsafe fn send_event(input: String, address: String) {
 }
 
 #[command]
-pub fn connect_for_large_file_transaction(message: String, address: String) {
+pub fn connect_for_large_file_transaction(
+    message: String,
+    address: String,
+    name: String,
+    extension: String,
+    save_location: String,
+) {
     unsafe {
         thread::spawn(move || match &mut TcpStream::connect(address) {
-            Ok(stream) => {
-                stream.write(message.as_bytes()).unwrap();
-                stream.flush().unwrap();
-                listen_large_file(stream)
-            }
+            Ok(stream) => receive_file(stream, message, name, extension, save_location),
             Err(_) => println!("Can't Connect For Large File Transaction"),
         });
     };
 }
 
-unsafe fn listen_large_file(stream: &mut TcpStream) {
+unsafe fn receive_file(
+    stream: &mut TcpStream,
+    message: String,
+    name: String,
+    extension: String,
+    save_location: String,
+) {
     println!("Listening for large file");
     let mut buffer = [0u8; 4000];
 
-    loop {
-        let bytes_read = stream.read(&mut buffer).expect("Can't Read");
+    let mut pathbuf = PathBuf::from(&save_location).join(name);
+    pathbuf.set_extension(extension);
 
-        if bytes_read == 0 {
-            break;
+    match &mut get_file_to_write(&pathbuf.as_path()) {
+        Some(file) => {
+            println!("File {:?}", file);
+            stream.write(message.as_bytes()).unwrap();
+            stream.flush().unwrap();
+            loop {
+                let bytes_read = stream.read(&mut buffer).expect("Can't Read");
+
+                if bytes_read == 0 {
+                    break;
+                }
+
+                file.write_all(&buffer[..bytes_read]).unwrap();
+            }
+
+            println!("Large File Stream Ends");
         }
-
-        println!("Received Buffer: {:?} size: {}", buffer, bytes_read);
+        None => {}
     }
+}
 
-    println!("Large File Stream Ends");
+fn get_file_to_write(path: &Path) -> Option<File> {
+    match path.try_exists() {
+        Ok(_) => match File::create(path) {
+            Ok(file) => return Some(file),
+            Err(e) => {
+                println!("File Not Created: {}", e);
+                return None;
+            }
+        },
+        Err(e) => {
+            println!("Error While Creating File: {}", e);
+            return None;
+        }
+    }
 }

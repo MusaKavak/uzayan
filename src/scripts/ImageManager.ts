@@ -94,14 +94,22 @@ export default class ImageManager {
         return
     }
 
-    private getThumnailCallback(id?: String, name?: String): () => void {
+    private getThumnailCallback(id?: String, name: String | undefined = id): () => void {
         return async () => {
             if (id == undefined) return
-            const location = await this.fileManager.getDownloadFileLocation()
-            if (location == undefined) return
-            const message = JSON.stringify({ message: "FullSizeImageRequest", input: { id } })
-            console.log(location)
-            //    invoke("connect_for_large_file_transaction", { message: message + "\n", address: Socket.connectedServer, name: name || id })
+            const saveLocation = await this.fileManager.getDownloadFileLocation()
+            if (saveLocation == undefined) return
+            const message = (JSON.stringify({ message: "FullSizeImageRequest", input: { id } })) + "\n"
+            invoke(
+                "connect_for_large_file_transaction",
+                {
+                    message,
+                    address: Socket.connectedServer,
+                    name,
+                    extension: "png",
+                    saveLocation
+                }
+            )
         }
     }
 }
