@@ -1,0 +1,50 @@
+#files-tab-body {
+    display: flex;
+    flex-direction: column;
+}
+
+#directory-header {
+    display: flex;
+    gap: var(--gap);
+    align-items: center;
+    position: sticky;
+}
+
+#directory-goback {
+    width: 2rem;
+    cursor: pointer;
+}
+
+#directory-goback svg {
+    height: 100%;
+    width: 100%;
+}
+
+#directory-goback path {
+    fill: var(--clr-primary);
+}
+
+#directory-body {
+    overflow-y: auto;
+    gap: var(--gap);
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--gap);
+}
+
+.directory-row {
+    min-width: calc(100% / 2 - var(--gap));
+    max-width: calc(100% / 2 - var(--gap));
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+}
+
+.directory-row svg {
+    width: 2rem;
+    height: auto;
+}
+
+.directory-row path {
+    fill: var(--clr-primary);
+}
