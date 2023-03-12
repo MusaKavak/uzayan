@@ -3,7 +3,6 @@ import { unix } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";
 import { invoke } from "@tauri-apps/api";
-import FileManager from "./FileManager";
 
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
@@ -11,9 +10,7 @@ export default class ImageManager {
     loadMoreButton = this.getLoadMoreButton()
     lastImageIndex = 0
 
-    constructor(
-        private fileManager: FileManager
-    ) {
+    constructor() {
         this.imagesTab?.appendChild(this.loadMoreButton)
     }
 
@@ -97,7 +94,7 @@ export default class ImageManager {
     private getThumnailCallback(id?: String, name: String | undefined = id): () => void {
         return async () => {
             if (id == undefined) return
-            const saveLocation = await this.fileManager.getDownloadFileLocation()
+            const saveLocation = await Public.getDownloadFileLocation()
             if (saveLocation == undefined) return
             const message = (JSON.stringify({ message: "FullSizeImageRequest", input: { id } })) + "\n"
             invoke(

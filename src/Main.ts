@@ -17,9 +17,9 @@ async function Main() {
     const notificationManager = new NotificationManager(windowLayoutManager)
     new TabsManager()
     const fileManager = new FileManager()
-    const imageManager = new ImageManager(fileManager)
+    const imageManager = new ImageManager()
     const connectionState = new ConnectionState(optionsManager)
-    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager)
+    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileManager)
 }
 
 
