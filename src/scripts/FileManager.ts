@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api";
 import FileSvg from "../assets/file.svg";
 import { Socket } from "../connection/Socket";
 import { File } from "../types/File";
@@ -24,7 +25,10 @@ export default class FileManager {
     }
 
     getRow(f: File): HTMLElement {
-        const callback = () => this.fileRequest(f.path)
+        const callback = () => {
+            if (f.isFile) this.fileRequest(f.path, f.name, f.extension)
+            else this.fileSystemRequest(f.path)
+        }
 
         return Public.createElement({
             clss: "directory-row card",
@@ -54,7 +58,7 @@ export default class FileManager {
 
     getGoBackButton(parent: File | undefined): HTMLElement | undefined {
         if (parent != undefined) {
-            const callback = () => this.fileRequest(parent.path)
+            const callback = () => this.fileSystemRequest(parent.path)
 
             return Public.createElement({
                 id: "directory-goback",
@@ -72,7 +76,24 @@ export default class FileManager {
         return this.svg.folder
     }
 
-    private fileRequest(path: string | undefined) {
-        Socket.send("FileRequest", { path })
+    private fileSystemRequest(path: string | undefined) {
+        Socket.send("FileSystemRequest", { path })
+    }
+
+    private async fileRequest(path?: string, name?: string, extension?: string) {
+        if (path == undefined) return
+        const saveLocation = await Public.getDownloadFileLocation()
+        if (saveLocation == undefined) return
+        const message = (JSON.stringify({ message: "FileRequest", input: { path } })) + "\n"
+        invoke(
+            "connect_for_large_file_transaction",
+            {
+                message,
+                address: Socket.connectedServer,
+                name,
+                extension,
+                saveLocation
+            }
+        )
     }
 }

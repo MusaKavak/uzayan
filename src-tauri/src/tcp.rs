@@ -8,6 +8,7 @@ use tauri::{command, Window};
 
 static mut STREAM: Option<TcpStream> = None;
 static mut APP: Option<Window> = None;
+static mut IS_CONNECTED: bool = false;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -19,18 +20,23 @@ struct Payload {
 pub fn connect(window: Window, address: String) -> bool {
     unsafe {
         APP = Some(window);
-        match TcpStream::connect(&address) {
-            Ok(stream) => {
-                STREAM = Some(stream);
-                listen_for_messages();
-                println!("Connected To: {}", address);
-                return true;
-            }
-            Err(_) => {
-                println!("Connection Refused From: {}", address);
-                return false;
-            }
-        };
+        if !IS_CONNECTED {
+            match TcpStream::connect(&address) {
+                Ok(stream) => {
+                    STREAM = Some(stream);
+                    IS_CONNECTED = true;
+                    listen_for_messages();
+                    println!("Connected To: {}", address);
+                    return true;
+                }
+                Err(_) => {
+                    println!("Connection Refused From: {}", address);
+                    return false;
+                }
+            };
+        } else {
+            return true;
+        }
     };
 }
 
@@ -116,6 +122,8 @@ unsafe fn receive_file(
             stream.flush().unwrap();
             loop {
                 let bytes_read = stream.read(&mut buffer).expect("Can't Read");
+
+                println!("{}",bytes_read);
 
                 if bytes_read == 0 {
                     break;

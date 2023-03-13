@@ -35,6 +35,7 @@ export class ConnectionState {
                     Socket.send("TestConnection", null)
                 }, 500);
                 this.removeQrCode()
+                this.optionsManaer.sync()
                 localStorage.setItem("ConnectedDeviceIp", address)
                 localStorage.setItem("ConnectedDevicePort", input.port.toString())
             }
