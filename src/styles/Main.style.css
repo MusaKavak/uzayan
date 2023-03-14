@@ -69,3 +69,13 @@ html {
     max-height: 50vh;
     overflow: auto;
 }
+
+.fill svg,
+.fill path {
+    fill: var(--clr-primary);
+}
+
+.stroke svg,
+.stroke path {
+    stroke: var(--clr-primary);
+}

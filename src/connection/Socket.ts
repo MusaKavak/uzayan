@@ -47,7 +47,7 @@ export class Socket {
             case "RemoveNotification": { this.notificationManger.removeNotification(message.input); break }
             case "Notifications": { this.notificationManger.syncNotifications(message.input); break }
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.input); break }
-            case "File": { this.fileManager.createFiles(message.input); break }
+            case "FileSystem": { this.fileManager.createFiles(message.input); break }
             default: break;
         }
     }

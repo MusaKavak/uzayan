@@ -3,6 +3,7 @@
     border-radius: 15px;
     overflow: hidden;
     padding: 0;
+    z-index: 1;
 }
 
 .tab {

@@ -10,12 +10,20 @@ export default class FileManager {
     private svg = new FileSvg()
 
     createFiles(file: File) {
+        console.log(file.isRoot)
+        console.log(file.size)
         if (this.filesTab) {
             this.filesTab.innerHTML = ""
-            this.filesTab.appendChild(this.getHeader(file))
-            this.filesTab.appendChild(this.getBody(file.children))
+            this.filesTab.appendChild(Public.createElement({
+                clss: "card",
+                children: [
+                    this.getHeader(file),
+                    this.getBody(file.children)
+                ]
+            }))
         }
     }
+
 
     getBody(children: File[] | undefined): HTMLElement {
         return Public.createElement({
@@ -26,14 +34,14 @@ export default class FileManager {
 
     getRow(f: File): HTMLElement {
         const callback = () => {
-            if (f.isFile) this.fileRequest(f.path, f.name, f.extension)
+            if (f.isFile) this.fileRequest(f.path, f.name, f.extension, f.size)
             else this.fileSystemRequest(f.path)
         }
 
         return Public.createElement({
-            clss: "directory-row card",
+            clss: "directory-row",
             innerHtml: `
-                <span id="file-icon">${this.getFileIcon()}</span>
+                <span class="file-icon">${this.getFileIcon(f.isFile, f.extension)}</span>
                 <span>${f.name || '-'}</span>
             `,
             listener: {
@@ -46,8 +54,9 @@ export default class FileManager {
     getHeader(file: File): HTMLElement {
         return Public.createElement({
             id: "directory-header",
+            clss: "card",
             children: [
-                this.getGoBackButton(file.parent),
+                this.getGoBackButton(file.parent, file.isRoot),
                 Public.createElement({
                     id: "directory-name",
                     content: file.name
@@ -56,8 +65,8 @@ export default class FileManager {
         })
     }
 
-    getGoBackButton(parent: File | undefined): HTMLElement | undefined {
-        if (parent != undefined) {
+    getGoBackButton(parent: File | undefined, isRoot?: boolean): HTMLElement | undefined {
+        if (parent != undefined && !isRoot) {
             const callback = () => this.fileSystemRequest(parent.path)
 
             return Public.createElement({
@@ -72,15 +81,18 @@ export default class FileManager {
         } else return
     }
 
-    private getFileIcon(): string {
-        return this.svg.folder
+    private getFileIcon(isFile?: boolean, extension?: string): string {
+        if (isFile) return `<span>${extension}</span>`
+        else return `<span>${this.svg.folder}</span>`
+
     }
 
     private fileSystemRequest(path: string | undefined) {
         Socket.send("FileSystemRequest", { path })
     }
 
-    private async fileRequest(path?: string, name?: string, extension?: string) {
+    private async fileRequest(path?: string, name?: string, extension?: string, size?: number) {
+        return console.log(size)
         if (path == undefined) return
         const saveLocation = await Public.getDownloadFileLocation()
         if (saveLocation == undefined) return

@@ -4,6 +4,8 @@ export type File = {
     path?: string,
     isFile?: boolean,
     isHidden?: boolean,
+    size?: number,
+    isRoot?: boolean,
     parent?: File,
     children?: File[]
 }
