@@ -14,13 +14,8 @@ export default class FileManager {
         console.log(file.size)
         if (this.filesTab) {
             this.filesTab.innerHTML = ""
-            this.filesTab.appendChild(Public.createElement({
-                clss: "card",
-                children: [
-                    this.getHeader(file),
-                    this.getBody(file.children)
-                ]
-            }))
+            this.filesTab.appendChild(this.getHeader(file))
+            this.filesTab.appendChild(this.getBody(file.children))
         }
     }
 
@@ -92,7 +87,6 @@ export default class FileManager {
     }
 
     private async fileRequest(path?: string, name?: string, extension?: string, size?: number) {
-        return console.log(size)
         if (path == undefined) return
         const saveLocation = await Public.getDownloadFileLocation()
         if (saveLocation == undefined) return

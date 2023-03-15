@@ -1,14 +1,23 @@
-#files-tab-body {
-    display: flex;
+#files-tab-body.active {
+    display: flex ;
     flex-direction: column;
+    --header-height: 2rem;
+    position: relative;
+    padding-top: var(--header-height);
 }
 
-#directory-header {
+.active #directory-header {
+    width: calc(100% - 2 * var(--gap));
+    height: var(--header-height);
+    position: absolute;
+    left: var(--gap);
+    top: var(--gap);
     display: flex;
-    height: 2rem;
     gap: var(--gap);
     align-items: center;
-    box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.5);
+    padding: var(--gap);
+    z-index: 1;
+    background-color: var(--clr-background);
 }
 
 #directory-goback {
@@ -26,6 +35,7 @@
 }
 
 #directory-body {
+    height: calc(100% - var(--header-height));
     overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
@@ -35,8 +45,8 @@
 }
 
 .directory-row {
-    min-width: calc(100% / 2 - var(--gap));
-    max-width: calc(100% / 2 - var(--gap));
+    min-width: 50%;
+    max-width: 50%;
     display: flex;
     align-items: center;
     gap: var(--gap);
