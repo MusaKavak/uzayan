@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api";
+import { listen } from "@tauri-apps/api/event";
 import FileSvg from "../assets/file.svg";
 import { Socket } from "../connection/Socket";
 import { File } from "../types/File";
@@ -10,8 +11,6 @@ export default class FileManager {
     private svg = new FileSvg()
 
     createFiles(file: File) {
-        console.log(file.isRoot)
-        console.log(file.size)
         if (this.filesTab) {
             this.filesTab.innerHTML = ""
             this.filesTab.appendChild(this.getHeader(file))
@@ -20,16 +19,16 @@ export default class FileManager {
     }
 
 
-    getBody(children: File[] | undefined): HTMLElement {
+    private getBody(children: File[] | undefined): HTMLElement {
         return Public.createElement({
             id: "directory-body",
             children: children?.map(f => this.getRow(f))
         })
     }
 
-    getRow(f: File): HTMLElement {
+    private getRow(f: File): HTMLElement {
         const callback = () => {
-            if (f.isFile) this.fileRequest(f.path, f.name, f.extension, f.size)
+            if (f.isFile) this.addOrRemoveFromRequestList(f)
             else this.fileSystemRequest(f.path)
         }
 
@@ -46,7 +45,7 @@ export default class FileManager {
         })
     }
 
-    getHeader(file: File): HTMLElement {
+    private getHeader(file: File): HTMLElement {
         return Public.createElement({
             id: "directory-header",
             clss: "card",
@@ -55,12 +54,24 @@ export default class FileManager {
                 Public.createElement({
                     id: "directory-name",
                     content: file.name
-                })
+                }),
+                this.getFolderActions()
             ]
         })
     }
 
-    getGoBackButton(parent: File | undefined, isRoot?: boolean): HTMLElement | undefined {
+    private getFolderActions(): HTMLElement | undefined {
+
+        return Public.createElement({
+            content: "send",
+            listener: {
+                event: "click",
+                callback: () => this.requestAllFilesFromList()
+            }
+        })
+    }
+
+    private getGoBackButton(parent: File | undefined, isRoot?: boolean): HTMLElement | undefined {
         if (parent != undefined && !isRoot) {
             const callback = () => this.fileSystemRequest(parent.path)
 
@@ -86,20 +97,58 @@ export default class FileManager {
         Socket.send("FileSystemRequest", { path })
     }
 
-    private async fileRequest(path?: string, name?: string, extension?: string, size?: number) {
-        if (path == undefined) return
+
+    private listOfFilesToRequest: File[] = []
+
+    private addOrRemoveFromRequestList(f: File) {
+        var allowToAdd = true;
+        this.listOfFilesToRequest = this.listOfFilesToRequest.filter(file => {
+            if (file == f) {
+                allowToAdd = false
+                return false
+            }
+            return true
+        })
+        if (allowToAdd) this.listOfFilesToRequest.push(f)
+    }
+
+    private async requestAllFilesFromList() {
+        console.log(this.listOfFilesToRequest)
         const saveLocation = await Public.getDownloadFileLocation()
         if (saveLocation == undefined) return
-        const message = (JSON.stringify({ message: "FileRequest", input: { path } })) + "\n"
-        invoke(
-            "connect_for_large_file_transaction",
-            {
-                message,
-                address: Socket.connectedServer,
-                name,
-                extension,
-                saveLocation
-            }
-        )
+
+        const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
+        console.log(isStreamOpen)
+        if (isStreamOpen) {
+            var i = 0
+
+            const unListen = await listen<boolean>("EndOfFile", (event) => {
+                console.log(event)
+                if (event.payload) {
+                    i++
+                    if (i == this.listOfFilesToRequest.length) {
+                        unListen()
+                        console.log("AllFilesReceived")
+                        invoke("close_large_file_stream", { message: '{message:"CloseLargeFileStream"}\n' })
+                    }
+                    this.requestFileByIndex(i, saveLocation)
+                }
+            })
+
+            this.requestFileByIndex(i, saveLocation)
+        }
+    }
+
+    private async requestFileByIndex(i: number, saveLocation: string) {
+        const f = this.listOfFilesToRequest[i]
+        if (f == undefined) return
+        const requestMessage = (JSON.stringify({ message: "FileRequest", input: { path: f.path } })) + "\n"
+
+        await invoke("receive_file", {
+            requestMessage,
+            name: f.name,
+            extension: f.extension,
+            saveLocation
+        })
     }
 }

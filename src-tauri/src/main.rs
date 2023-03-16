@@ -3,8 +3,9 @@
     windows_subsystem = "windows"
 )]
 
+mod file;
+mod frontend;
 mod tcp;
-mod tools;
 mod udp;
 
 #[macro_use]
@@ -16,8 +17,10 @@ fn main() {
             udp::listen_socket,
             tcp::connect,
             tcp::emit_message,
-            tcp::connect_for_large_file_transaction,
-            tools::get_ip_address
+            tcp::get_ip_address,
+            file::open_large_file_stream,
+            file::receive_file,
+            file::close_large_file_stream
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

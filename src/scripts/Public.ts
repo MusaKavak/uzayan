@@ -60,7 +60,7 @@ export class Public {
         return element
     }
 
-    static async getDownloadFileLocation(): Promise<String | undefined> {
+    static async getDownloadFileLocation(): Promise<string | undefined> {
         const path = Public.settings.DonwloadFileLocation
         const remember = Public.settings.RememberDownloadLocation
         if (path != undefined && remember && await exists(path)) return path
