@@ -1,23 +1,25 @@
-#files-tab-body.active {
-    display: flex ;
-    flex-direction: column;
-    --header-height: 2rem;
+#files-tab-body {
     position: relative;
-    padding-top: var(--header-height);
+    --header-height: 2rem;
+    display: flex;
+    flex-direction: column;
 }
 
-.active #directory-header {
-    width: calc(100% - 2 * var(--gap));
+#files-tab-body.active {
+    padding-top: calc(var(--header-height) + var(--gap));
+}
+
+#directory-header {
+    background-color: var(--clr-background);
+    z-index: 1;
     height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     position: absolute;
     left: var(--gap);
     top: var(--gap);
-    display: flex;
-    gap: var(--gap);
-    align-items: center;
-    padding: var(--gap);
-    z-index: 1;
-    background-color: var(--clr-background);
+    width: calc(100% - 2 * var(--gap));
 }
 
 #directory-goback {
@@ -34,32 +36,55 @@
     fill: var(--clr-primary);
 }
 
+#directory-actions {
+    background-color: red;
+    height: 100%;
+}
+
+#directory-actions>div {
+    height: 100%;
+    padding: .1rem;
+}
+
+#directory-actions svg {
+    height: 100%;
+    width: auto;
+}
+
 #directory-body {
-    height: calc(100% - var(--header-height));
-    overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
+    gap: var(--gap);
+    justify-content: flex-start;
+    overflow-y: scroll;
     padding: var(--gap);
-    justify-content: space-between;
-    z-index: 0;
 }
 
 .directory-row {
-    min-width: 50%;
-    max-width: 50%;
-    display: flex;
-    align-items: center;
-    gap: var(--gap);
+    flex-grow: 1;
+    height: 6rem;
     background-color: var(--clr-background);
     cursor: pointer;
     padding: var(--gap);
     border-radius: 15px;
     transition: var(--transition);
     line-break: anywhere;
+    border: 1px solid transparent;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
 }
 
-.directory-row:hover {
+.select .directory-row.file {
+    pointer-events: all;
+}
+
+.directory-row:hover,
+.select .directory-row.file {
     background-color: var(--clr-baclground-accent);
+}
+
+.select .directory-row:has(input:checked) {
+    border: 1px solid var(--clr-accent);
 }
 
 .file-icon {

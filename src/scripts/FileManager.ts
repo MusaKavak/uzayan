@@ -9,12 +9,18 @@ export default class FileManager {
 
     private filesTab = document.getElementById("files-tab-body")
     private svg = new FileSvg()
+    private allowToCreate = true
+
+    constructor() {
+        this.filesTab?.classList.toggle("select")
+    }
 
     createFiles(file: File) {
-        if (this.filesTab) {
+        if (this.filesTab && this.allowToCreate) {
             this.filesTab.innerHTML = ""
             this.filesTab.appendChild(this.getHeader(file))
             this.filesTab.appendChild(this.getBody(file.children))
+            this.allowToCreate = false
         }
     }
 
@@ -22,27 +28,52 @@ export default class FileManager {
     private getBody(children: File[] | undefined): HTMLElement {
         return Public.createElement({
             id: "directory-body",
-            children: children?.map(f => this.getRow(f))
+            children: children?.map(f => this.getDirectoryItem(f))
         })
     }
 
-    private getRow(f: File): HTMLElement {
+    private getDirectoryItem(f: File): HTMLElement {
         const callback = () => {
-            if (f.isFile) this.addOrRemoveFromRequestList(f)
+            if (f.isFile) {
+                //this.addOrRemoveFromRequestList(f)
+            }
             else this.fileSystemRequest(f.path)
         }
 
         return Public.createElement({
-            clss: "directory-row",
+            type: "label",
+            clss: "directory-row " + (f.isFile ? "file" : ""),
             innerHtml: `
                 <span class="file-icon">${this.getFileIcon(f.isFile, f.extension)}</span>
                 <span>${f.name || '-'}</span>
             `,
+            children: [
+                this.getSelectionCheckBox(f)
+            ],
             listener: {
                 event: "click",
                 callback
             }
         })
+    }
+
+    getSelectionCheckBox(f: File): HTMLElement | undefined {
+        if (f.isFile) {
+            const chbx = document.createElement("input") as HTMLInputElement
+            chbx.classList.add("selection-checkbox")
+            chbx.setAttribute("type", "checkbox")
+            chbx.setAttribute("style", "opacity: 0;")
+            chbx.addEventListener("change", () => {
+                if (chbx.checked) {
+                    this.addToRequestList(f)
+                } else {
+                    this.removeFromRequestList(f)
+                }
+                console.log(this.filesToRequest)
+            })
+            return chbx
+        }
+        return
     }
 
     private getHeader(file: File): HTMLElement {
@@ -55,19 +86,24 @@ export default class FileManager {
                     id: "directory-name",
                     content: file.name
                 }),
-                this.getFolderActions()
+                this.getDirectoryActions()
             ]
         })
     }
 
-    private getFolderActions(): HTMLElement | undefined {
-
+    private getDirectoryActions(): HTMLElement | undefined {
         return Public.createElement({
-            content: "send",
-            listener: {
-                event: "click",
-                callback: () => this.requestAllFilesFromList()
-            }
+            id: "directory-actions",
+            children: [
+                Public.createElement({
+                    innerHtml: this.svg.select,
+                    title: "Select",
+                    listener: {
+                        event: "click",
+                        callback: () => this.filesTab?.classList.toggle("select")
+                    }
+                })
+            ]
         })
     }
 
@@ -94,26 +130,24 @@ export default class FileManager {
     }
 
     private fileSystemRequest(path: string | undefined) {
+        this.allowToCreate = true
         Socket.send("FileSystemRequest", { path })
     }
 
 
-    private listOfFilesToRequest: File[] = []
+    private filesToRequest: File[] = []
 
-    private addOrRemoveFromRequestList(f: File) {
-        var allowToAdd = true;
-        this.listOfFilesToRequest = this.listOfFilesToRequest.filter(file => {
-            if (file == f) {
-                allowToAdd = false
-                return false
-            }
-            return true
-        })
-        if (allowToAdd) this.listOfFilesToRequest.push(f)
+    private addToRequestList(f: File) {
+        if (!this.filesToRequest.includes(f)) {
+            this.filesToRequest.push(f)
+        }
+    }
+    private removeFromRequestList(f: File) {
+        this.filesToRequest = this.filesToRequest.filter(file => file != f)
     }
 
     private async requestAllFilesFromList() {
-        console.log(this.listOfFilesToRequest)
+        console.log(this.filesToRequest)
         const saveLocation = await Public.getDownloadFileLocation()
         if (saveLocation == undefined) return
 
@@ -126,7 +160,7 @@ export default class FileManager {
                 console.log(event)
                 if (event.payload) {
                     i++
-                    if (i == this.listOfFilesToRequest.length) {
+                    if (i == this.filesToRequest.length) {
                         unListen()
                         console.log("AllFilesReceived")
                         invoke("close_large_file_stream", { message: '{message:"CloseLargeFileStream"}\n' })
@@ -140,7 +174,7 @@ export default class FileManager {
     }
 
     private async requestFileByIndex(i: number, saveLocation: string) {
-        const f = this.listOfFilesToRequest[i]
+        const f = this.filesToRequest[i]
         if (f == undefined) return
         const requestMessage = (JSON.stringify({ message: "FileRequest", input: { path: f.path } })) + "\n"
 
