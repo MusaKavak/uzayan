@@ -10,69 +10,71 @@
     border-radius: 15px;
 }
 
-.notification {
+#notifications-tab-body>div {
     width: 100%;
     margin-top: var(--gap);
-    display: flex;
-    position: relative;
-    gap: var(--gap);
-    padding: var(--gap);
     box-shadow: var(--box-shadow);
     border-radius: 15px;
     overflow: hidden;
+}
+
+.notification-group>div {
+    border-bottom: 1px solid var(--clr-baclground-accent);
+}
+
+.notification {
+    max-height: 10rem;
+    position: relative;
+    padding: var(--gap);
 }
 
 .notification.temporary {
     animation: bounce 5s forwards;
 }
 
-.notification-large-icon {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-}
-
 .notification-body {
-    flex-grow: 1;
+    max-height: 100%;
+    display: flex;
+    gap: var(--gap);
 }
 
-.notification-actions:has(*) {
-    background-color: var(--clr-background);
-    /* bottom: calc(-1 * var(--gap)); */
-    /* right: var(--gap); */
-    bottom: -100%;
-    right: 0;
-    position: absolute;
-    height: calc(3 * var(--gap));
+.notification-actions {
+    width: max-content;
+    display: flex;
     border-radius: 15px;
     overflow: hidden;
-    display: flex;
-    box-shadow: var(--box-shadow);
+    max-height: 0;
     transition: var(--transition);
+}
+
+.notification:hover .notification-actions:has(*) {
+    margin-top: var(--gap);
+    max-height: 100px;
 }
 
 .notification-action {
+    background-color: var(--clr-accent);
+    padding: 5px;
+    display: inline;
     color: var(--clr-primary);
-    background-color: transparent;
-    outline: transparent;
-    border: none;
     transition: var(--transition);
-    padding: var(--gap);
     cursor: pointer;
 }
 
 .notification-action:hover {
-    background-color: var(--clr-baclground-accent);
-    filter: brightness(200%);
+    background-color: var(--clr-accent-dark);
 }
 
-.notification:hover .notification-actions {
-    bottom: 0;
+.notification-large-icon {
+    width: 4rem;
+    height: 4rem;
 }
 
-.notification.temporary .notification-actions {
-    bottom: 0;
+.notification-content {
+    height: 100%;
+    overflow-y: scroll;
 }
+
 
 @keyframes bounce {
     0% {

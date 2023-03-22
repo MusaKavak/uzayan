@@ -11,27 +11,31 @@
 html {
     width: 100vw;
     height: 100vh;
-    --clr-background: #34343B;
-    --clr-baclground-accent: #2e2e33;
-    --clr-primary: #EAEAEA;
-    --clr-accent: #7C4DFF;
-    --clr-accent-second: #4a2aa3;
+    --clr-background: rgb(52, 52, 59);
+    --clr-background-bright: rgb(74, 74, 82);
+    --clr-baclground-accent: rgb(46, 46, 51);
+    --clr-primary: rgb(234, 234, 234);
+    --clr-accent: rgb(88, 28, 255);
+    --clr-accent-dark: rgb(64, 21, 182);
+    --clr-accent-transparent: rgba(88, 28, 255, 0.702);
+    --clr-accent-second: rgb(74, 42, 163);
 
     --sz-window-height-when-closed: 8px;
 
     --gap: 0.7rem;
     --box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.5);
-    --transition: .5s
+    --transition: .5s;
+
+    color: var(--clr-primary);
 }
 
 ::-webkit-scrollbar {
     width: 2px;
     height: 2px;
-    background-color: var(--clr-background);
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--clr-baclground-accent);
+    background-color: var(--clr-background-bright);
 }
 
 #body {
@@ -78,4 +82,18 @@ html {
 .stroke svg,
 .stroke path {
     stroke: var(--clr-primary);
+}
+
+.button {
+    background-color: var(--clr-background);
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--clr-baclground-accent);
 }

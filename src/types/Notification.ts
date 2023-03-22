@@ -1,9 +1,13 @@
 export type Notification = {
+    key: string
+    packageName: string
     infoText?: string
-    key?: string
     largeIcon?: string
-    packageName?: string
     title?: string
     text?: string,
-    actions?: string[]
+    bigText?: string,
+    actions?: string[],
+    progress?: number,
+    progressMax?: number,
+    isGroup?: boolean
 }

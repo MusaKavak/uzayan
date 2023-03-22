@@ -12,7 +12,8 @@ class Settings {
         public IsWindowCentered: boolean = false,
         public ImageCountPerRequest: number = 10,
         public RememberDownloadLocation: boolean = false,
-        public DonwloadFileLocation?: string
+        public DonwloadFileLocation?: string,
+        public NotificationDuration: number = 8000,
     ) { }
 }
 

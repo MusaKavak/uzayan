@@ -4,42 +4,60 @@ import { Public } from "./Public";
 import WindowLayoutManager from "./WindowLayoutManager";
 
 export default class NotificationManager {
-    private container = document.getElementById("recent-notifications-container")
+    private headsUpContainer = document.getElementById("recent-notifications-container")
     private notificationTab = document.getElementById("notifications-tab-body")
 
+    private notifications: { [key: string]: HTMLElement } = {}
+    private groups: { [packageName: string]: { element: HTMLElement, keys: string[] } } = {}
+
     constructor(private windowLayoutManager: WindowLayoutManager) { }
-
-    pushNotification(nf: Notification) {
-        const element = this.createNotificationElement(nf)
-        this.addToNotificationTab(element)
-
-        const headsUp = element.cloneNode(true) as Element
-        headsUp.classList.add("teporary")
-        this.windowLayoutManager.openWindowForNotification()
-        this.container?.appendChild(headsUp)
-        this.unbounceNotification(headsUp)
-    }
 
     syncNotifications(nfs: Notification[]) {
         if (this.notificationTab != null) {
             this.notificationTab.innerHTML = ""
-            nfs.forEach(nf => {
-                this.addToNotificationTab(
-                    this.createNotificationElement(nf)
-                )
-            })
+            this.notifications = {}
+            this.groups = {}
+            nfs.forEach(nf => this.newNotification(nf, false))
         }
     }
 
-    private addToNotificationTab(element: Element) {
-        this.notificationTab?.appendChild(element)
+    newNotification(nf: Notification, headsUp: boolean) {
+        const element = this.createNotificationElement(nf)
+        if (this.notifications[nf.key]) {
+            this.notifications[nf.key].replaceWith(element)
+        } else {
+            this.pushNotification(nf.key, nf.isGroup || false, element, nf.packageName)
+        }
+        if (headsUp) this.showHeadsUp(element)
     }
 
-    removeNotification(key: String | null) {
-        const id = "k-" + key
-        document.querySelectorAll("#notifications-tab-body .notification").forEach(nf => {
-            if (nf.id == id) nf.remove()
-        })
+    removeNotification(key?: string) {
+        if (key) {
+            this.notifications[key]?.remove()
+            delete this.notifications[key]
+        }
+    }
+
+    private pushNotification(key: string, isGroup: boolean, element: HTMLElement, packageName: string) {
+        this.notifications[key] = element
+        if (isGroup) {
+            if (this.groups[packageName] == undefined) {
+                this.groups[packageName] = { element: this.createGroup(), keys: [] }
+                this.notificationTab?.appendChild(this.groups[packageName].element)
+            }
+            this.groups[packageName].element.appendChild(element)
+            this.groups[packageName].keys.push(key)
+        } else {
+            this.notificationTab?.appendChild(element)
+        }
+    }
+
+    private showHeadsUp(element: Element) {
+        const headsUp = element.cloneNode(true) as Element
+        headsUp.classList.add("headsup")
+        this.windowLayoutManager.openWindowForNotification()
+        this.headsUpContainer?.appendChild(headsUp)
+        this.unbounceNotification(headsUp)
     }
 
 
@@ -47,12 +65,17 @@ export default class NotificationManager {
         setTimeout(() => element.remove(), 5000);
     }
 
+    private createGroup(): HTMLElement {
+        return Public.createElement({
+            clss: "notification-group"
+        })
+    }
+
     private createNotificationElement(nf: Notification): HTMLElement {
         return Public.createElement({
             clss: "notification",
             id: "notification-" + nf.key,
             children: [
-                this.getLargeIcon(nf.largeIcon),
                 this.getNotificationBody(nf),
                 this.getNotificationActions(nf),
             ]
@@ -73,7 +96,6 @@ export default class NotificationManager {
         }
         return Public.createElement({
             clss: "notification-action",
-            type: "button",
             content: action,
             listener: {
                 event: "click",
@@ -86,8 +108,22 @@ export default class NotificationManager {
         return Public.createElement({
             clss: "notification-body",
             children: [
+                this.getLargeIcon(nf.largeIcon),
+                this.getNotificationContent(nf)
+            ]
+        })
+    }
+
+    private getNotificationContent(nf: Notification): HTMLElement {
+        return Public.createElement({
+            clss: "notification-content",
+            children: [
                 Public.createElement({ clss: "notification-title", content: nf.title }),
-                Public.createElement({ clss: "notification-text", content: nf.text })
+                Public.createElement({ clss: "notification-text", content: nf.text }),
+                nf.bigText && nf.text == nf.bigText ? undefined : Public.createElement({
+                    clss: "notification-big-text",
+                    content: nf.bigText
+                })
             ]
         })
     }

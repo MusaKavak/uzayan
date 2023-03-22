@@ -43,7 +43,7 @@ export class Socket {
             case "MediaSessions": { this.mediaSessionManager.createMediaSessions(message.input as []); break }
             case "MediaSessionState": { this.mediaSessionManager.updateMediaSessionState(message.input); break }
             case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.input); break }
-            case "Notification": { this.notificationManger.pushNotification(message.input); break }
+            case "Notification": { this.notificationManger.newNotification(message.input, true); break }
             case "RemoveNotification": { this.notificationManger.removeNotification(message.input); break }
             case "Notifications": { this.notificationManger.syncNotifications(message.input); break }
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.input); break }

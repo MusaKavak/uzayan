@@ -7,17 +7,7 @@
 }
 
 .tab {
-    background-color: var(--clr-background);
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: var(--gap);
-    transition: var(--transition);
-}
-
-.tab:hover {
-    background-color: var(--clr-baclground-accent);
 }
 
 .tab.active {
