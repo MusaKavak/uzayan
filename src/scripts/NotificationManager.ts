@@ -1,9 +1,12 @@
+import NotificationSvg from "../assets/notification.svg";
 import { Socket } from "../connection/Socket";
 import { Notification } from "../types/Notification";
 import { Public } from "./Public";
 import WindowLayoutManager from "./WindowLayoutManager";
 
 export default class NotificationManager {
+    private svg = new NotificationSvg()
+
     private headsUpContainer = document.getElementById("recent-notifications-container")
     private notificationTab = document.getElementById("notifications-tab-body")
 
@@ -22,6 +25,8 @@ export default class NotificationManager {
     }
 
     newNotification(nf: Notification, headsUp: boolean) {
+        console.log(nf.text)
+        console.log(nf.bigText)
         const element = this.createNotificationElement(nf)
         if (this.notifications[nf.key]) {
             this.notifications[nf.key].replaceWith(element)
@@ -72,22 +77,41 @@ export default class NotificationManager {
     }
 
     private createNotificationElement(nf: Notification): HTMLElement {
-        return Public.createElement({
+        const actions = this.getNotificationActions(nf)
+        var folder: HTMLElement | undefined
+        if (actions) folder = this.getFolder()
+        const element = Public.createElement({
+            type: "label",
+            innerHtml: actions ? this.svg.folder : "",
             clss: "notification",
             id: "notification-" + nf.key,
             children: [
+                folder,
                 this.getNotificationBody(nf),
-                this.getNotificationActions(nf),
+                actions
             ]
         })
+
+        return element
+    }
+
+    getFolder(): HTMLElement {
+        const folder = Public.createElement({
+            type: "input",
+        })
+        folder.setAttribute("type", "checkbox")
+        return folder
     }
 
     private getNotificationActions(nf: Notification): HTMLElement | undefined {
-        const actionList = nf.actions?.map(a => this.getAction(a, nf.key))
-        return Public.createElement({
-            clss: "notification-actions",
-            children: actionList
-        })
+        const actionList = nf.actions?.map(a => this.getAction(a, nf.key)) || []
+        if (actionList.length > 0) {
+            return Public.createElement({
+                clss: "notification-actions",
+                children: actionList
+            })
+        }
+        return
     }
 
     private getAction(action?: string, key?: string): HTMLElement | undefined {
@@ -120,10 +144,11 @@ export default class NotificationManager {
             children: [
                 Public.createElement({ clss: "notification-title", content: nf.title }),
                 Public.createElement({ clss: "notification-text", content: nf.text }),
-                nf.bigText && nf.text == nf.bigText ? undefined : Public.createElement({
-                    clss: "notification-big-text",
-                    content: nf.bigText
-                })
+                nf.bigText && nf.text != nf.bigText
+                    ? Public.createElement({
+                        clss: "notification-big-text",
+                        content: nf.bigText
+                    }) : undefined
             ]
         })
     }

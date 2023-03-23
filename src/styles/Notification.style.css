@@ -10,7 +10,8 @@
     border-radius: 15px;
 }
 
-#notifications-tab-body>div {
+#notifications-tab-body>div,
+#notifications-tab-body>label {
     width: 100%;
     margin-top: var(--gap);
     box-shadow: var(--box-shadow);
@@ -18,14 +19,16 @@
     overflow: hidden;
 }
 
-.notification-group>div {
+.notification-group>label {
     border-bottom: 1px solid var(--clr-baclground-accent);
 }
 
 .notification {
+    display: block;
     max-height: 10rem;
     position: relative;
     padding: var(--gap);
+    overflow: auto;
 }
 
 .notification.temporary {
@@ -38,6 +41,26 @@
     gap: var(--gap);
 }
 
+.notification input {
+    opacity: 0;
+    position: absolute;
+}
+
+.notification-folder {
+    width: 1.5rem;
+    height: 1.5rem;
+    position: absolute;
+    right: var(--gap);
+    top: 5px;
+    border-radius: 50%;
+    background-color: var(--clr-accent-transparent);
+    transition: var(--transition);
+}
+
+.notification:has(input:checked)>.notification-folder {
+    transform: rotate(-180deg);
+}
+
 .notification-actions {
     width: max-content;
     display: flex;
@@ -47,7 +70,7 @@
     transition: var(--transition);
 }
 
-.notification:hover .notification-actions:has(*) {
+.notification input:checked~.notification-actions {
     margin-top: var(--gap);
     max-height: 100px;
 }
@@ -75,6 +98,23 @@
     overflow-y: scroll;
 }
 
+.notification-content>div {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notification input:checked~.notification-body .notification-content>div {
+    word-break: break-all;
+    white-space: normal;
+}
+
+
+.notification-text,
+.notification-bigtext {
+    color: var(--clr-primary-dark);
+}
 
 @keyframes bounce {
     0% {

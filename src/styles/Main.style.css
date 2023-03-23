@@ -15,6 +15,7 @@ html {
     --clr-background-bright: rgb(74, 74, 82);
     --clr-baclground-accent: rgb(46, 46, 51);
     --clr-primary: rgb(234, 234, 234);
+    --clr-primary-dark: rgb(179, 179, 179);
     --clr-accent: rgb(88, 28, 255);
     --clr-accent-dark: rgb(64, 21, 182);
     --clr-accent-transparent: rgba(88, 28, 255, 0.702);
@@ -32,6 +33,7 @@ html {
 ::-webkit-scrollbar {
     width: 2px;
     height: 2px;
+    position: absolute;
 }
 
 ::-webkit-scrollbar-thumb {
