@@ -56,12 +56,6 @@
     width: auto;
 }
 
-.session-actions svg path {
-    stroke: var(--clr-primary);
-    stroke-width: 0;
-    fill: var(--clr-primary);
-}
-
 .actions-play-pause div {
     transition: var(--transition);
 }

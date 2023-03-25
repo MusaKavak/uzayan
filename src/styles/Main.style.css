@@ -76,13 +76,11 @@ html {
     overflow: auto;
 }
 
-.fill svg,
-.fill path {
+.fill {
     fill: var(--clr-primary);
 }
 
-.stroke svg,
-.stroke path {
+.stroke {
     stroke: var(--clr-primary);
 }
 
