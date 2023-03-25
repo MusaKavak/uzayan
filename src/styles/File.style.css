@@ -20,6 +20,7 @@
     left: var(--gap);
     top: var(--gap);
     width: calc(100% - 2 * var(--gap));
+    padding: 0 var(--gap);
 }
 
 #directory-goback {
@@ -37,7 +38,6 @@
 }
 
 #directory-actions {
-    background-color: red;
     height: 100%;
 }
 
@@ -60,7 +60,7 @@
     padding: var(--gap);
 }
 
-.directory-row {
+.directory-item {
     flex-grow: 1;
     height: 6rem;
     background-color: var(--clr-background);
@@ -71,19 +71,16 @@
     line-break: anywhere;
     border: 1px solid transparent;
     box-shadow: var(--box-shadow);
-    overflow: hidden;
+    position: relative;
 }
 
-.select .directory-row.file {
-    pointer-events: all;
-}
 
-.directory-row:hover,
-.select .directory-row.file {
+.directory-item:hover,
+.select .directory-item.file {
     background-color: var(--clr-baclground-accent);
 }
 
-.select .directory-row:has(input:checked) {
+.select .directory-item:has(input:checked) {
     border: 1px solid var(--clr-accent);
 }
 
@@ -105,6 +102,27 @@
     height: auto;
 }
 
-.directory-row path {
-    fill: var(--clr-primary);
+.directory-item-menu {
+    position: absolute;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    border-radius: 15px;
+    display: none;
+    top: 5px;
+    right: 5px;
+    z-index: 2;
+    transition: 1s;
+    transition-delay: 2.5s;
+}
+
+.directory-item-menu>div {
+    padding: var(--gap);
+}
+
+.select .directory-item-menu {
+    display: none !important;
+}
+
+.directory-item:focus-within .directory-item-menu {
+    display: block;
 }

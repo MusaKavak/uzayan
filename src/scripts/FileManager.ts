@@ -10,6 +10,7 @@ export default class FileManager {
     private filesTab = document.getElementById("files-tab-body")
     private svg = new FileSvg()
     private allowToCreate = true
+    private isSelectionOpen = false
 
     constructor() {
         this.filesTab?.classList.toggle("select")
@@ -42,13 +43,14 @@ export default class FileManager {
 
         return Public.createElement({
             type: "label",
-            clss: "directory-row " + (f.isFile ? "file" : ""),
+            clss: "directory-item " + (f.isFile ? "file" : ""),
             innerHtml: `
                 <span class="file-icon">${this.getFileIcon(f.isFile, f.extension)}</span>
                 <span>${f.name || '-'}</span>
             `,
             children: [
-                this.getSelectionCheckBox(f)
+                this.getSelectionCheckBox(f),
+                this.getMenu(f),
             ],
             listener: {
                 event: "click",
@@ -56,24 +58,62 @@ export default class FileManager {
             }
         })
     }
+    getMenu(f: File): HTMLElement | undefined {
+        if (!f.isFile) return
+        return Public.createElement({
+            clss: "directory-item-menu",
+            children: [
+                this.getDeleteButton(f.path),
+                this.getRenameButton(f.path),
+                this.getDownloadButton(f.path)
+            ]
+        })
+    }
 
-    getSelectionCheckBox(f: File): HTMLElement | undefined {
-        if (f.isFile) {
-            const chbx = document.createElement("input") as HTMLInputElement
-            chbx.classList.add("selection-checkbox")
-            chbx.setAttribute("type", "checkbox")
-            chbx.setAttribute("style", "opacity: 0;")
-            chbx.addEventListener("change", () => {
+    getDownloadButton(path: string | undefined): HTMLElement {
+        return Public.createElement({
+            clss: "button",
+            content: "Download"
+        })
+    }
+
+    private getRenameButton(path: string | undefined): HTMLElement {
+        return Public.createElement({
+            clss: "button",
+            content: "Rename",
+        })
+    }
+
+    private getDeleteButton(path: string | undefined): HTMLElement {
+        return Public.createElement({
+            clss: "button",
+            content: "Delete",
+            listener: {
+                event: "click",
+                callback: () => { Socket.send("DeleteFile", { path }) }
+            }
+        })
+    }
+
+    private getSelectionCheckBox(f: File): HTMLElement | undefined {
+        if (!f.isFile) return
+        const chbx = document.createElement("input") as HTMLInputElement
+        chbx.classList.add("selection-checkbox")
+        chbx.setAttribute("type", "checkbox")
+        chbx.setAttribute("style", "opacity: 0;")
+        chbx.addEventListener("change", () => {
+            if (!this.isSelectionOpen) {
+                chbx.checked = !chbx.checked
+            } else {
                 if (chbx.checked) {
                     this.addToRequestList(f)
                 } else {
                     this.removeFromRequestList(f)
                 }
-                console.log(this.filesToRequest)
-            })
-            return chbx
-        }
-        return
+            }
+            console.log(this.filesToRequest)
+        })
+        return chbx
     }
 
     private getHeader(file: File): HTMLElement {
@@ -100,7 +140,10 @@ export default class FileManager {
                     title: "Select",
                     listener: {
                         event: "click",
-                        callback: () => this.filesTab?.classList.toggle("select")
+                        callback: () => {
+                            this.filesTab?.classList.toggle("select")
+                            this.isSelectionOpen = !this.isSelectionOpen
+                        }
                     }
                 })
             ]

@@ -10,6 +10,7 @@ import ImageManager from "./scripts/ImageManager";
 import FileManager from "./scripts/FileManager";
 
 async function Main() {
+    //document.addEventListener('contextmenu', event => event.preventDefault());
     Public.getSettingsFromLocalStorage()
     const optionsManager = new OptionsManager()
     const windowLayoutManager = new WindowLayoutManager(document.body)
