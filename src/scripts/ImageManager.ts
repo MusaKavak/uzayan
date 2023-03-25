@@ -3,6 +3,7 @@ import { unix } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";
 import { invoke } from "@tauri-apps/api";
+import { listen } from "@tauri-apps/api/event";
 
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
@@ -22,7 +23,7 @@ export default class ImageManager {
         }
         if (
             (this.lastDateContainer?.getAttribute("date") || true)
-            != (date?.dayString || false)
+            != (date || false)
         ) this.lastDateContainer = this.getDateContainer(date)
         this.lastDateContainer?.appendChild(this.getThumbnail(image))
         if (image.index) this.lastImageIndex = image.index
@@ -48,12 +49,12 @@ export default class ImageManager {
         })
     }
 
-    private getDateContainer(date: ImageDate | undefined): HTMLElement {
+    private getDateContainer(date: string | undefined): HTMLElement {
         const container = Public.createElement({
             clss: "image-date-container",
-            innerHtml: `<div class="date-container-header">${date?.dayString}</div>`
+            innerHtml: `<div class="date-container-header">${date}</div>`
         })
-        container.setAttribute("date", date?.dayString || "")
+        container.setAttribute("date", date || "")
         this.loadMoreButton.insertAdjacentElement("beforebegin", container)
 
         return container
@@ -67,55 +68,46 @@ export default class ImageManager {
             clss: "image-thumbnail",
             listener: {
                 event: "click",
-                callback: this.getThumnailCallback(image.id, image.name)
+                callback: this.getImage(image.id, image.name)
             }
         })
     }
 
-    private getImageDate(date?: number): ImageDate | undefined {
+    private getImageDate(date?: number): string | undefined {
         if (date != undefined) {
-            //The date number received from Kotlin 
-            //represents the count of seconds since 1.1.1970, 
-            //while JavaScript specifies time in milliseconds.
             const imageDate = unix(date)
             imageDate.locale("tr")
-            return {
-                dayOfTheMonth: imageDate.date(),
-                month: imageDate.month(),
-                year: imageDate.year(),
-                monthName: imageDate.format("MMMM"),
-                dayName: imageDate.format("dddd"),
-                dayString: imageDate.format("MMMM D dddd")
-            }
+            return imageDate.format("MMMM D dddd")
         }
         return
     }
 
-    private getThumnailCallback(id?: String, name: String | undefined = id): () => void {
+    private getImage(id?: string, name: string | undefined = id): () => void {
         return async () => {
-            if (id == undefined) return
             const saveLocation = await Public.getDownloadFileLocation()
             if (saveLocation == undefined) return
-            const message = (JSON.stringify({ message: "FullSizeImageRequest", input: { id } })) + "\n"
-            invoke(
-                "connect_for_large_file_transaction",
-                {
-                    message,
-                    address: Socket.connectedServer,
-                    name,
-                    extension: "png",
-                    saveLocation
-                }
-            )
+
+            const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
+            if (isStreamOpen) {
+                const unListen = await listen<boolean>("EndOfFile", (event) => {
+                    if (event.payload) {
+                        unListen()
+                        invoke("close_large_file_stream", { message: '{message:"CloseLargeFileStream"}\n' })
+                    }
+                })
+                this.requestImage(id, name, saveLocation)
+            }
         }
     }
-}
 
-type ImageDate = {
-    dayOfTheMonth: number,
-    month: number,
-    year: number,
-    monthName: string,
-    dayName: string,
-    dayString: string
+    private async requestImage(id?: string, name?: string, saveLocation?: string) {
+        const requestMessage = (JSON.stringify({ message: "FullSizeImageRequest", input: { id } })) + "\n"
+
+        await invoke("receive_file", {
+            requestMessage,
+            name,
+            extension: "png",
+            saveLocation
+        })
+    }
 }
