@@ -58,7 +58,8 @@ export default class FileManager {
             }
         })
     }
-    getMenu(f: File): HTMLElement | undefined {
+
+    private getMenu(f: File): HTMLElement | undefined {
         if (!f.isFile) return
         return Public.createElement({
             clss: "directory-item-menu",
@@ -70,7 +71,7 @@ export default class FileManager {
         })
     }
 
-    getDownloadButton(path: string | undefined): HTMLElement {
+    private getDownloadButton(path: string | undefined): HTMLElement {
         return Public.createElement({
             clss: "button",
             content: "Download"
@@ -136,6 +137,21 @@ export default class FileManager {
             id: "directory-actions",
             children: [
                 Public.createElement({
+                    innerHtml: this.svg.download,
+                    title: "Download",
+                    clss: "requires-selected",
+                    listener: {
+                        event: "click",
+                        callback: () => { this.requestAllFilesFromList() }
+                    }
+                }),
+                Public.createElement({
+                    innerHtml: this.svg.delete,
+                    title: "Delete",
+                    clss: "requires-selected",
+                    //TODO add delete action
+                }),
+                Public.createElement({
                     innerHtml: this.svg.select,
                     title: "Select",
                     listener: {
@@ -145,7 +161,7 @@ export default class FileManager {
                             this.isSelectionOpen = !this.isSelectionOpen
                         }
                     }
-                })
+                }),
             ]
         })
     }

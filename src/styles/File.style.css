@@ -44,6 +44,19 @@
 #directory-actions>div {
     height: 100%;
     padding: .1rem;
+    display: inline-block;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.requires-selected {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.select:has(input:checked) .requires-selected {
+    opacity: 1;
+    pointer-events: all;
 }
 
 #directory-actions svg {
@@ -77,7 +90,7 @@
 
 .directory-item:hover,
 .select .directory-item.file {
-    background-color: var(--clr-baclground-accent);
+    background-color: var(--clr-background-bright);
 }
 
 .select .directory-item:has(input:checked) {
