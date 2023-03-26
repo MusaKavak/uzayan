@@ -18,12 +18,13 @@
 #tab-bodies-container {
     overflow: hidden;
     margin: 0;
-    max-height: 0;
+    display: none;
+    max-height: 50vh;
     transition: var(--transition);
 }
 
 #tab-bodies-container:has(.active) {
-    max-height: 50vh;
+    display: block;
 }
 
 .tab-body {
