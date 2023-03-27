@@ -241,7 +241,8 @@ export default class FileManager {
             requestMessage,
             name: f.name,
             extension: f.extension,
-            saveLocation
+            saveLocation,
+            fileSize: f.size?.toString()
         })
     }
 }

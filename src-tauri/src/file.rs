@@ -34,6 +34,7 @@ pub fn receive_file(
     name: String,
     extension: String,
     save_location: String,
+    file_size: String,
 ) {
     unsafe {
         match &mut STREAM {
@@ -51,21 +52,25 @@ pub fn receive_file(
                     Some(file) => {
                         stream.write(request_message.as_bytes()).unwrap();
                         stream.flush().unwrap();
-                        let mut buffer = [0u8; 4000];
+                        let mut buffer = [0u8; 2000];
+                        let mut received = 0;
+                        let size: usize = file_size.parse().unwrap();
                         loop {
+                            if received >= size {
+                                println!("File Ends");
+                                break;
+                            }
                             let bytes_read = stream.read(&mut buffer).expect("Can't Read");
                             println!("{}", bytes_read);
                             if bytes_read == 0 {
                                 println!("This work after ");
                                 break;
                             }
-                            if bytes_read == 3 && &buffer[..3] == [64, 64, 64] {
-                                println!("This Should Work! ");
-                                break;
-                            }
+                            received += bytes_read;
                             file.write_all(&buffer[..bytes_read]).unwrap();
                         }
                         println!("Large File Stream Ends");
+                        println!("Received {} bytes expected {} bytes", received, file_size);
                         window.emit("EndOfFile", true).unwrap();
                     }
                 };
