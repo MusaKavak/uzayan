@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="./src/styles/Connection.style.css">
   <link rel="stylesheet" href="./src/styles/Image.style.css">
   <link rel="stylesheet" href="./src/styles/File.style.css">
+  <link rel="stylesheet" href="./src/styles/IO.style.css">
 </head>
 
 <body>
@@ -20,7 +21,7 @@
     <div id="options-container" class="container card">
       <div id="sync">
         <svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path
+          <path class="fill"
             d="M4,12a1,1,0,0,1-2,0A9.983,9.983,0,0,1,18.242,4.206V2.758a1,1,0,1,1,2,0v4a1,1,0,0,1-1,1h-4a1,1,0,0,1,0-2h1.743A7.986,7.986,0,0,0,4,12Zm17-1a1,1,0,0,0-1,1A7.986,7.986,0,0,1,7.015,18.242H8.757a1,1,0,1,0,0-2h-4a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V19.794A9.984,9.984,0,0,0,22,12,1,1,0,0,0,21,11Z" />
         </svg>
       </div>
@@ -33,16 +34,16 @@
     </div>
     <div id="recent-notifications-container" class="container card"></div>
     <div id="tabs-container" class="container card">
-      <div id="notifications-tab" action="GetNotifications" class="tab stroke button">
+      <div id="notifications-tab" action="GetNotifications" class="tab button">
         Notifications
       </div>
-      <div id="images-tab" action="GetImages" class="tab fill button">
+      <div id="images-tab" action="GetImages" class="tab button">
         Images
       </div>
-      <div id="files-tab" action="GetFiles" class="tab fill button">
+      <div id="files-tab" action="GetFiles" class="tab button">
         Files
       </div>
-      <div id="messages-tab" action="GetMessages" class="tab stroke button">
+      <div id="messages-tab" action="GetMessages" class="tab button">
         Messages
       </div>
     </div>

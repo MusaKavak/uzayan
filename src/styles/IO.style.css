@@ -1,0 +1,48 @@
+#io-container>div {
+    display: flex;
+    flex-wrap: wrap;
+    transition: var(--transition);
+}
+
+.io-header,
+.io-bar {
+    width: 100%;
+    flex-shrink: 0;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    transition: var(--transition);
+}
+
+.io-header {
+    max-height: 0;
+    overflow: hidden;
+}
+
+.io-progress:hover .io-header {
+    max-height: 2rem;
+    margin-bottom: var(--gap);
+}
+
+.io-bar {
+    background-image: linear-gradient(90deg,
+            var(--clr-accent) var(--ratio),
+            var(--clr-background-bright) var(--ratio) 100%);
+    border-radius: 15px;
+    height: 15px;
+    align-items: center;
+    padding: 0 var(--gap);
+}
+
+.io-progress:hover .io-bar {
+    height: 2rem;
+}
+
+.io-bar>div {
+    transition: var(--transition);
+    opacity: 0;
+}
+
+.io-progress:hover .io-bar>div {
+    opacity: 1;
+}
