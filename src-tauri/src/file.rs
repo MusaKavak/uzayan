@@ -52,72 +52,67 @@ pub fn open_large_file_stream(address: String) -> bool {
 #[command]
 pub fn receive_file(window: Window, request: ReceiveFileRequest) {
     unsafe {
-        match &mut STREAM {
-            None => {
-                println!("There Is No Large File Stream Avaliable");
-                window.emit("EndOfFile", false).unwrap();
-                return;
-            }
-            Some(stream) => thread::spawn(move || -> () {
-                match &mut get_file_to_write(
-                    request.save_location,
-                    &request.name,
-                    request.extension,
-                ) {
-                    None => {
-                        window.emit("EndOfFile", false).unwrap();
-                        ()
-                    }
-                    Some(file) => {
-                        stream.write(request.request_message.as_bytes()).unwrap();
-                        stream.flush().unwrap();
-                        let mut buffer = [0u8; 4096];
-                        let mut received = 0;
-                        let size: usize = request.file_size.parse().unwrap();
-                        window
-                            .emit(
-                                "CreateInputProgressBar",
-                                DownloadProgressBarRequest {
-                                    progress_id: 1,
-                                    received_files: String::from("5/10"),
-                                    file_name: request.name,
-                                },
-                            )
-                            .unwrap();
-                        loop {
-                            if received >= size {
-                                println!("File Ends");
-                                break;
-                            }
-                            let bytes_read = stream.read(&mut buffer).expect("Can't Read");
-                            println!("{}", bytes_read);
-                            if bytes_read == 0 {
-                                println!("This work after ");
-                                break;
-                            }
-                            received += bytes_read;
-                            window
-                                .emit(
-                                    "UpdateProgress",
-                                    UpdateProgressRequest {
-                                        progress_id: 1,
-                                        ratio: (received as f32 / size as f32) * 100.0,
-                                    },
-                                )
-                                .unwrap();
-                            file.write_all(&buffer[..bytes_read]).unwrap();
-                        }
-                        println!("Large File Stream Ends");
-                        println!(
-                            "Received {} bytes expected {} bytes",
-                            received, request.file_size
-                        );
-                        window.emit("EndOfFile", true).unwrap();
-                    }
-                };
-            }),
-        };
+        thread::spawn(|| {
+            match &mut STREAM {
+                None => {
+                    println!("There Is No Large File Stream Avaliable");
+                    window.emit("EndOfFile", false).unwrap();
+                    return;
+                }
+                Some(stream) => start_receiving(stream, window, request),
+            };
+        })
     };
+}
+
+pub fn start_receiving(stream: &mut TcpStream, window: Window, request: ReceiveFileRequest) {
+    let mut file = get_file_to_write(&request).unwrap();
+    let size: usize = request.file_size.parse().unwrap();
+    stream.write(request.request_message.as_bytes()).unwrap();
+    stream.flush().unwrap();
+    request_progress_bar(&window, request);
+    read_and_write_to_file(stream, &mut file, size);
+    window.emit("EndOfFile", true).unwrap();
+}
+
+fn read_and_write_to_file(stream: &mut TcpStream, file: &mut File, size: usize) {
+    let mut buffer = [0u8; 4096];
+    let mut received = 0;
+
+    loop {
+        if received >= size {
+            break;
+        };
+        let bytes_read = stream.read(&mut buffer).expect("Can't Read");
+        if bytes_read == 0 {
+            break;
+        }
+        received += bytes_read;
+        file.write_all(&buffer[..bytes_read]).unwrap();
+    }
+    println!("Received {} bytes expected {} bytes", received, size);
+}
+
+fn request_progress_bar(window: &Window, request: ReceiveFileRequest) {
+    window
+        .emit(
+            "CreateInputProgressBar",
+            DownloadProgressBarRequest {
+                progress_id: 1,
+                received_files: String::from("5/10"),
+                file_name: request.name,
+            },
+        )
+        .unwrap();
+}
+
+fn get_file_to_write(request: &ReceiveFileRequest) -> Result<File, std::io::Error> {
+    let mut pathbuf = PathBuf::from(&request.save_location).join(&request.name);
+    pathbuf.set_extension(&request.extension);
+    match File::create(pathbuf) {
+        Ok(file) => return Ok(file),
+        Err(e) => return Err(e),
+    }
 }
 
 #[command]
@@ -131,24 +126,6 @@ pub fn close_large_file_stream(message: String) -> bool {
                 true
             }
             None => false,
-        }
-    }
-}
-
-fn get_file_to_write(path: String, name: &String, extension: String) -> Option<File> {
-    let mut pathbuf = PathBuf::from(path).join(name);
-    pathbuf.set_extension(extension);
-    match pathbuf.try_exists() {
-        Ok(_) => match File::create(pathbuf) {
-            Ok(file) => return Some(file),
-            Err(e) => {
-                println!("File Not Created: {}", e);
-                return None;
-            }
-        },
-        Err(e) => {
-            println!("Error While Creating File: {}", e);
-            return None;
         }
     }
 }
