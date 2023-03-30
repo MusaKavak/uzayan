@@ -8,7 +8,7 @@ export default class IOManager {
     private activeBars: { [id: number]: HTMLElement } = {}
 
     constructor() {
-        this.listenMessages()
+        this.listenMessages().then(() => { })
     }
 
     private async listenMessages() {
@@ -17,6 +17,7 @@ export default class IOManager {
         })
 
         await listen<UpdateProgressRequest>("UpdateProgress", (event) => {
+            console.log(event.payload.ratio)
             this.activeBars[event.payload.progressId]
                 ?.style.setProperty("--ratio", `${event.payload.ratio}%`)
         })
@@ -26,7 +27,7 @@ export default class IOManager {
         if (this.ioContainer == null) return
         const progress = this.getProgress(request.receivedFiles, request.fileName)
         progress.setAttribute("style", "--ratio: 0%")
-
+        this.activeBars[request.progressId] = progress
         this.ioContainer.appendChild(progress)
     }
 

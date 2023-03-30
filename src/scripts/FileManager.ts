@@ -238,11 +238,21 @@ export default class FileManager {
         const requestMessage = (JSON.stringify({ message: "FileRequest", input: { path: f.path } })) + "\n"
 
         await invoke("receive_file", {
-            requestMessage,
-            name: f.name,
-            extension: f.extension,
-            saveLocation,
-            fileSize: f.size?.toString()
+            request: {
+                request_message: requestMessage,
+                name: f.name,
+                extension: f.extension,
+                save_location: saveLocation,
+                file_size: f.size?.toString()
+            } as ReceiveFileRequest
         })
     }
+}
+
+type ReceiveFileRequest = {
+    request_message: String,
+    name: String,
+    extension: String,
+    save_location: String,
+    file_size: String,
 }

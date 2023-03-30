@@ -10,6 +10,28 @@ use tauri::{command, Window};
 
 static mut STREAM: Option<TcpStream> = None;
 
+#[derive(serde::Deserialize)]
+pub struct ReceiveFileRequest {
+    request_message: String,
+    name: String,
+    extension: String,
+    save_location: String,
+    file_size: String,
+}
+#[derive(Clone, serde::Serialize)]
+struct DownloadProgressBarRequest {
+    progress_id: u8,
+    received_files: String,
+    file_name: String,
+}
+
+#[derive(Clone, serde::Serialize)]
+
+struct UpdateProgressRequest {
+    progress_id: u8,
+    ratio: f32,
+}
+
 #[command]
 pub fn open_large_file_stream(address: String) -> bool {
     unsafe {
@@ -28,14 +50,7 @@ pub fn open_large_file_stream(address: String) -> bool {
 }
 
 #[command]
-pub fn receive_file(
-    window: Window,
-    request_message: String,
-    name: String,
-    extension: String,
-    save_location: String,
-    file_size: String,
-) {
+pub fn receive_file(window: Window, request: ReceiveFileRequest) {
     unsafe {
         match &mut STREAM {
             None => {
@@ -44,17 +59,31 @@ pub fn receive_file(
                 return;
             }
             Some(stream) => thread::spawn(move || -> () {
-                match &mut get_file_to_write(save_location, name, extension) {
+                match &mut get_file_to_write(
+                    request.save_location,
+                    &request.name,
+                    request.extension,
+                ) {
                     None => {
                         window.emit("EndOfFile", false).unwrap();
                         ()
                     }
                     Some(file) => {
-                        stream.write(request_message.as_bytes()).unwrap();
+                        stream.write(request.request_message.as_bytes()).unwrap();
                         stream.flush().unwrap();
-                        let mut buffer = [0u8; 2000];
+                        let mut buffer = [0u8; 4096];
                         let mut received = 0;
-                        let size: usize = file_size.parse().unwrap();
+                        let size: usize = request.file_size.parse().unwrap();
+                        window
+                            .emit(
+                                "CreateInputProgressBar",
+                                DownloadProgressBarRequest {
+                                    progress_id: 1,
+                                    received_files: String::from("5/10"),
+                                    file_name: request.name,
+                                },
+                            )
+                            .unwrap();
                         loop {
                             if received >= size {
                                 println!("File Ends");
@@ -67,10 +96,22 @@ pub fn receive_file(
                                 break;
                             }
                             received += bytes_read;
+                            window
+                                .emit(
+                                    "UpdateProgress",
+                                    UpdateProgressRequest {
+                                        progress_id: 1,
+                                        ratio: (received as f32 / size as f32) * 100.0,
+                                    },
+                                )
+                                .unwrap();
                             file.write_all(&buffer[..bytes_read]).unwrap();
                         }
                         println!("Large File Stream Ends");
-                        println!("Received {} bytes expected {} bytes", received, file_size);
+                        println!(
+                            "Received {} bytes expected {} bytes",
+                            received, request.file_size
+                        );
                         window.emit("EndOfFile", true).unwrap();
                     }
                 };
@@ -94,7 +135,7 @@ pub fn close_large_file_stream(message: String) -> bool {
     }
 }
 
-fn get_file_to_write(path: String, name: String, extension: String) -> Option<File> {
+fn get_file_to_write(path: String, name: &String, extension: String) -> Option<File> {
     let mut pathbuf = PathBuf::from(path).join(name);
     pathbuf.set_extension(extension);
     match pathbuf.try_exists() {
