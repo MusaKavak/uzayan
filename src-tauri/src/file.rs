@@ -8,15 +8,13 @@ use std::{
 
 use tauri::{command, Window};
 
-static mut STREAM: Option<TcpStream> = None;
-
-#[derive(serde::Deserialize)]
-pub struct ReceiveFileRequest {
-    request_message: String,
+#[derive(serde::Deserialize, Debug)]
+pub struct FileRequest {
+    message: String,
     name: String,
     extension: String,
-    save_location: String,
-    file_size: String,
+    location: String,
+    size: usize,
 }
 #[derive(Clone, serde::Serialize)]
 struct DownloadProgressBarRequest {
@@ -31,6 +29,8 @@ struct UpdateProgressRequest {
     progress_id: u8,
     ratio: f32,
 }
+
+static mut STREAM: Option<TcpStream> = None;
 
 #[command]
 pub fn open_large_file_stream(address: String) -> bool {
@@ -49,8 +49,9 @@ pub fn open_large_file_stream(address: String) -> bool {
     };
 }
 
-#[command]
-pub fn receive_file(window: Window, request: ReceiveFileRequest) {
+#[tauri::command]
+pub fn request_file(window: Window, request: FileRequest) {
+    println!("File {:?}", &request);
     unsafe {
         thread::spawn(|| {
             match &mut STREAM {
@@ -65,35 +66,39 @@ pub fn receive_file(window: Window, request: ReceiveFileRequest) {
     };
 }
 
-pub fn start_receiving(stream: &mut TcpStream, window: Window, request: ReceiveFileRequest) {
+pub unsafe fn start_receiving(stream: &mut TcpStream, window: Window, request: FileRequest) {
     let mut file = get_file_to_write(&request).unwrap();
-    let size: usize = request.file_size.parse().unwrap();
-    stream.write(request.request_message.as_bytes()).unwrap();
+    FILE_SIZE = request.size;
+    stream.write(request.message.as_bytes()).unwrap();
     stream.flush().unwrap();
     request_progress_bar(&window, request);
-    read_and_write_to_file(stream, &mut file, size);
+    read_and_write_to_file(stream, &mut file);
     window.emit("EndOfFile", true).unwrap();
 }
 
-fn read_and_write_to_file(stream: &mut TcpStream, file: &mut File, size: usize) {
+static mut FILE_SIZE: usize = 0;
+static mut RECEIVED_BYTES: usize = 0;
+unsafe fn read_and_write_to_file(stream: &mut TcpStream, file: &mut File) {
     let mut buffer = [0u8; 4096];
-    let mut received = 0;
-
+    RECEIVED_BYTES = 0;
     loop {
-        if received >= size {
+        if RECEIVED_BYTES >= FILE_SIZE {
             break;
         };
         let bytes_read = stream.read(&mut buffer).expect("Can't Read");
         if bytes_read == 0 {
             break;
         }
-        received += bytes_read;
+        RECEIVED_BYTES += bytes_read;
         file.write_all(&buffer[..bytes_read]).unwrap();
     }
-    println!("Received {} bytes expected {} bytes", received, size);
+    println!(
+        "Received {} bytes expected {} bytes",
+        RECEIVED_BYTES, FILE_SIZE
+    );
 }
 
-fn request_progress_bar(window: &Window, request: ReceiveFileRequest) {
+fn request_progress_bar(window: &Window, request: FileRequest) {
     window
         .emit(
             "CreateInputProgressBar",
@@ -106,13 +111,18 @@ fn request_progress_bar(window: &Window, request: ReceiveFileRequest) {
         .unwrap();
 }
 
-fn get_file_to_write(request: &ReceiveFileRequest) -> Result<File, std::io::Error> {
-    let mut pathbuf = PathBuf::from(&request.save_location).join(&request.name);
+fn get_file_to_write(request: &FileRequest) -> Result<File, std::io::Error> {
+    let mut pathbuf = PathBuf::from(&request.location).join(&request.name);
     pathbuf.set_extension(&request.extension);
     match File::create(pathbuf) {
         Ok(file) => return Ok(file),
         Err(e) => return Err(e),
     }
+}
+
+#[command]
+pub fn get_current_progress() -> f32 {
+    unsafe { (RECEIVED_BYTES as f32 / FILE_SIZE as f32) * 100.0 }
 }
 
 #[command]

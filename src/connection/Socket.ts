@@ -5,7 +5,7 @@ import { ConnectionObject } from '../types/ConnectionObject'
 import NotificationManager from '../scripts/NotificationManager'
 import { ConnectionState } from './ConnectionState'
 import ImageManager from '../scripts/ImageManager'
-import FileManager from '../scripts/FileManager'
+import FileTabManager from '../scripts/FileTabManager'
 
 export class Socket {
 
@@ -14,7 +14,7 @@ export class Socket {
         private mediaSessionManager: MediaSessionManager,
         private notificationManger: NotificationManager,
         private imageManager: ImageManager,
-        private fileManager: FileManager
+        private fileTabManager: FileTabManager
     ) { this.inititialize() }
 
     private async inititialize() {
@@ -47,7 +47,7 @@ export class Socket {
             case "RemoveNotification": { this.notificationManger.removeNotification(message.input); break }
             case "Notifications": { this.notificationManger.syncNotifications(message.input); break }
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.input); break }
-            case "FileSystem": { this.fileManager.createFiles(message.input); break }
+            case "FileSystem": { this.fileTabManager.createFiles(message.input); break }
             default: break;
         }
     }

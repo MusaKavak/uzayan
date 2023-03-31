@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api"
 import { listen } from "@tauri-apps/api/event"
 import IOSvg from "../assets/io.svg"
 import { Public } from "./Public"
@@ -27,8 +28,15 @@ export default class IOManager {
         if (this.ioContainer == null) return
         const progress = this.getProgress(request.receivedFiles, request.fileName)
         progress.setAttribute("style", "--ratio: 0%")
+        if (this.activeBars[request.progressId]) {
+            console.log("replacing")
+            this.activeBars[request.progressId].replaceWith()
+        } else {
+            console.log("appending")
+            this.ioContainer.appendChild(progress)
+        }
         this.activeBars[request.progressId] = progress
-        this.ioContainer.appendChild(progress)
+        this.syncProgress(request.progressId)
     }
 
     private getProgress(received: string, fileName: string): HTMLElement {
@@ -75,6 +83,14 @@ export default class IOManager {
             clss: "io-header-actions",
             innerHtml: `<div>${received}</div>`,
         })
+    }
+
+    private syncProgress(id: number) {
+        const interval = setInterval(async () => {
+            const progress = await invoke<number>("get_current_progress");
+            if (progress == 100) clearInterval(interval)
+            this.activeBars[id]?.setAttribute("style", `--ratio: ${progress}%`)
+        }, 1000)
     }
 }
 

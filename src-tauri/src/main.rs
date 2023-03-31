@@ -19,8 +19,9 @@ fn main() {
             tcp::emit_message,
             tcp::get_ip_address,
             file::open_large_file_stream,
-            file::receive_file,
-            file::close_large_file_stream
+            file::request_file,
+            file::close_large_file_stream,
+            file::get_current_progress
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

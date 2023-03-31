@@ -7,7 +7,7 @@ import { Public } from "./scripts/Public";
 import WindowLayoutManager from "./scripts/WindowLayoutManager";
 import TabsManager from "./scripts/TabsManager";
 import ImageManager from "./scripts/ImageManager";
-import FileManager from "./scripts/FileManager";
+import FileTabManager from "./scripts/FileTabManager";
 import IOManager from "./scripts/IOManager";
 
 async function Main() {
@@ -18,11 +18,11 @@ async function Main() {
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
     new TabsManager()
-    const fileManager = new FileManager()
+    const fileTabManager = new FileTabManager()
     const imageManager = new ImageManager()
     new IOManager()
     const connectionState = new ConnectionState(optionsManager)
-    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileManager)
+    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileTabManager)
 }
 
 
