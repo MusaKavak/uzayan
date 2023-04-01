@@ -7,9 +7,11 @@ import { Socket } from "../connection/Socket"
 import { File } from "../types/File"
 import { FileRequest } from "../types/FileRequest"
 import { Public } from "./Public"
+import IOManager from "./IOManager";
 
 export default class FileManager {
 
+    constructor(private ioManager: IOManager) { }
 
     async requestFiles(files: File[]) {
         const location = await this.getDownloadFileLocation()
@@ -30,6 +32,8 @@ export default class FileManager {
     private async request(files: FileRequest[]) {
         const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
         if (isStreamOpen) {
+            this.ioManager.createNewInputProgressBar(files.length, files[0].name)
+
             var i = 0
 
             const unListen = await listen<boolean>("EndOfFile", async (event) => {
@@ -41,8 +45,13 @@ export default class FileManager {
                         invoke("close_large_file_stream", { message: '{message:"CloseLargeFileStream"}\n' })
                         return
                     }
+                    const nextFile = files[i]
+                    this.ioManager.nextFile(
+                        `${i + 1}/${files.length}`,
+                        nextFile.name
+                    )
                     await invoke("request_file", {
-                        request: files[i]
+                        request: nextFile
                     })
                 }
             })

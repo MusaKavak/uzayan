@@ -1,60 +1,68 @@
 import { invoke } from "@tauri-apps/api"
-import { listen } from "@tauri-apps/api/event"
 import IOSvg from "../assets/io.svg"
 import { Public } from "./Public"
 
 export default class IOManager {
     private svg = new IOSvg()
     private ioContainer = document.getElementById("io-container")
-    private activeBars: { [id: number]: HTMLElement } = {}
+    private currentContainer?: HTMLElement
+    private currentFileName?: HTMLElement
+    private currentRatio?: HTMLElement
+    private currentFileInfo?: HTMLElement
 
     constructor() {
         this.listenMessages().then(() => { })
     }
 
-    private async listenMessages() {
-        await listen<DowloadProgressBarRequest>("CreateInputProgressBar", (event) => {
-            this.createNewInputProgressBar(event.payload)
-        })
+    async listenMessages() { }
 
-        await listen<UpdateProgressRequest>("UpdateProgress", (event) => {
-            console.log(event.payload.ratio)
-            this.activeBars[event.payload.progressId]
-                ?.style.setProperty("--ratio", `${event.payload.ratio}%`)
-        })
-    }
-
-    private async createNewInputProgressBar(request: DowloadProgressBarRequest) {
+    async createNewInputProgressBar(countOfFiles: number, firstFileName: string) {
         if (this.ioContainer == null) return
-        const progress = this.getProgress(request.receivedFiles, request.fileName)
-        progress.setAttribute("style", "--ratio: 0%")
-        if (this.activeBars[request.progressId]) {
-            console.log("replacing")
-            this.activeBars[request.progressId].replaceWith()
-        } else {
-            console.log("appending")
-            this.ioContainer.appendChild(progress)
-        }
-        this.activeBars[request.progressId] = progress
-        this.syncProgress(request.progressId)
+        this.currentContainer = this.getProgressContainer(countOfFiles, firstFileName)
+        this.syncProgress()
+        this.ioContainer.appendChild(this.currentContainer)
     }
 
-    private getProgress(received: string, fileName: string): HTMLElement {
-        return Public.createElement({
+    nextFile(currentFileInfo: string, fileName: string) {
+        this.setCurrentState({
+            currentFileInfo,
+            fileName,
+            ratio: 0
+        })
+    }
+
+    private getProgressContainer(countOfFiles: number, firstFileName: string): HTMLElement {
+        const container = Public.createElement({
             clss: "io-progress",
             children: [
-                this.getHeader(received),
-                this.getBar(fileName)
+                this.getHeader(countOfFiles),
+                this.getBar(firstFileName)
+            ]
+        })
+        container.setAttribute("style", "--ratio: 0%")
+        return container
+    }
+
+    private getBar(firstFileName: string): HTMLElement {
+        const fileName = document.createElement("div")
+        fileName.textContent = firstFileName
+        fileName.setAttribute("title", firstFileName)
+        this.currentFileName = fileName
+        return Public.createElement({
+            clss: "io-bar",
+            children: [
+                fileName,
+                this.getBarRatio(),
+                this.getBarActions()
             ]
         })
     }
 
-    private getBar(fileName: string): HTMLElement {
-        return Public.createElement({
-            clss: "io-bar",
-            innerHtml: `<div>${fileName}</div>`,
-            children: [this.getBarActions()]
-        })
+    private getBarRatio(): HTMLElement {
+        const ratio = document.createElement("div");
+        ratio.textContent = "0%"
+        this.currentRatio = ratio
+        return ratio
     }
 
     private getBarActions(): HTMLElement {
@@ -68,39 +76,52 @@ export default class IOManager {
         })
     }
 
-    private getHeader(received: string): HTMLElement {
+    private getHeader(countOfFiles: number): HTMLElement {
         return Public.createElement({
             clss: "io-header",
-            innerHtml: `<div>${this.svg.io}</div>`,
             children: [
-                this.getHeaderActions(received)
+                this.getIcon(),
+                this.getCurrentFileInfo(countOfFiles),
             ]
         })
     }
 
-    private getHeaderActions(received: string): HTMLElement {
+    private getIcon(): HTMLElement {
         return Public.createElement({
-            clss: "io-header-actions",
-            innerHtml: `<div>${received}</div>`,
+            clss: "io-header-icon",
+            innerHtml: this.svg.io,
         })
     }
 
-    private syncProgress(id: number) {
+    private getCurrentFileInfo(countOfFiles: number): HTMLElement {
+        const currentFile = document.createElement("div")
+        currentFile.textContent = `1/${countOfFiles}`
+        this.currentFileInfo = currentFile
+        return currentFile
+    }
+
+    private syncProgress() {
         const interval = setInterval(async () => {
             const progress = await invoke<number>("get_current_progress");
             if (progress == 100) clearInterval(interval)
-            this.activeBars[id]?.setAttribute("style", `--ratio: ${progress}%`)
+            this.setCurrentState({ ratio: progress })
         }, 1000)
     }
-}
 
-type DowloadProgressBarRequest = {
-    progressId: number,
-    receivedFiles: string,
-    fileName: string,
-}
-
-type UpdateProgressRequest = {
-    progressId: number
-    ratio: number,
+    private setCurrentState(state: {
+        ratio?: number,
+        fileName?: string,
+        currentFileInfo?: string
+    }) {
+        if (state.ratio && this.currentContainer)
+            this.currentContainer.style.setProperty("--ratio", `${state.ratio.toFixed(2)}%`)
+        if (state.ratio && this.currentRatio)
+            this.currentRatio.textContent = `${state.ratio.toFixed(2)}%`
+        if (state.fileName && this.currentFileName) {
+            this.currentFileName.textContent = state.fileName
+        }
+        if (state.currentFileInfo && this.currentFileInfo) {
+            this.currentFileInfo.textContent = state.currentFileInfo
+        }
+    }
 }

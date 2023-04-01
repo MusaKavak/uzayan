@@ -71,7 +71,6 @@ pub unsafe fn start_receiving(stream: &mut TcpStream, window: Window, request: F
     FILE_SIZE = request.size;
     stream.write(request.message.as_bytes()).unwrap();
     stream.flush().unwrap();
-    request_progress_bar(&window, request);
     read_and_write_to_file(stream, &mut file);
     window.emit("EndOfFile", true).unwrap();
 }
@@ -96,19 +95,6 @@ unsafe fn read_and_write_to_file(stream: &mut TcpStream, file: &mut File) {
         "Received {} bytes expected {} bytes",
         RECEIVED_BYTES, FILE_SIZE
     );
-}
-
-fn request_progress_bar(window: &Window, request: FileRequest) {
-    window
-        .emit(
-            "CreateInputProgressBar",
-            DownloadProgressBarRequest {
-                progress_id: 1,
-                received_files: String::from("5/10"),
-                file_name: request.name,
-            },
-        )
-        .unwrap();
 }
 
 fn get_file_to_write(request: &FileRequest) -> Result<File, std::io::Error> {

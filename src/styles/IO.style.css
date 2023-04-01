@@ -1,7 +1,22 @@
-#io-container>div {
+#io-container {
+    transition: var(--transition);
+    border-radius: 15px;
+    box-shadow: var(--box-shadow);
+}
+
+#io-container:has(.io-progress) {
+    margin-top: var(--gap);
+}
+
+.io-progress {
     display: flex;
     flex-wrap: wrap;
     transition: var(--transition);
+    margin-bottom: var(--gap);
+}
+
+.io-progress:last-child {
+    margin-bottom: 0;
 }
 
 .io-header,
@@ -12,16 +27,27 @@
     display: flex;
     justify-content: space-between;
     transition: var(--transition);
+    padding: 0 var(--gap);
 }
 
 .io-header {
-    max-height: 0;
+    height: 0;
+    z-index: 5;
+    align-items: center;
     overflow: hidden;
 }
 
 .io-progress:hover .io-header {
-    max-height: 2rem;
-    margin-bottom: var(--gap);
+    height: 2rem;
+}
+
+.io-header-icon {
+    height: 100%;
+}
+
+.io-header-icon svg {
+    height: 100%;
+    width: auto;
 }
 
 .io-bar {
@@ -31,7 +57,14 @@
     border-radius: 15px;
     height: 15px;
     align-items: center;
-    padding: 0 var(--gap);
+}
+
+.io-bar>div {
+    width: 25%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
 }
 
 .io-progress:hover .io-bar {

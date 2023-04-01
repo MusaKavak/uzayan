@@ -6,13 +6,12 @@ import { Public } from "./Public";
 
 export default class FileTabManager {
 
-    private fileManager = new FileManager()
     private filesTab = document.getElementById("files-tab-body")
     private svg = new FileSvg()
     private allowToCreate = true
     private isSelectionOpen = false
 
-    constructor() {
+    constructor(private fileManager: FileManager) {
         this.filesTab?.classList.toggle("select")
     }
 

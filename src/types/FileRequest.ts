@@ -1,7 +1,7 @@
 export type FileRequest = {
     message: string,
-    name: String,
-    extension: String,
-    location: String,
+    name: string,
+    extension: string,
+    location: string,
     size: number,
 }

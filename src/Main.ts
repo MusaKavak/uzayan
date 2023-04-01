@@ -9,6 +9,7 @@ import TabsManager from "./scripts/TabsManager";
 import ImageManager from "./scripts/ImageManager";
 import FileTabManager from "./scripts/FileTabManager";
 import IOManager from "./scripts/IOManager";
+import FileManager from "./scripts/FileManager";
 
 async function Main() {
     //document.addEventListener('contextmenu', event => event.preventDefault());
@@ -18,9 +19,10 @@ async function Main() {
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
     new TabsManager()
-    const fileTabManager = new FileTabManager()
+    const ioManager = new IOManager()
+    const fileManager = new FileManager(ioManager)
+    const fileTabManager = new FileTabManager(fileManager)
     const imageManager = new ImageManager()
-    new IOManager()
     const connectionState = new ConnectionState(optionsManager)
     new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileTabManager)
 }
