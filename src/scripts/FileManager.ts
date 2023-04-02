@@ -26,13 +26,13 @@ export default class FileManager {
                 location
             } as FileRequest
         })
-        this.request(filesToRequest)
+        this.request(filesToRequest, location)
     }
 
-    private async request(files: FileRequest[]) {
+    private async request(files: FileRequest[], saveLocation: string) {
         const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
         if (isStreamOpen) {
-            this.ioManager.createNewInputProgressBar(files.length, files[0].name)
+            this.ioManager.createNewInputProgressBar(files.length, files[0].name, saveLocation, "")
 
             var i = 0
 

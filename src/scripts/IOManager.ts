@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api"
 import IOSvg from "../assets/io.svg"
 import { Public } from "./Public"
+import { open } from "@tauri-apps/api/shell"
 
 export default class IOManager {
     private svg = new IOSvg()
@@ -9,6 +10,7 @@ export default class IOManager {
     private currentFileName?: HTMLElement
     private currentRatio?: HTMLElement
     private currentFileInfo?: HTMLElement
+    private progressIndex = 0
 
     constructor() {
         this.listenMessages().then(() => { })
@@ -16,9 +18,11 @@ export default class IOManager {
 
     async listenMessages() { }
 
-    async createNewInputProgressBar(countOfFiles: number, firstFileName: string) {
+    async createNewInputProgressBar(countOfFiles: number, firstFileName: string, path: string, pathOfFirstFile: string) {
         if (this.ioContainer == null) return
-        this.currentContainer = this.getProgressContainer(countOfFiles, firstFileName)
+        this.progressIndex++
+        const id = "io-" + this.progressIndex
+        this.currentContainer = this.getProgressContainer(countOfFiles, firstFileName, path, id)
         this.syncProgress()
         this.ioContainer.appendChild(this.currentContainer)
     }
@@ -31,19 +35,20 @@ export default class IOManager {
         })
     }
 
-    private getProgressContainer(countOfFiles: number, firstFileName: string): HTMLElement {
+    private getProgressContainer(countOfFiles: number, firstFileName: string, path: string, id: string): HTMLElement {
         const container = Public.createElement({
             clss: "io-progress",
+            id,
             children: [
                 this.getHeader(countOfFiles),
-                this.getBar(firstFileName)
+                this.getBar(firstFileName, path, id)
             ]
         })
         container.setAttribute("style", "--ratio: 0%")
         return container
     }
 
-    private getBar(firstFileName: string): HTMLElement {
+    private getBar(firstFileName: string, path: string, id: string): HTMLElement {
         const fileName = document.createElement("div")
         fileName.textContent = firstFileName
         fileName.setAttribute("title", firstFileName)
@@ -53,7 +58,7 @@ export default class IOManager {
             children: [
                 fileName,
                 this.getBarRatio(),
-                this.getBarActions()
+                this.getBarActions(path, id)
             ]
         })
     }
@@ -65,15 +70,60 @@ export default class IOManager {
         return ratio
     }
 
-    private getBarActions(): HTMLElement {
+    private getBarActions(path: string, id: string): HTMLElement {
         return Public.createElement({
             clss: "io-bar-actions",
-            innerHtml: `
-            <span>cancel</span>
-            <span>openlocation</span>
-            <span>finish</span>
-            `
+            children: [
+                this.getCancel(id),
+                this.getOpenFolder(path, id),
+                this.getDone(id)
+            ],
         })
+    }
+
+    private getDone(id: string): HTMLElement {
+        return Public.createElement({
+            innerHtml: this.svg.done,
+            title: "Done",
+            listener: {
+                event: 'click',
+                callback: () => this.removeProgress(id)
+            }
+        })
+    }
+
+    private getOpenFolder(path: string, id: string): HTMLElement {
+        return Public.createElement({
+            innerHtml: this.svg.folder,
+            title: "Show In Folder",
+            listener: {
+                event: 'click',
+                callback: () => {
+                    open(path)
+                    this.removeProgress(id)
+                }
+            }
+        })
+    }
+
+    private getCancel(id: string): HTMLElement {
+        return Public.createElement({
+            clss: "io-action-undone",
+            title: "Cancel",
+            innerHtml: this.svg.cancel,
+            listener: {
+                event: 'click',
+                callback: () => this.removeProgress(id)
+            }
+        })
+    }
+
+    private removeProgress(id: string) {
+        const progress = document.getElementById(id)
+        progress?.classList.add("removing")
+        setTimeout(() => {
+            progress?.remove()
+        }, Public.settings.TransitionDuration)
     }
 
     private getHeader(countOfFiles: number): HTMLElement {

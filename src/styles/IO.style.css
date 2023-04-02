@@ -30,6 +30,7 @@
     padding: 0 var(--gap);
 }
 
+.io-progress.removing .io-header,
 .io-header {
     height: 0;
     z-index: 5;
@@ -50,6 +51,7 @@
     width: auto;
 }
 
+.io-progress.removing .io-bar,
 .io-bar {
     background-image: linear-gradient(90deg,
             var(--clr-accent) var(--ratio),
@@ -71,11 +73,34 @@
     height: 2rem;
 }
 
-.io-bar>div {
+.io-progress.removing .io-bar {
+    height: 0;
+}
+
+.io-bar>div,
+.io-progress.removing .io-bar>div {
     transition: var(--transition);
     opacity: 0;
 }
 
 .io-progress:hover .io-bar>div {
     opacity: 1;
+}
+
+.io-bar-actions {
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: fill;
+}
+
+.io-bar-actions svg,
+.io-bar-actions div {
+    height: 100%;
+    width: 2rem;
+    cursor: pointer;
+}
+
+.io-bar-actions div:hover {
+    filter: brightness(150%);
 }

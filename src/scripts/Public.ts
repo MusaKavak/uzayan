@@ -10,6 +10,7 @@ class Settings {
         public RememberDownloadLocation: boolean = false,
         public DonwloadFileLocation?: string,
         public NotificationDuration: number = 8000,
+        public TransitionDuration: number = 500,
     ) { }
 }
 
