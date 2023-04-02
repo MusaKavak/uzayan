@@ -32,7 +32,7 @@ export default class FileManager {
     private async request(files: FileRequest[], saveLocation: string) {
         const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
         if (isStreamOpen) {
-            this.ioManager.createNewInputProgressBar(files.length, files[0].name, saveLocation, "")
+            this.ioManager.createNewInputProgressBar(files.length, files[0].name, saveLocation)
 
             var i = 0
 
@@ -42,6 +42,7 @@ export default class FileManager {
                     if (i == files.length) {
                         unListen()
                         console.log("AllFilesReceived")
+                        this.ioManager.endOfProgress()
                         invoke("close_large_file_stream", { message: '{message:"CloseLargeFileStream"}\n' })
                         return
                     }

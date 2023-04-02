@@ -94,12 +94,34 @@
     pointer-events: fill;
 }
 
-.io-bar-actions svg,
-.io-bar-actions div {
+.io-bar-actions>div {
+    transition: width var(--transition);
+    overflow: hidden;
+}
+
+.io-action-done {
+    width: 0;
+}
+
+.io-action-undone {
+    width: 2rem;
+}
+
+.io-progress.done .io-action-done {
+    width: 2rem;
+}
+
+.io-progress.done .io-action-undone {
+    width: 0;
+}
+
+.io-bar-actions svg {
     height: 100%;
     width: 2rem;
     cursor: pointer;
+
 }
+
 
 .io-bar-actions div:hover {
     filter: brightness(150%);

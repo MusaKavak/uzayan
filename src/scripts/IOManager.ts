@@ -18,7 +18,7 @@ export default class IOManager {
 
     async listenMessages() { }
 
-    async createNewInputProgressBar(countOfFiles: number, firstFileName: string, path: string, pathOfFirstFile: string) {
+    async createNewInputProgressBar(countOfFiles: number, firstFileName: string, path: string) {
         if (this.ioContainer == null) return
         this.progressIndex++
         const id = "io-" + this.progressIndex
@@ -33,6 +33,10 @@ export default class IOManager {
             fileName,
             ratio: 0
         })
+    }
+
+    endOfProgress() {
+        this.currentContainer?.classList.add("done")
     }
 
     private getProgressContainer(countOfFiles: number, firstFileName: string, path: string, id: string): HTMLElement {
@@ -83,6 +87,7 @@ export default class IOManager {
 
     private getDone(id: string): HTMLElement {
         return Public.createElement({
+            clss: "io-action-done",
             innerHtml: this.svg.done,
             title: "Done",
             listener: {
@@ -94,6 +99,7 @@ export default class IOManager {
 
     private getOpenFolder(path: string, id: string): HTMLElement {
         return Public.createElement({
+            clss: "io-action-done",
             innerHtml: this.svg.folder,
             title: "Show In Folder",
             listener: {
@@ -161,7 +167,7 @@ export default class IOManager {
     private setCurrentState(state: {
         ratio?: number,
         fileName?: string,
-        currentFileInfo?: string
+        currentFileInfo?: string,
     }) {
         if (state.ratio && this.currentContainer)
             this.currentContainer.style.setProperty("--ratio", `${state.ratio.toFixed(2)}%`)
