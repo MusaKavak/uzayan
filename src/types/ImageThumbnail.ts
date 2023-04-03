@@ -1,7 +1,8 @@
 export type ImageThumbnail = {
-    id?: string,
+    id: string,
     value?: string,
-    name?: string,
-    date?: number
-    index?: number
+    name: string,
+    date: number,
+    index: number,
+    size: number
 }

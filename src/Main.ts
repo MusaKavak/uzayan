@@ -22,7 +22,7 @@ async function Main() {
     const ioManager = new IOManager()
     const fileManager = new FileManager(ioManager)
     const fileTabManager = new FileTabManager(fileManager)
-    const imageManager = new ImageManager()
+    const imageManager = new ImageManager(fileManager)
     const connectionState = new ConnectionState(optionsManager)
     new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileTabManager)
 }

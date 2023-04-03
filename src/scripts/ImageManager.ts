@@ -2,8 +2,7 @@ import { ImageThumbnail } from "../types/ImageThumbnail";
 import { unix } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";
-import { invoke } from "@tauri-apps/api";
-import { listen } from "@tauri-apps/api/event";
+import FileManager from "./FileManager";
 
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
@@ -11,7 +10,7 @@ export default class ImageManager {
     loadMoreButton = this.getLoadMoreButton()
     lastImageIndex = 0
 
-    constructor() {
+    constructor(private fileManager: FileManager) {
         this.imagesTab?.appendChild(this.loadMoreButton)
     }
 
@@ -68,7 +67,7 @@ export default class ImageManager {
             clss: "image-thumbnail",
             listener: {
                 event: "click",
-                callback: this.getImage(image.id, image.name)
+                callback: () => this.fileManager.requestImage(image.id, image.name, image.size)
             }
         })
     }
@@ -80,34 +79,5 @@ export default class ImageManager {
             return imageDate.format("MMMM D dddd")
         }
         return
-    }
-
-    private getImage(id?: string, name: string | undefined = id): () => void {
-        return async () => {
-            const saveLocation = await Public.getDownloadFileLocation()
-            if (saveLocation == undefined) return
-
-            const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
-            if (isStreamOpen) {
-                const unListen = await listen<boolean>("EndOfFile", (event) => {
-                    if (event.payload) {
-                        unListen()
-                        invoke("close_large_file_stream", { message: '{message:"CloseLargeFileStream"}\n' })
-                    }
-                })
-                this.requestImage(id, name, saveLocation)
-            }
-        }
-    }
-
-    private async requestImage(id?: string, name?: string, saveLocation?: string) {
-        const requestMessage = (JSON.stringify({ message: "FullSizeImageRequest", input: { id } })) + "\n"
-
-        await invoke("receive_file", {
-            requestMessage,
-            name,
-            extension: "png",
-            saveLocation
-        })
     }
 }

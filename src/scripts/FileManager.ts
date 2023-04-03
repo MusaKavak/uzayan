@@ -29,6 +29,21 @@ export default class FileManager {
         this.request(filesToRequest, location)
     }
 
+    async requestImage(id: string, name: string, size: number) {
+        const location = await this.getDownloadFileLocation()
+        if (location == undefined) return
+        const requestMessage = (JSON.stringify({ message: "FullSizeImageRequest", input: { id } })) + "\n"
+        const filesToRequest: FileRequest[] = [{
+            //FileName has the extension
+            extension: "",
+            location,
+            message: requestMessage,
+            name,
+            size
+        }]
+        this.request(filesToRequest, location)
+    }
+
     private async request(files: FileRequest[], saveLocation: string) {
         const isStreamOpen = await invoke("open_large_file_stream", { address: Socket.connectedServer })
         if (isStreamOpen) {
