@@ -16,7 +16,8 @@ pub fn connect(window: Window, address: String) -> bool {
         set_window(window);
         if !IS_CONNECTED {
             match TcpStream::connect(&address) {
-                Ok(stream) => {
+                Ok(mut stream) => {
+                    stream.write(&[200]).unwrap();
                     STREAM = Some(stream);
                     IS_CONNECTED = true;
                     listen_for_messages();

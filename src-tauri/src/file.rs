@@ -36,7 +36,8 @@ static mut STREAM: Option<TcpStream> = None;
 pub fn open_large_file_stream(address: String) -> bool {
     unsafe {
         match TcpStream::connect(address) {
-            Ok(stream) => {
+            Ok(mut stream) => {
+                stream.write(&[201]).unwrap();
                 STREAM = Some(stream);
                 println!("Connected For Large File Transaction");
                 return true;
