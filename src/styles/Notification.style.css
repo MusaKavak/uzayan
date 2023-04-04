@@ -7,7 +7,7 @@
     max-height: 60vh;
     box-shadow: var(--box-shadow);
     margin-top: var(--gap);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
 }
 
 #notifications-tab-body>div,
@@ -15,12 +15,12 @@
     width: 100%;
     margin-top: var(--gap);
     box-shadow: var(--box-shadow);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     overflow: hidden;
 }
 
 .notification-group>label {
-    border-bottom: 1px solid var(--clr-baclground-accent);
+    border-bottom: 1px solid var(--clr-background-dark);
 }
 
 .notification {
@@ -64,7 +64,7 @@
 .notification-actions {
     width: max-content;
     display: flex;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     overflow: hidden;
     max-height: 0;
     transition: var(--transition);

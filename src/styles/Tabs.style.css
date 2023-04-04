@@ -1,6 +1,6 @@
 #tabs-container {
     display: flex;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     overflow: hidden;
     padding: 0;
     z-index: 1;
@@ -11,7 +11,7 @@
 }
 
 .tab.active {
-    background-color: var(--clr-baclground-accent);
+    background-color: var(--clr-background-dark);
     filter: brightness(200%);
 }
 

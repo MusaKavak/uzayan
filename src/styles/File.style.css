@@ -79,7 +79,7 @@
     background-color: var(--clr-background);
     cursor: pointer;
     padding: var(--gap);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     transition: var(--transition);
     line-break: anywhere;
     border: 1px solid transparent;
@@ -119,7 +119,7 @@
     position: absolute;
     box-shadow: var(--box-shadow);
     overflow: hidden;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     display: none;
     top: 5px;
     right: 5px;

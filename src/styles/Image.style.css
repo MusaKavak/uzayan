@@ -13,7 +13,7 @@
     margin-bottom: var(--gap);
     box-shadow: var(--box-shadow);
     padding: var(--gap);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
 }
 
 .date-container-header {
@@ -30,11 +30,11 @@
     background-color: var(--clr-background);
     padding: var(--gap);
     box-shadow: var(--box-shadow);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     transition: var(--transition);
 }
 
 #load-more-image-button:hover {
-    background-color: var(--clr-baclground-accent);
+    background-color: var(--clr-background-dark);
 }
