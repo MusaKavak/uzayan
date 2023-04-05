@@ -1,4 +1,4 @@
-import { ImageThumbnail } from "../types/ImageThumbnail";
+import { ImageThumbnail } from "../types/network/ImageThumbnail";
 import { unix } from "dayjs"
 import { Public } from "./Public";
 import { Socket } from "../connection/Socket";

@@ -1,7 +1,7 @@
 {
   "build": {
-    "beforeBuildCommand":"npm run build",
-    "beforeDevCommand":"npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": true
@@ -12,7 +12,13 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs": {
+        "all": true,
+        "scope": [
+          "$RESOURCE/resources/settings/*"
+        ]
+      }
     },
     "bundle": {
       "active": true,
@@ -38,7 +44,9 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": [
+        "resources/settings/*.settings.json"
+      ],
       "shortDescription": "",
       "targets": "all",
       "windows": {

@@ -4,8 +4,8 @@ import { exists } from "@tauri-apps/api/fs"
 import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
 import { Socket } from "../connection/Socket"
-import { File } from "../types/File"
-import { FileRequest } from "../types/FileRequest"
+import { File } from "../types/network/File"
+import { FileRequest } from "../types/local/FileRequest"
 import { Public } from "./Public"
 import IOManager from "./IOManager";
 

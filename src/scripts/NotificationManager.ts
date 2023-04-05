@@ -1,6 +1,6 @@
 import NotificationSvg from "../assets/notification.svg";
 import { Socket } from "../connection/Socket";
-import { Notification } from "../types/Notification";
+import { Notification } from "../types/network/Notification";
 import { Public } from "./Public";
 import WindowLayoutManager from "./WindowLayoutManager";
 

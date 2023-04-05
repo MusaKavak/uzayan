@@ -1,6 +1,6 @@
 import FileSvg from "../assets/file.svg";
 import { Socket } from "../connection/Socket";
-import { File } from "../types/File";
+import { File } from "../types/network/File";
 import FileManager from "./FileManager";
 import { Public } from "./Public";
 

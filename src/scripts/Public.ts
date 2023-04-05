@@ -1,31 +1,22 @@
-class Settings {
-    constructor(
-        public BarWidth: number = 500,
-        public BarHeightWhenClosed: number = 9,
-        public WindowPositionFromLeft: number = 100,
-        public WindowOpeningDuration: number = 500,
-        public WindowOpenDelay: number = 500,
-        public IsWindowCentered: boolean = false,
-        public ImageCountPerRequest: number = 10,
-        public RememberDownloadLocation: boolean = false,
-        public DonwloadFileLocation?: string,
-        public NotificationDuration: number = 8000,
-        public TransitionDuration: number = 500,
-    ) { }
-}
+import { AppSettings } from "../types/local/Settings"
+import { getApperanceSettings, getAppSettings } from "./Settings"
 
 export class Public {
-    static settings: Settings = new Settings()
+    static settings: AppSettings
     static base64head = "data:image/jpg;base64, "
     static isWindowOpen = false
 
-    static getSettingsFromLocalStorage() {
-        //const string = localStorage.getItem("settings")
-        //if (string != null && string.length > 10) this.settings = JSON.parse(string)
+    static async loadSettings() {
+        this.settings = await getAppSettings()
+        this.loadApperanceSettings()
     }
 
-    static updateSettings() {
-        localStorage.setItem("settings", JSON.stringify(this.settings))
+    private static async loadApperanceSettings() {
+        const html = document.querySelector("html")
+        const apperanceSettings = await getApperanceSettings()
+        for (const key in apperanceSettings) {
+            html?.style.setProperty(key, apperanceSettings[key])
+        }
     }
 
     static createElement(

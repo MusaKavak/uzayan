@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
 import MediaSessionManager from '../scripts/MediaSessionManager'
-import { ConnectionObject } from '../types/ConnectionObject'
+import { ConnectionObject } from '../types/local/ConnectionObject'
 import NotificationManager from '../scripts/NotificationManager'
 import { ConnectionState } from './ConnectionState'
 import ImageManager from '../scripts/ImageManager'

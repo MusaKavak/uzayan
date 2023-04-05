@@ -13,7 +13,7 @@ import FileManager from "./scripts/FileManager";
 
 async function Main() {
     //document.addEventListener('contextmenu', event => event.preventDefault());
-    Public.getSettingsFromLocalStorage()
+    await Public.loadSettings()
     const optionsManager = new OptionsManager()
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
