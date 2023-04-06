@@ -16,7 +16,8 @@
       "fs": {
         "all": true,
         "scope": [
-          "$RESOURCE/resources/settings/*"
+          "$RESOURCE/resources/settings/*",
+          "$RESOURCE/resources/lang/**/*"
         ]
       }
     },
@@ -45,7 +46,8 @@
         "signingIdentity": null
       },
       "resources": [
-        "resources/settings/*.settings.json"
+        "resources/settings/*.settings.json",
+        "resources/lang/**/*.lang.json"
       ],
       "shortDescription": "",
       "targets": "all",

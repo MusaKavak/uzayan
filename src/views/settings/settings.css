@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html {
+    --clr-background: rgb(21, 21, 44);
+    --clr-background-bright: rgb(35, 35, 71);
+    --clr-background-dark: rgb(21, 21, 44);
+    --clr-primary: rgb(234, 234, 234);
+    --clr-primary-dark: rgb(179, 179, 179);
+    --clr-accent: rgb(255, 102, 0);
+    --clr-accent-dark: rgb(197, 79, 0);
+    --clr-accent-transparent: rgba(255, 102, 0, 0.7);
+    --clr-shadow: rgb(0, 0, 0);
+    --gap: .7rem;
+    --transition: .5s;
+}
+
+body {
+    background-color: var(--clr-background);
+    color: var(--clr-primary);
+    display: flex;
+}
+
+#sidebar {
+    height: 100vh;
+    border-right: 2px solid var(--clr-background-bright);
+}
+
+#container {
+    flex-grow: 1;
+}
+
+.settings-section {
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--gap);
+}
+
+.settings-section>h3 {
+    width: 100%;
+}
+
+.settings-section>div {
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: clamp(300px, 50%, 100%);
+    margin-bottom: var(--gap);
+    overflow: hidden;
+}
+
+.setting-description {
+    font-size: .9rem;
+    color: var(--clr-primary-dark);
+    margin: 3px 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    display: none;
+}
+
+input {
+    border: none;
+    background-color: var(--clr-background-bright);
+    padding: 0 3px;
+    outline: none;
+    font-size: 1rem;
+    transition: var(--transition);
+    color: var(--clr-primary);
+}
+
+.setting:hover input,
+input:focus {
+    background-color: var(--clr-accent);
+}
+
+label {
+    background-color: red;
+}
+
+.checkbox {
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--clr-background-bright);
+    position: relative;
+    transition: var(--transition);
+}
+
+.checkbox::after {
+    content: '';
+    width: 13px;
+    height: 13px;
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background-color: var(--clr-background-bright);
+    transition: var(--transition);
+
+}
+
+label:has(input:checked) .checkbox {
+    border-color: var(--clr-accent);
+}
+
+label:has(input:checked) .checkbox::after {
+    background-color: var(--clr-accent);
+    left: 22px;
+}
+
+label input {
+    display: none;
+}
