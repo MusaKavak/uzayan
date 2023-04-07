@@ -2,7 +2,6 @@
     "BarWidth": 500,
     "BarHeightWhenClosed": 9,
     "WindowPositionFromLeft": 100,
-    "WindowOpeningDuration": 500,
     "WindowOpenDelay": 500,
     "IsWindowCentered": false,
     "ImageCountPerRequest": 10,

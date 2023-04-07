@@ -2,7 +2,6 @@ export type AppSettings = {
     BarWidth: number
     BarHeightWhenClosed: number
     WindowPositionFromLeft: number
-    WindowOpeningDuration: number
     WindowOpenDelay: number
     IsWindowCentered: boolean
     ImageCountPerRequest: number
@@ -22,10 +21,8 @@ export type ApperanceSettings = {
     "--clr-accent-dark": string,
     "--clr-accent-transparent": string,
     "--clr-shadow": string,
-    "--sz-window-height-when-closed": string,
     "--border-radius": string,
     "--gap": string,
     "--box-shadow": string,
-    "--transition": string,
     [key: string]: string
 }

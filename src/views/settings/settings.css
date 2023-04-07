@@ -4,6 +4,7 @@
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 html {
@@ -33,6 +34,8 @@ body {
 
 #container {
     flex-grow: 1;
+    height: 100vh;
+    overflow: auto;
 }
 
 .settings-section {
@@ -43,6 +46,7 @@ body {
 
 .settings-section>h3 {
     width: 100%;
+    margin-bottom: 3px;
 }
 
 .settings-section>div {
@@ -73,6 +77,7 @@ input {
     font-size: 1rem;
     transition: var(--transition);
     color: var(--clr-primary);
+    width: 25%;
 }
 
 .setting:hover input,
@@ -118,4 +123,17 @@ label:has(input:checked) .checkbox::after {
 
 label input {
     display: none;
+}
+
+.color-input {
+    height: 20px;
+    border: none;
+    outline: none;
+    padding: 0;
+    background-color: transparent !important;
+}
+
+.color-input::-webkit-color-swatch {
+    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
 }

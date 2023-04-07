@@ -50,8 +50,21 @@ function getBooleanInput(key) {
     return label
 }
 
+function getColorInput(key) {
+    const input = document.createElement("input")
+    input.setAttribute("type", "color")
+    input.classList.add("color-input")
+    input.value = appearanceSettings[key]
+    input.addEventListener("input", () => {
+        console.log(input.value)
+    })
+    return input
+}
+
 const sctGeneral = document.getElementById("general-settings-section")
+const sctAppearance = document.getElementById("appearance-settings-section")
 const appSettings = await getResource("settings/app.settings")
+const appearanceSettings = await getResource("settings/apperance.settings")
 const text = await getResource("lang/en/settings.lang")
 
 
@@ -66,4 +79,13 @@ for (const key in appSettings) {
         input = getBooleanInput(key)
     }
     sctGeneral.appendChild(createSetting(content.title, content.description, input))
+}
+
+for (const key in appearanceSettings) {
+    const content = text[key]
+    let input
+    if (key.substring(0, 5) == "--clr") {
+        input = getColorInput(key)
+    }
+    sctAppearance.appendChild(createSetting(content.title, content.description, input))
 }

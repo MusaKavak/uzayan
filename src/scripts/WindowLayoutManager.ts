@@ -22,7 +22,7 @@ export default class WindowLayoutManager {
         this.size.width = width
         this.size.height = height
         await appWindow.setMinSize(this.size)
-        await appWindow.setMaxSize(this.size)
+        // await appWindow.setMaxSize(this.size)
         await appWindow.setSize(this.size)
     }
 
@@ -64,7 +64,7 @@ export default class WindowLayoutManager {
                 setTimeout(() => {
                     this.setWindowSize()
                     Public.isWindowOpen = false
-                }, Public.settings.WindowOpeningDuration);
+                }, Public.settings.TransitionDuration);
             }
         }, Public.settings.WindowOpenDelay);
 

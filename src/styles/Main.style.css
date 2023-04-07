@@ -29,6 +29,7 @@ html {
     --transition: .5s;
 
     color: var(--clr-primary);
+    overflow: hidden;
 }
 
 ::-webkit-scrollbar {

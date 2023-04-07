@@ -1,23 +1,9 @@
 import { AppSettings } from "../types/local/Settings"
-import { getApperanceSettings, getAppSettings } from "./Settings"
 
 export class Public {
     static settings: AppSettings
     static base64head = "data:image/jpg;base64, "
     static isWindowOpen = false
-
-    static async loadSettings() {
-        this.settings = await getAppSettings()
-        this.loadApperanceSettings()
-    }
-
-    private static async loadApperanceSettings() {
-        const html = document.querySelector("html")
-        const apperanceSettings = await getApperanceSettings()
-        for (const key in apperanceSettings) {
-            html?.style.setProperty(key, apperanceSettings[key])
-        }
-    }
 
     static createElement(
         specs: {
