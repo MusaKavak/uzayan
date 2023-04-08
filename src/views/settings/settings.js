@@ -1,6 +1,7 @@
 const { readTextFile, writeTextFile } = window.__TAURI__.fs
 const { resolveResource } = window.__TAURI__.path
 const { appWindow } = window.__TAURI__.window
+const { emit } = window.__TAURI__.event
 
 async function getResourcePath(path) {
     return await resolveResource(`resources/${path}.json`)
@@ -15,14 +16,14 @@ async function writeResource(path, value) {
     await writeTextFile(await getResourcePath(path), value)
 }
 
-function saveSettings() {
+async function saveSettings() {
     const appSettingsString = JSON.stringify(appSettings, null, 2)
     const appearanceSettingsString = JSON.stringify(appearanceSettings, null, 2)
 
-    console.log(appSettings)
+    document.querySelectorAll(".dirty").forEach(e => e.classList.remove("dirty"))
 
-    writeResource(appSettingsPath, appSettingsString)
-    writeResource(appearanceSettingsPath, appearanceSettingsString)
+    await writeResource(appSettingsPath, appSettingsString)
+    await writeResource(appearanceSettingsPath, appearanceSettingsString)
 }
 
 function createSetting(title, description, inputElement) {
@@ -116,8 +117,15 @@ btnCancel.onclick = () => {
     appWindow.close()
 }
 
-btnApply.onclick = () => {
-    saveSettings()
+btnOk.onclick = async () => {
+    await saveSettings()
+    emit("reload")
+    appWindow.close()
+}
+
+btnApply.onclick = async () => {
+    await saveSettings()
+    emit("reload")
 }
 
 for (const key in appSettings) {

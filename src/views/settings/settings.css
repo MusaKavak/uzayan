@@ -46,6 +46,17 @@ body {
 #sidebar button {
     width: 100%;
     flex-shrink: 0;
+    padding: 3px;
+    border-radius: 5px;
+    outline: transparent;
+    border: none;
+    background-color: var(--clr-background-bright);
+    color: var(--clr-primary);
+    transition: var(--transition);
+}
+
+#sidebar button:hover {
+    filter: brightness(130%);
 }
 
 #container {

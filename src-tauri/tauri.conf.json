@@ -65,6 +65,7 @@
     },
     "windows": [
       {
+        "label": "main",
         "fullscreen": false,
         "height": 7,
         "title": "uzayan",
