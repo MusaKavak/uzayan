@@ -1,10 +1,28 @@
-const { readTextFile } = window.__TAURI__.fs
+const { readTextFile, writeTextFile } = window.__TAURI__.fs
 const { resolveResource } = window.__TAURI__.path
+const { appWindow } = window.__TAURI__.window
+
+async function getResourcePath(path) {
+    return await resolveResource(`resources/${path}.json`)
+}
 
 async function getResource(path) {
-    const resource = await resolveResource(`resources/${path}.json`)
-    const settings = await readTextFile(resource)
+    const settings = await readTextFile(await getResourcePath(path))
     return JSON.parse(settings)
+}
+
+async function writeResource(path, value) {
+    await writeTextFile(await getResourcePath(path), value)
+}
+
+function saveSettings() {
+    const appSettingsString = JSON.stringify(appSettings, null, 2)
+    const appearanceSettingsString = JSON.stringify(appearanceSettings, null, 2)
+
+    console.log(appSettings)
+
+    writeResource(appSettingsPath, appSettingsString)
+    writeResource(appearanceSettingsPath, appearanceSettingsString)
 }
 
 function createSetting(title, description, inputElement) {
@@ -26,54 +44,88 @@ function createSetting(title, description, inputElement) {
     return element
 }
 
-function getTextInput(key, type) {
+//Inputs
+function getNumberInput(key) {
+    const initialValue = appSettings[key]
     const input = document.createElement("input")
-    input.setAttribute("type", type)
-    input.value = appSettings[key]
-    console.log(input.value)
-    input.addEventListener("keydown", () => {
-        console.log(input.value)
+    input.setAttribute("type", "number")
+    input.value = initialValue
+    input.addEventListener("change", () => {
+        const value = parseInt(input.value)
+        console.log(initialValue + "           " + input.value)
+        appSettings[key] = value
+        if (initialValue == value) {
+            input.classList.remove("dirty")
+        } else {
+            input.classList.add("dirty")
+        }
     })
     return input
 }
 
 function getBooleanInput(key) {
+    const initialValue = appSettings[key]
     const label = document.createElement("label")
     label.innerHTML = '<div class="checkbox"></div>'
     const input = document.createElement("input")
     input.setAttribute("type", "checkbox")
-    input.checked = appSettings[key]
+    input.checked = initialValue
     input.addEventListener("change", () => {
-        console.log(input.checked)
+        appSettings[key] = input.checked
+        if (initialValue == input.checked) {
+            input.classList.remove("dirty")
+        } else {
+            input.classList.add("dirty")
+        }
     })
     label.appendChild(input)
     return label
 }
 
 function getColorInput(key) {
+    const initialValue = appearanceSettings[key]
     const input = document.createElement("input")
     input.setAttribute("type", "color")
     input.classList.add("color-input")
     input.value = appearanceSettings[key]
     input.addEventListener("input", () => {
-        console.log(input.value)
+        appearanceSettings[key] = input.value
+        if (initialValue == input.value) {
+            input.classList.remove("dirty")
+        } else {
+            input.classList.add("dirty")
+        }
     })
     return input
 }
 
+const appSettingsPath = "settings/app.settings"
+const appearanceSettingsPath = "settings/apperance.settings"
+
+const text = await getResource("lang/en/settings.lang")
+const appSettings = await getResource(appSettingsPath)
+const appearanceSettings = await getResource(appearanceSettingsPath)
+
 const sctGeneral = document.getElementById("general-settings-section")
 const sctAppearance = document.getElementById("appearance-settings-section")
-const appSettings = await getResource("settings/app.settings")
-const appearanceSettings = await getResource("settings/apperance.settings")
-const text = await getResource("lang/en/settings.lang")
+const btnCancel = document.getElementById("btn-cancel")
+const btnOk = document.getElementById("btn-ok")
+const btnApply = document.getElementById("btn-apply")
 
+btnCancel.onclick = () => {
+    appWindow.close()
+}
+
+btnApply.onclick = () => {
+    saveSettings()
+}
 
 for (const key in appSettings) {
     const content = text[key]
     const type = typeof (appSettings[key])
     let input = undefined
     if (type == "number") {
-        input = getTextInput(key, "number")
+        input = getNumberInput(key)
     }
     if (type == "boolean") {
         input = getBooleanInput(key)

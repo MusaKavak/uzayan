@@ -30,6 +30,22 @@ body {
 #sidebar {
     height: 100vh;
     border-right: 2px solid var(--clr-background-bright);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--gap);
+}
+
+#sidebar>div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+#sidebar button {
+    width: 100%;
+    flex-shrink: 0;
 }
 
 #container {
@@ -52,9 +68,21 @@ body {
 .settings-section>div {
     flex-grow: 1;
     flex-shrink: 0;
-    width: clamp(300px, 50%, 100%);
+    min-width: 300px;
+    width: 50%;
+    max-width: 50%;
     margin-bottom: var(--gap);
     overflow: hidden;
+}
+
+.setting {
+    padding: var(--gap);
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.setting:has(.dirty) {
+    border-color: var(--clr-accent);
 }
 
 .setting-description {
@@ -77,10 +105,10 @@ input {
     font-size: 1rem;
     transition: var(--transition);
     color: var(--clr-primary);
-    width: 25%;
+    width: 50%;
+    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.6);
 }
 
-.setting:hover input,
 input:focus {
     background-color: var(--clr-accent);
 }
@@ -96,6 +124,7 @@ label {
     border: 1px solid var(--clr-background-bright);
     position: relative;
     transition: var(--transition);
+    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.6);
 }
 
 .checkbox::after {
@@ -131,6 +160,7 @@ label input {
     outline: none;
     padding: 0;
     background-color: transparent !important;
+    box-shadow: none;
 }
 
 .color-input::-webkit-color-swatch {
