@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api"
 import qrcode from "qrcode"
-import OptionsManager from "../scripts/OptionsManager"
+import HeaderManager from "../scripts/HeaderManager"
 import { Socket } from "./Socket"
 
 export class ConnectionState {
@@ -8,7 +8,7 @@ export class ConnectionState {
     pairCode = "123414"
 
     constructor(
-        private optionsManaer: OptionsManager
+        private headerManager: HeaderManager
     ) { }
 
     async sendTestMessageToLastConnectedDevice() {
@@ -21,7 +21,7 @@ export class ConnectionState {
                 console.log("w")
                 Socket.send("TestConnection", "")
                 this.removeQrCode()
-                this.optionsManaer.sync()
+                this.headerManager.sync()
                 console.log("Connected To: " + ip)
             }
         }
@@ -35,7 +35,7 @@ export class ConnectionState {
                     Socket.send("TestConnection", null)
                 }, 500);
                 this.removeQrCode()
-                this.optionsManaer.sync()
+                this.headerManager.sync()
                 localStorage.setItem("ConnectedDeviceIp", address)
                 localStorage.setItem("ConnectedDevicePort", input.port.toString())
             }

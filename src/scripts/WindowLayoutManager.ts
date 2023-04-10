@@ -16,6 +16,11 @@ export default class WindowLayoutManager {
         this.setWindowPosition(Public.settings.WindowPositionFromLeft, 0)
 
         this.setListeners()
+
+        if (localStorage.getItem("OpenWindowOnStart")) {
+            this.openWindow()
+            localStorage.removeItem("OpenWindowOnStart")
+        }
     }
 
     async setWindowSize(width: number = Public.settings.BarWidth, height: number = Public.settings.BarHeightWhenClosed) {
@@ -58,16 +63,17 @@ export default class WindowLayoutManager {
     }
 
     async closeWindow() {
-        setTimeout(() => {
-            if (Public.isWindowOpen) {
-                this.body.classList.remove("window-open")
-                setTimeout(() => {
-                    this.setWindowSize()
-                    Public.isWindowOpen = false
-                }, Public.settings.TransitionDuration);
-            }
-        }, Public.settings.WindowOpenDelay);
-
+        if (!Public.isWindowPinned) {
+            setTimeout(() => {
+                if (Public.isWindowOpen) {
+                    this.body.classList.remove("window-open")
+                    setTimeout(() => {
+                        this.setWindowSize()
+                        Public.isWindowOpen = false
+                    }, Public.settings.TransitionDuration);
+                }
+            }, Public.settings.WindowOpenDelay);
+        }
     }
 
     private timeout: NodeJS.Timeout | undefined

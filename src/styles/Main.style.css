@@ -11,7 +11,7 @@
 html {
     width: 100vw;
     height: 100vh;
-    --clr-background: rgb(21, 21, 44);
+    /* --clr-background: rgb(21, 21, 44);
     --clr-background-bright: rgb(35, 35, 71);
     --clr-background-dark: rgb(21, 21, 44);
     --clr-primary: rgb(234, 234, 234);
@@ -21,12 +21,13 @@ html {
     --clr-accent-transparent: rgba(255, 102, 0, 0.7);
     --clr-shadow: rgb(0, 0, 0);
 
-    --sz-window-height-when-closed: 8px;
+    --sz-window-height-when-closed: 8px; */
+    --sz-icon: 2rem;
 
     --border-radius: 15px;
     --gap: 0.7rem;
     --box-shadow: 0 0 8px 1px var(--clr-shadow);
-    --transition: .5s;
+    /* --transition: .5s; */
 
     color: var(--clr-primary);
     overflow: hidden;
@@ -82,8 +83,16 @@ html {
     fill: var(--clr-primary);
 }
 
+.fill-accent {
+    fill: var(--clr-accent);
+}
+
 .stroke {
     stroke: var(--clr-primary);
+}
+
+.stroke-accent {
+    fill: var(--clr-accent);
 }
 
 .button {

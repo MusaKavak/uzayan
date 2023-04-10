@@ -4,6 +4,7 @@ export class Public {
     static settings: AppSettings
     static base64head = "data:image/webp;base64, "
     static isWindowOpen = false
+    static isWindowPinned = false
 
     static createElement(
         specs: {

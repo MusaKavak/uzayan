@@ -1,0 +1,27 @@
+#header-container {
+    display: flex;
+    padding: 0 var(--gap);
+    justify-content: space-between;
+    overflow: hidden;
+    height: var(--sz-icon);
+}
+
+
+#header-actions {
+    display: flex;
+}
+
+#header-actions svg {
+    scale: 0.7;
+}
+
+#header-actions>div:hover,
+.pinned #header-action-pin {
+    cursor: pointer;
+    --clr-primary: var(--clr-accent)
+}
+
+#header-container svg {
+    height: var(--sz-icon);
+    width: var(--sz-icon);
+}

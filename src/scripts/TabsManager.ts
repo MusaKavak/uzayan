@@ -23,7 +23,12 @@ export default class TabsManager {
                 } else this.currentActive = -1
             })
         })
-        document.body.addEventListener("mouseleave", () => { this.deactivateCurrent(); this.currentActive = -1 })
+        document.body.addEventListener("mouseleave", () => {
+            if (!Public.isWindowPinned) {
+                this.deactivateCurrent()
+                this.currentActive = -1
+            }
+        })
     }
 
     private deactivateCurrent() {
