@@ -103,6 +103,7 @@ export default class FileTabManager {
                         f.name || "",
                         async (value?: string) => {
                             if (this.currentPath && value) {
+                                this.allowToCreate = true
                                 const source = f.path
                                 const target = await join(this.currentPath, value)
                                 Socket.send("MoveFileRequest", { source, target })
@@ -124,6 +125,7 @@ export default class FileTabManager {
                     this.dialogManager.showDialog(
                         "Are you sure you want to delete this file?",
                         () => {
+                            this.allowToCreate = true
                             Socket.send("DeleteFileRequest", { path })
                         }
                     )
