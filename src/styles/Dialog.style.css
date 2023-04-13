@@ -28,6 +28,15 @@
     flex-shrink: 0;
 }
 
+.dialog input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid var(--clr-accent);
+    padding: 0 3px;
+    width: 100%;
+    outline: none;
+}
+
 .dialog-actions-wrapper {
     width: 100%;
     display: flex;

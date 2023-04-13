@@ -1,6 +1,8 @@
+import { join } from "@tauri-apps/api/path";
 import FileSvg from "../assets/file.svg";
 import { Socket } from "../connection/Socket";
 import { File } from "../types/network/File";
+import { DialogManager } from "./DialogManager";
 import FileManager from "./FileManager";
 import { Public } from "./Public";
 
@@ -10,8 +12,11 @@ export default class FileTabManager {
     private svg = new FileSvg()
     private allowToCreate = true
     private isSelectionOpen = false
+    private currentPath?: string
 
-    constructor(private fileManager: FileManager) {
+    constructor(
+        private fileManager: FileManager,
+        private dialogManager: DialogManager) {
         this.filesTab?.classList.toggle("select")
     }
 
@@ -21,6 +26,7 @@ export default class FileTabManager {
             this.filesTab.appendChild(this.getHeader(file))
             this.filesTab.appendChild(this.getBody(file.children))
             this.allowToCreate = false
+            this.currentPath = file.path
         }
     }
 
@@ -60,27 +66,51 @@ export default class FileTabManager {
 
     private getMenu(f: File): HTMLElement | undefined {
         if (!f.isFile) return
-        return Public.createElement({
+        const menu = Public.createElement({
             clss: "directory-item-menu",
             children: [
                 this.getDeleteButton(f.path),
-                this.getRenameButton(),
-                this.getDownloadButton()
+                this.getRenameButton(f),
+                this.getDownloadButton(f)
             ]
         })
+        menu.setAttribute("tabIndex", "-1")
+        return menu
     }
 
-    private getDownloadButton(): HTMLElement {
+    private getDownloadButton(f: File): HTMLElement {
         return Public.createElement({
             clss: "button",
-            content: "Download"
+            content: "Download",
+            listener: {
+                event: "click",
+                callback: () => {
+                    this.fileManager.requestFiles([f])
+                }
+            }
         })
     }
 
-    private getRenameButton(): HTMLElement {
+    private getRenameButton(f: File): HTMLElement {
         return Public.createElement({
             clss: "button",
             content: "Rename",
+            listener: {
+                event: "click",
+                callback: () => {
+                    this.dialogManager.showDialogWithInput(
+                        "Rename File",
+                        f.name || "",
+                        async (value?: string) => {
+                            if (this.currentPath && value) {
+                                const source = f.path
+                                const target = await join(this.currentPath, value)
+                                Socket.send("MoveFileRequest", { source, target })
+                            }
+                        }
+                    )
+                }
+            }
         })
     }
 
@@ -90,7 +120,14 @@ export default class FileTabManager {
             content: "Delete",
             listener: {
                 event: "click",
-                callback: () => { Socket.send("DeleteFile", { path }) }
+                callback: () => {
+                    this.dialogManager.showDialog(
+                        "Are you sure you want to delete this file?",
+                        () => {
+                            Socket.send("DeleteFileRequest", { path })
+                        }
+                    )
+                }
             }
         })
     }
@@ -111,7 +148,6 @@ export default class FileTabManager {
                     this.removeFromRequestList(f)
                 }
             }
-            console.log(this.filesToRequest)
         })
         return chbx
     }
