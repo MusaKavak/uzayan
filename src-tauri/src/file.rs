@@ -1,3 +1,4 @@
+use json::object;
 use std::{
     fs::File,
     io::{Read, Write},
@@ -5,7 +6,6 @@ use std::{
     path::PathBuf,
     thread,
 };
-
 use tauri::{command, Window};
 
 #[derive(serde::Deserialize, Debug)]
@@ -31,6 +31,7 @@ struct UpdateProgressRequest {
 }
 
 static mut STREAM: Option<TcpStream> = None;
+static mut OUT: Option<TcpStream> = None;
 
 #[command]
 pub fn open_large_file_stream(address: String) -> bool {
@@ -125,4 +126,61 @@ pub fn close_large_file_stream(message: String) -> bool {
             None => false,
         }
     }
+}
+
+#[command]
+pub fn connect_for_file_output(address: String) -> bool {
+    unsafe {
+        match TcpStream::connect(address) {
+            Ok(mut stream) => {
+                stream.write(&[202]).unwrap();
+                OUT = Some(stream);
+                println!("Connected For Large File Transaction");
+                return true;
+            }
+            Err(_) => {
+                println!("Can't Connect For Large File Transaction");
+                return false;
+            }
+        };
+    };
+}
+
+#[command]
+pub fn file_out(source: String, target: String) {
+    thread::spawn(move || {
+        let mut file = File::open(&source).unwrap();
+        let file_size = file.metadata().unwrap().len();
+
+        let json = object! {
+            path : target,
+            size : file_size
+        };
+        let mut request_string = json::stringify(json);
+        request_string.push_str("\n");
+        println!("{}", request_string);
+        unsafe {
+            match &mut OUT {
+                Some(out) => {
+                    out.write(request_string.as_bytes()).unwrap();
+                    let mut status: [u8; 1] = [0u8; 1];
+                    out.read(&mut status).unwrap();
+                    println!("status : {}", status[0]);
+                    if status[0] == 100 {
+                        let mut buf = [0u8; 4096];
+                        println!("File Out Start");
+                        loop {
+                            let bytes_read = file.read(&mut buf).unwrap();
+                            if bytes_read == 0 {
+                                break;
+                            }
+                            out.write(&buf[..bytes_read]).unwrap();
+                        }
+                        println!("File Out End");
+                    }
+                }
+                None => todo!(),
+            }
+        }
+    });
 }

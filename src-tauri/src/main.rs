@@ -10,6 +10,7 @@ mod udp;
 
 #[macro_use]
 extern crate lazy_static;
+extern crate json;
 
 fn main() {
     tauri::Builder::default()
@@ -21,7 +22,9 @@ fn main() {
             file::open_large_file_stream,
             file::request_file,
             file::close_large_file_stream,
-            file::get_current_progress
+            file::get_current_progress,
+            file::connect_for_file_output,
+            file::file_out
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

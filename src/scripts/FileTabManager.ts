@@ -46,6 +46,8 @@ export default class FileTabManager {
             else this.fileSystemRequest(f.path)
         }
 
+        console.log(f.path)
+
         return Public.createElement({
             type: "label",
             clss: "directory-item " + (f.isFile ? "file" : ""),
