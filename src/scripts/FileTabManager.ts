@@ -1,10 +1,13 @@
-import { join } from "@tauri-apps/api/path";
+import { basename, extname, join } from "@tauri-apps/api/path";
 import FileSvg from "../assets/file.svg";
 import { Socket } from "../connection/Socket";
 import { File } from "../types/network/File";
 import { DialogManager } from "./DialogManager";
 import FileManager from "./FileManager";
 import { Public } from "./Public";
+import { open } from "@tauri-apps/api/dialog";
+import { invoke } from "@tauri-apps/api";
+import { appWindow } from "@tauri-apps/api/window";
 
 export default class FileTabManager {
 
@@ -45,8 +48,6 @@ export default class FileTabManager {
             }
             else this.fileSystemRequest(f.path)
         }
-
-        console.log(f.path)
 
         return Public.createElement({
             type: "label",
@@ -201,6 +202,14 @@ export default class FileTabManager {
                         }
                     }
                 }),
+                Public.createElement({
+                    innerHtml: this.svg.upload,
+                    title: "Upload",
+                    listener: {
+                        event: "click",
+                        callback: () => this.uploadFiles()
+                    }
+                })
             ]
         })
     }
@@ -244,4 +253,41 @@ export default class FileTabManager {
         this.filesToRequest = this.filesToRequest.filter(file => file != f)
     }
 
+    private async uploadFiles() {
+        if (this.currentPath == undefined) return
+        await appWindow.setAlwaysOnTop(false)
+        const selectedPaths = await open({
+            directory: false,
+            multiple: true,
+            title: "Select Files To Upload",
+        })
+        await appWindow.setAlwaysOnTop(true)
+        if (selectedPaths == null) return
+
+        let filePathsToUpload: string[] = []
+
+        if (Array.isArray(selectedPaths)) filePathsToUpload = selectedPaths
+        else filePathsToUpload = [selectedPaths]
+
+        const filesToUpload: FileToUpload[] = await Promise.all(filePathsToUpload.map(async (p) => {
+            const baseName = await basename(p)
+            console.log(baseName)
+            const extName = await extname(p)
+            const target = await join(this.currentPath!!, `${baseName}.${extName}`)
+            return {
+                source: p,
+                target
+            }
+        }))
+
+        console.log(filesToUpload)
+
+        console.log(filesToUpload)
+        await invoke("send_files", { address: Socket.connectedServer, filesToUpload })
+    }
+}
+
+type FileToUpload = {
+    source: string,
+    target: string
 }

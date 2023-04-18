@@ -9,17 +9,17 @@ use json::object;
 use tauri::command;
 
 #[derive(serde::Deserialize)]
-pub struct FileToRequest {
+pub struct FilesToUpload {
     source: String,
     target: String,
 }
 
 #[command]
-pub fn send_files(address: String, files_to_request: Vec<FileToRequest>) {
+pub fn send_files(address: String, files_to_upload: Vec<FilesToUpload>) {
     thread::spawn(move || {
         let mut stream = get_stream(address).unwrap();
         let mut status = [0u8; 1];
-        for f in files_to_request.iter() {
+        for f in files_to_upload.iter() {
             let (mut source_file, size) = get_source_file(&f.source).unwrap();
             let request_string = get_request_string(&f.target, size);
 
