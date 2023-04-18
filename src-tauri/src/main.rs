@@ -4,6 +4,7 @@
 )]
 
 mod file;
+mod file_out;
 mod frontend;
 mod tcp;
 mod udp;
@@ -23,8 +24,7 @@ fn main() {
             file::request_file,
             file::close_large_file_stream,
             file::get_current_progress,
-            file::connect_for_file_output,
-            file::file_out
+            file_out::send_files
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
