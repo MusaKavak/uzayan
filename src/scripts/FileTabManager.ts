@@ -8,6 +8,7 @@ import { Public } from "./Public";
 import { open } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
+import { UnlistenFn } from "@tauri-apps/api/event";
 
 export default class FileTabManager {
 
@@ -16,6 +17,8 @@ export default class FileTabManager {
     private allowToCreate = true
     private isSelectionOpen = false
     private currentPath?: string
+
+    unlistenDropListener?: UnlistenFn
 
     constructor(
         private fileManager: FileManager,
@@ -162,13 +165,31 @@ export default class FileTabManager {
             id: "directory-header",
             clss: "card",
             children: [
+                this.getHeaderTitle(file),
+                this.getDropMessage(),
+                this.getDirectoryActions()
+            ]
+        })
+    }
+
+    private getHeaderTitle(file: File): HTMLElement {
+        return Public.createElement({
+            id: "directory-header-title",
+            children: [
                 this.getGoBackButton(file.parent, file.isRoot),
                 Public.createElement({
                     id: "directory-name",
+                    title: file.name,
                     content: file.name
                 }),
-                this.getDirectoryActions()
             ]
+        })
+    }
+
+    private getDropMessage(): HTMLElement {
+        return Public.createElement({
+            id: "directory-drop",
+            content: "Drop file(s) to upload"
         })
     }
 
@@ -207,7 +228,7 @@ export default class FileTabManager {
                     title: "Upload",
                     listener: {
                         event: "click",
-                        callback: () => this.uploadFiles()
+                        callback: () => this.selectFilesToUpload()
                     }
                 })
             ]
@@ -253,7 +274,7 @@ export default class FileTabManager {
         this.filesToRequest = this.filesToRequest.filter(file => file != f)
     }
 
-    private async uploadFiles() {
+    private async selectFilesToUpload() {
         if (this.currentPath == undefined) return
         await appWindow.setAlwaysOnTop(false)
         const selectedPaths = await open({
@@ -269,6 +290,24 @@ export default class FileTabManager {
         if (Array.isArray(selectedPaths)) filePathsToUpload = selectedPaths
         else filePathsToUpload = [selectedPaths]
 
+        this.uploadFiles(filePathsToUpload)
+    }
+
+    async setDragAndDropEvents() {
+        this.unlistenDropListener = await appWindow.onFileDropEvent((event) => {
+            if (event.payload.type === 'hover') {
+                this.filesTab?.classList.add("drop-active")
+            } else if (event.payload.type === 'drop') {
+                this.filesTab?.classList.remove("drop-active")
+                this.uploadFiles(event.payload.paths)
+                console.log('User dropped', event.payload);
+            } else {
+                this.filesTab?.classList.remove("drop-active")
+            }
+        });
+    }
+
+    private async uploadFiles(filePathsToUpload: string[]) {
         const filesToUpload: FileToUpload[] = await Promise.all(filePathsToUpload.map(async (p) => {
             const baseName = await basename(p)
             console.log(baseName)
@@ -282,7 +321,6 @@ export default class FileTabManager {
 
         console.log(filesToUpload)
 
-        console.log(filesToUpload)
         await invoke("send_files", { address: Socket.connectedServer, filesToUpload })
     }
 }

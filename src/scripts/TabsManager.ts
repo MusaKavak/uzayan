@@ -1,4 +1,5 @@
 import { Socket } from "../connection/Socket"
+import FileTabManager from "./FileTabManager"
 import { Public } from "./Public"
 
 export default class TabsManager {
@@ -6,7 +7,7 @@ export default class TabsManager {
     private tabBodies = document.querySelectorAll(".tab-body")
     private currentActive = -1
 
-    constructor() {
+    constructor(private fileTabManager: FileTabManager) {
         this.setListeners()
     }
 
@@ -34,11 +35,15 @@ export default class TabsManager {
     private deactivateCurrent() {
         this.tabIcons[this.currentActive]?.classList.remove("active")
         this.tabBodies[this.currentActive]?.classList.remove("active")
+        if (this.fileTabManager.unlistenDropListener) this.fileTabManager.unlistenDropListener()
     }
 
     private invokeAction(action?: string | null) {
         if (action == "GetNotifications") Socket.send("NotificationsRequest", "")
-        if (action == "GetFiles") Socket.send("FileSystemRequest", { path: "" })
+        if (action == "GetFiles") {
+            Socket.send("FileSystemRequest", { path: "" })
+            this.fileTabManager.setDragAndDropEvents()
+        }
         if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: Public.settings.ImageCountPerRequest })
     }
 

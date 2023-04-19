@@ -20,12 +20,12 @@ async function Main() {
     const windowLayoutManager = new WindowLayoutManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowLayoutManager)
-    new TabsManager()
     const ioManager = new IOManager()
     const fileManager = new FileManager(ioManager)
     const fileTabManager = new FileTabManager(fileManager, dialogManager)
     const imageManager = new ImageManager(fileManager)
     const connectionState = new ConnectionState(headerManager)
+    new TabsManager(fileTabManager)
     new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileTabManager)
 }
 
