@@ -2,7 +2,9 @@ use std::{
     fs::File,
     io::{Read, Result, Write},
     net::TcpStream,
+    sync::mpsc,
     thread,
+    time::Duration,
 };
 
 use json::object;
@@ -14,13 +16,15 @@ pub struct FilesToUpload {
     target: String,
 }
 
+static mut BYTES_WROTE: u64 = 0;
+
 #[command]
 pub fn send_files(address: String, files_to_upload: Vec<FilesToUpload>) {
     thread::spawn(move || {
         let mut stream = get_stream(address).unwrap();
         let mut status = [0u8; 1];
         for f in files_to_upload.iter() {
-            let (mut source_file, size) = get_source_file(&f.source).unwrap();
+            let (source_file, size) = get_source_file(&f.source).unwrap();
             let request_string = get_request_string(&f.target, size);
 
             stream.write(request_string.as_bytes()).unwrap();
@@ -28,17 +32,9 @@ pub fn send_files(address: String, files_to_upload: Vec<FilesToUpload>) {
             println!("status : {}", status[0]);
 
             if status[0] == 100 {
-                let mut buf = [0u8; 4096];
-                println!("File Out Start");
-                loop {
-                    let bytes_read = source_file.read(&mut buf).unwrap();
-                    if bytes_read == 0 {
-                        break;
-                    }
-                    stream.write(&buf[..bytes_read]).unwrap();
-                }
-                println!("File Out End");
+                unsafe { fire_sending(size, source_file, &stream) }
             }
+
             stream.read(&mut status).unwrap();
             println!("file ended with {}", status[0]);
             if status[0] != 99 {
@@ -47,6 +43,32 @@ pub fn send_files(address: String, files_to_upload: Vec<FilesToUpload>) {
         }
         stream.write(String::from("done").as_bytes()).unwrap();
     });
+}
+
+unsafe fn fire_sending(size: u64, mut source_file: File, mut stream: &TcpStream) {
+    let mut buf = [0u8; 4096];
+    println!("File Out Start");
+
+    let progress_tracker = thread::spawn(move || loop {
+        let progress = BYTES_WROTE as f64 / size as f64 * 100.0;
+        println!("Progress: {}%", progress);
+        if BYTES_WROTE == size {
+            BYTES_WROTE = 0;
+            break;
+        }
+        thread::sleep(Duration::from_millis(1000))
+    });
+
+    loop {
+        let bytes_read = source_file.read(&mut buf).unwrap();
+        BYTES_WROTE += bytes_read as u64;
+        if BYTES_WROTE == size {
+            break;
+        }
+        stream.write(&buf[..bytes_read]).unwrap();
+    }
+    println!("File Out End");
+    progress_tracker.join().unwrap();
 }
 
 fn get_request_string(path: &String, size: u64) -> String {
