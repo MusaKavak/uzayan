@@ -1,85 +1,76 @@
-import { invoke } from "@tauri-apps/api"
 import IOSvg from "../assets/io.svg"
 import { Public } from "./Public"
-import { open } from "@tauri-apps/api/shell"
+// import { open } from "@tauri-apps/api/shell"
+import { listen } from "@tauri-apps/api/event"
 
 export default class IOManager {
     private svg = new IOSvg()
     private ioContainer = document.getElementById("io-container")
-    private currentContainer?: HTMLElement
-    private currentFileName?: HTMLElement
-    private currentRatio?: HTMLElement
-    private currentFileInfo?: HTMLElement
-    private progressIndex = 0
 
     constructor() {
-        this.listenMessages().then(() => { })
+        this.listenMessages()
     }
 
-    async listenMessages() { }
-
-    async createNewInputProgressBar(countOfFiles: number, firstFileName: string, path: string) {
-        if (this.ioContainer == null) return
-        this.progressIndex++
-        const id = "io-" + this.progressIndex
-        this.currentContainer = this.getProgressContainer(countOfFiles, firstFileName, path, id)
-        this.syncProgress()
-        this.ioContainer.appendChild(this.currentContainer)
-    }
-
-    nextFile(currentFileInfo: string, fileName: string) {
-        this.setCurrentState({
-            currentFileInfo,
-            fileName,
-            ratio: 0
+    private async listenMessages() {
+        await listen<{ id: number, isInput: boolean, downloadLocation?: string }>("progress_bar_request", (e) => {
+            this.createNewInputProgressBar(e.payload.id, e.payload.isInput)
+        })
+        await listen<ProgressUpdate>("progress_update", (e) => {
+            console.log(e.payload)
+            this.updateProgressBar(e.payload)
         })
     }
 
-    endOfProgress() {
-        this.currentContainer?.classList.add("done")
+
+    async createNewInputProgressBar(id: number, isInput: boolean) {
+        if (this.ioContainer == null) return
+        const idAtrr = "io-" + id
+        this.ioContainer.appendChild(this.getProgressContainer(idAtrr, isInput))
     }
 
-    private getProgressContainer(countOfFiles: number, firstFileName: string, path: string, id: string): HTMLElement {
+
+    private getProgressContainer(id: string, isInput: boolean): HTMLElement {
         const container = Public.createElement({
             clss: "io-progress",
             id,
             children: [
-                this.getHeader(countOfFiles),
-                this.getBar(firstFileName, path, id)
+                this.getHeader(isInput),
+                this.getBar(id)
             ]
         })
         container.setAttribute("style", "--ratio: 0%")
         return container
     }
 
-    private getBar(firstFileName: string, path: string, id: string): HTMLElement {
-        const fileName = document.createElement("div")
-        fileName.textContent = firstFileName
-        fileName.setAttribute("title", firstFileName)
-        this.currentFileName = fileName
+    private getBar(id: string): HTMLElement {
         return Public.createElement({
             clss: "io-bar",
             children: [
-                fileName,
-                this.getBarRatio(),
-                this.getBarActions(path, id)
+                this.getFileName(),
+                this.getProgressRatio(),
+                this.getBarActions(id)
             ]
         })
     }
 
-    private getBarRatio(): HTMLElement {
-        const ratio = document.createElement("div");
-        ratio.textContent = "0%"
-        this.currentRatio = ratio
-        return ratio
+    private getFileName(): HTMLElement {
+        return Public.createElement({
+            clss: "io-file-name",
+        })
     }
 
-    private getBarActions(path: string, id: string): HTMLElement {
+    private getProgressRatio(): HTMLElement {
+        return Public.createElement({
+            clss: "io-progress-ratio",
+        })
+    }
+
+    private getBarActions(id: string): HTMLElement {
         return Public.createElement({
             clss: "io-bar-actions",
             children: [
                 this.getCancel(id),
-                this.getOpenFolder(path, id),
+                //this.getOpenFolder(path, id),
                 this.getDone(id)
             ],
         })
@@ -97,20 +88,20 @@ export default class IOManager {
         })
     }
 
-    private getOpenFolder(path: string, id: string): HTMLElement {
-        return Public.createElement({
-            clss: "io-action-done",
-            innerHtml: this.svg.folder,
-            title: "Show In Folder",
-            listener: {
-                event: 'click',
-                callback: () => {
-                    open(path)
-                    this.removeProgress(id)
-                }
-            }
-        })
-    }
+    // private getOpenFolder(path: string, id: string): HTMLElement {
+    //     return Public.createElement({
+    //         clss: "io-action-done",
+    //         innerHtml: this.svg.folder,
+    //         title: "Show In Folder",
+    //         listener: {
+    //             event: 'click',
+    //             callback: () => {
+    //                 open(path)
+    //                 this.removeProgress(id)
+    //             }
+    //         }
+    //     })
+    // }
 
     private getCancel(id: string): HTMLElement {
         return Public.createElement({
@@ -132,52 +123,54 @@ export default class IOManager {
         }, Public.settings.TransitionDuration)
     }
 
-    private getHeader(countOfFiles: number): HTMLElement {
+    private getHeader(isInput: boolean): HTMLElement {
         return Public.createElement({
             clss: "io-header",
             children: [
-                this.getIcon(),
-                this.getCurrentFileInfo(countOfFiles),
+                this.getIcon(isInput),
+                this.getFileRatio(),
             ]
         })
     }
 
-    private getIcon(): HTMLElement {
+    private getIcon(_isInput: boolean): HTMLElement {
         return Public.createElement({
             clss: "io-header-icon",
             innerHtml: this.svg.io,
         })
     }
 
-    private getCurrentFileInfo(countOfFiles: number): HTMLElement {
-        const currentFile = document.createElement("div")
-        currentFile.textContent = `1/${countOfFiles}`
-        this.currentFileInfo = currentFile
-        return currentFile
+    private getFileRatio(): HTMLElement {
+        return Public.createElement({
+            clss: "io-file-ratio"
+        })
     }
 
-    private syncProgress() {
-        const interval = setInterval(async () => {
-            const progress = await invoke<number>("get_current_progress");
-            if (progress == 100) clearInterval(interval)
-            this.setCurrentState({ ratio: progress })
-        }, 1000)
-    }
+    private updateProgressBar(p: ProgressUpdate) {
+        const container = document.querySelector('#io-' + p.id) as HTMLElement
+        if (!container) return
 
-    private setCurrentState(state: {
-        ratio?: number,
-        fileName?: string,
-        currentFileInfo?: string,
-    }) {
-        if (state.ratio && this.currentContainer)
-            this.currentContainer.style.setProperty("--ratio", `${state.ratio.toFixed(2)}%`)
-        if (state.ratio && this.currentRatio)
-            this.currentRatio.textContent = `${state.ratio.toFixed(2)}%`
-        if (state.fileName && this.currentFileName) {
-            this.currentFileName.textContent = state.fileName
+        const name = container.querySelector(".io-file-name")
+        if (name) {
+            name.textContent = p.name
+            name.setAttribute("title", p.name)
         }
-        if (state.currentFileInfo && this.currentFileInfo) {
-            this.currentFileInfo.textContent = state.currentFileInfo
-        }
+
+        const progressElement = container.querySelector(".io-progress-ratio")
+        const progress = `${p.progress.toFixed(2)}%`
+        if (progress == "100.00%") container.classList.add("done")
+        else container.classList.remove("done")
+        if (progressElement) progressElement.textContent = progress
+        container.style.setProperty("--ratio", progress)
+
+        const ratio = container.querySelector(".io-file-ratio")
+        if (ratio) ratio.textContent = p.ratio
     }
+}
+
+type ProgressUpdate = {
+    id: number,
+    name: string,
+    progress: number,
+    ratio: string,
 }
