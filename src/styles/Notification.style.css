@@ -1,5 +1,4 @@
 #recent-notifications-container {
-    overflow: scroll;
     max-height: 0;
 }
 
@@ -8,6 +7,11 @@
     box-shadow: var(--box-shadow);
     margin-top: var(--gap);
     border-radius: var(--border-radius);
+}
+
+#recent-notifications-container .notification {
+    border-radius: var(--border-radius);
+    animation: bounce 5s forwards;
 }
 
 #notifications-tab-body>div,
@@ -31,19 +35,31 @@
     overflow: auto;
 }
 
-.notification.temporary {
-    animation: bounce 5s forwards;
-}
 
 .notification-body {
     max-height: 100%;
     display: flex;
+    position: relative;
     gap: var(--gap);
+    z-index: 5;
 }
 
 .notification input {
     opacity: 0;
     position: absolute;
+}
+
+.notification-progress {
+    background-image: linear-gradient(90deg,
+            var(--clr-accent) var(--ratio),
+            transparent var(--ratio) 100%);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.2;
+    z-index: 0;
 }
 
 .notification-folder {
@@ -53,8 +69,8 @@
     right: var(--gap);
     top: 5px;
     border-radius: 50%;
+    z-index: 5;
     background-color: var(--clr-accent-transparent);
-    transition: var(--transition);
 }
 
 .notification:has(input:checked)>.notification-folder {
@@ -64,10 +80,11 @@
 .notification-actions {
     width: max-content;
     display: flex;
+    position: relative;
     border-radius: var(--border-radius);
     overflow: hidden;
     max-height: 0;
-    transition: var(--transition);
+    z-index: 5;
 }
 
 .notification input:checked~.notification-actions {
@@ -110,26 +127,36 @@
     white-space: normal;
 }
 
+.notification-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.notification-title img {
+    height: 1.2rem;
+
+}
 
 .notification-text,
-.notification-bigtext {
+.notification-big-text {
     color: var(--clr-primary-dark);
 }
 
 @keyframes bounce {
     0% {
-        max-height: 0;
+        max-height: 0 !important;
     }
 
     10% {
-        max-height: 200px;
+        max-height: 200px !important;
     }
 
     90% {
-        max-height: 200px;
+        max-height: 200px !important;
     }
 
     to {
-        max-height: 0;
+        max-height: 0 !important;
     }
 }

@@ -11,7 +11,8 @@ export default class NotificationManager {
     private notificationTab = document.getElementById("notifications-tab-body")
 
     private notifications: { [key: string]: HTMLElement } = {}
-    private groups: { [packageName: string]: { element: HTMLElement, keys: string[] } } = {}
+    private headsUpNotifications: { [key: string]: HTMLElement } = {}
+    private groups: { [groupKey: string]: { container: HTMLElement } } = {}
 
     constructor(private windowLayoutManager: WindowLayoutManager) { }
 
@@ -25,15 +26,24 @@ export default class NotificationManager {
     }
 
     newNotification(nf: Notification, headsUp: boolean) {
-        console.log(nf.text)
-        console.log(nf.bigText)
         const element = this.createNotificationElement(nf)
+        let push = true;
+
         if (this.notifications[nf.key]) {
             this.notifications[nf.key].replaceWith(element)
-        } else {
-            this.pushNotification(nf.key, nf.isGroup || false, element, nf.packageName)
+            this.notifications[nf.key] = element
+            push = false
         }
-        if (headsUp) this.showHeadsUp(element)
+        if (this.headsUpNotifications[nf.key]) {
+            this.headsUpNotifications[nf.key].replaceWith(element)
+            this.headsUpNotifications[nf.key] = element
+            push = false
+        }
+
+        if (push) {
+            this.pushNotification(nf.key, element, nf.isGroup, nf.groupKey)
+            if (headsUp) this.showHeadsUp(nf.key, element)
+        }
     }
 
     removeNotification(key?: string) {
@@ -43,31 +53,33 @@ export default class NotificationManager {
         }
     }
 
-    private pushNotification(key: string, isGroup: boolean, element: HTMLElement, packageName: string) {
+    private pushNotification(key: string, element: HTMLElement, isGroup: boolean, groupKey?: string) {
         this.notifications[key] = element
-        if (isGroup) {
-            if (this.groups[packageName] == undefined) {
-                this.groups[packageName] = { element: this.createGroup(), keys: [] }
-                this.notificationTab?.appendChild(this.groups[packageName].element)
+        if (isGroup && groupKey) {
+            if (this.groups[groupKey] == undefined) {
+                this.groups[groupKey] = { container: this.createGroup() }
+                this.notificationTab?.appendChild(this.groups[groupKey].container)
             }
-            this.groups[packageName].element.appendChild(element)
-            this.groups[packageName].keys.push(key)
+            this.groups[groupKey].container.appendChild(element)
         } else {
             this.notificationTab?.appendChild(element)
         }
     }
 
-    private showHeadsUp(element: Element) {
-        const headsUp = element.cloneNode(true) as Element
-        headsUp.classList.add("headsup")
+    private showHeadsUp(key: string, element: HTMLElement) {
+        const headsUp = element.cloneNode(true) as HTMLElement
+        this.headsUpNotifications[key] = headsUp
         this.windowLayoutManager.openWindowForNotification()
         this.headsUpContainer?.appendChild(headsUp)
-        this.unbounceNotification(headsUp)
+        this.unbounceNotification(key)
     }
 
 
-    private unbounceNotification(element: Element) {
-        setTimeout(() => element.remove(), 5000);
+    private unbounceNotification(key: string) {
+        setTimeout(() => {
+            this.headsUpNotifications[key]?.remove()
+            delete this.headsUpNotifications[key]
+        }, 5000);
     }
 
     private createGroup(): HTMLElement {
@@ -84,8 +96,8 @@ export default class NotificationManager {
             type: "label",
             innerHtml: actions ? this.svg.folder : "",
             clss: "notification",
-            id: "notification-" + nf.key,
             children: [
+                this.getNotificationProgress(nf.progress, nf.progressMax),
                 folder,
                 this.getNotificationBody(nf),
                 actions
@@ -95,7 +107,18 @@ export default class NotificationManager {
         return element
     }
 
-    getFolder(): HTMLElement {
+    private getNotificationProgress(progress?: number, progressMax?: number): HTMLElement | undefined {
+        if (progress && progressMax && progressMax != 0) {
+            const p = document.createElement("div")
+            p.classList.add("notification-progress")
+            const ratio = progress / progressMax * 100
+            p.setAttribute("style", `--ratio: ${ratio}%`)
+            return p
+        }
+        return
+    }
+
+    private getFolder(): HTMLElement {
         const folder = Public.createElement({
             type: "input",
         })
@@ -142,13 +165,20 @@ export default class NotificationManager {
         return Public.createElement({
             clss: "notification-content",
             children: [
-                Public.createElement({ clss: "notification-title", content: nf.title }),
-                Public.createElement({ clss: "notification-text", content: nf.text }),
-                nf.bigText && nf.text != nf.bigText
-                    ? Public.createElement({
-                        clss: "notification-big-text",
-                        content: nf.bigText
-                    }) : undefined
+                this.getNotificationTitle(nf),
+                nf.bigText
+                    ? Public.createElement({ clss: "notification-big-text", content: nf.bigText })
+                    : Public.createElement({ clss: "notification-text", content: nf.text }),
+            ]
+        })
+    }
+
+    private getNotificationTitle(nf: Notification): HTMLElement {
+        return Public.createElement({
+            clss: "notification-title",
+            children: [
+                nf.smallIcon ? Public.createElement({ type: "img", src: Public.base64head + nf.smallIcon }) : undefined,
+                Public.createElement({ type: "span", content: nf.title })
             ]
         })
     }
