@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-mod file;
+mod file_in;
 mod file_out;
 mod frontend;
 mod tcp;
@@ -20,10 +20,7 @@ fn main() {
             tcp::connect,
             tcp::emit_message,
             tcp::get_ip_address,
-            file::open_large_file_stream,
-            file::request_file,
-            file::close_large_file_stream,
-            file::get_current_progress,
+            file_in::receive_files,
             file_out::send_files
         ])
         .run(tauri::generate_context!())

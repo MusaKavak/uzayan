@@ -3,12 +3,13 @@ import FileSvg from "../assets/file.svg";
 import { Socket } from "../connection/Socket";
 import { File } from "../types/network/File";
 import { DialogManager } from "./DialogManager";
-import FileManager from "./FileManager";
+import FileManager from "./FileTransferManager";
 import { Public } from "./Public";
 import { open } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
+import { FileToDownload } from "../types/local/FileToTransfer";
 
 export default class FileTabManager {
 
@@ -91,7 +92,7 @@ export default class FileTabManager {
             listener: {
                 event: "click",
                 callback: () => {
-                    this.fileManager.requestFiles([f])
+                    this.fileManager.downloadFiles([{ source: f.path, size: f.size }])
                 }
             }
         })
@@ -203,7 +204,9 @@ export default class FileTabManager {
                     clss: "requires-selected",
                     listener: {
                         event: "click",
-                        callback: () => { this.fileManager.requestFiles(this.filesToRequest) }
+                        callback: () => {
+                            this.fileManager.downloadFiles(this.filesToRequest)
+                        }
                     }
                 }),
                 Public.createElement({
@@ -263,15 +266,17 @@ export default class FileTabManager {
     }
 
 
-    private filesToRequest: File[] = []
+    private filesToRequest: FileToDownload[] = []
 
     private addToRequestList(f: File) {
-        if (!this.filesToRequest.includes(f)) {
-            this.filesToRequest.push(f)
+        const item = { source: f.path, size: f.size }
+        if (!this.filesToRequest.includes(item)) {
+            this.filesToRequest.push(item)
         }
     }
     private removeFromRequestList(f: File) {
-        this.filesToRequest = this.filesToRequest.filter(file => file != f)
+        const item = { source: f.path, size: f.size }
+        this.filesToRequest = this.filesToRequest.filter(f => f != item)
     }
 
     private async selectFilesToUpload() {

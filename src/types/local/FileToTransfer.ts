@@ -5,3 +5,8 @@ export type FileRequest = {
     location: string,
     size: number,
 }
+
+export type FileToDownload = {
+    source: string,
+    size: number,
+}

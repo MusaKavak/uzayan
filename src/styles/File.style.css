@@ -49,9 +49,11 @@
     justify-content: center;
     opacity: 0;
     transition: var(--transition);
+    z-index: -1;
 }
 
 .drop-active #directory-drop {
+    z-index: 10;
     opacity: 1;
 }
 

@@ -12,7 +12,7 @@ use json::object;
 use tauri::{command, Window};
 
 #[derive(serde::Deserialize)]
-pub struct FilesToUpload {
+pub struct FileToUpload {
     source: String,
     target: String,
 }
@@ -35,7 +35,7 @@ static ID: AtomicU8 = AtomicU8::new(0);
 static mut BYTES_WROTE: u64 = 0;
 
 #[command]
-pub fn send_files(window: Window, address: String, files_to_upload: Vec<FilesToUpload>) {
+pub fn send_files(window: Window, address: String, files_to_upload: Vec<FileToUpload>) {
     thread::spawn(move || {
         let mut stream = get_stream(address).unwrap();
         let mut status = [0u8; 1];
@@ -123,8 +123,7 @@ fn get_request_string(path: &String, size: u64) -> String {
         path : path.clone(),
         size : size
     };
-    let mut request_string = json::stringify(json);
-    request_string.push_str("\n");
+    let request_string = json::stringify(json) + "\n";
     return request_string;
 }
 
