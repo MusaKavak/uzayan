@@ -69,6 +69,11 @@
     text-align: center;
 }
 
+.io-input .io-file-name {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .io-progress:hover .io-bar {
     height: 2rem;
 }

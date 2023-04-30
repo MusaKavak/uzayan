@@ -39,7 +39,7 @@ pub fn receive_files(window: Window, address: String, files_to_receive: Vec<File
     thread::spawn(move || {
         let mut stream = get_stream(address).unwrap();
 
-        let progress_update_base = send_progress_bar_request(&window, false);
+        let progress_update_base = send_progress_bar_request(&window, true);
         let denominator = format!("/{}", files_to_receive.len());
 
         for (i, f) in files_to_receive.iter().enumerate() {
@@ -55,6 +55,7 @@ pub fn receive_files(window: Window, address: String, files_to_receive: Vec<File
                 let mut progress_update = progress_update_base.clone();
                 progress_update.name = f.name.clone();
                 progress_update.ratio = format!("{}{}", i + 1, &denominator);
+                progress_update.path = Some(f.target.clone());
                 unsafe {
                     fire_receiving(
                         file_to_download,

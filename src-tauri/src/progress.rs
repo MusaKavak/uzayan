@@ -15,6 +15,7 @@ pub struct ProgressUpdate {
     pub name: String,
     pub progress: f32,
     pub ratio: String,
+    pub path: Option<String>,
 }
 
 static ID: AtomicU8 = AtomicU8::new(0);
@@ -31,5 +32,6 @@ pub fn send_progress_bar_request(window: &Window, is_input: bool) -> ProgressUpd
         name: String::new(),
         progress: 0.0,
         ratio: String::new(),
+        path: if is_input { Some(String::new()) } else { None },
     };
 }
