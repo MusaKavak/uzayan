@@ -20,6 +20,7 @@ export default class FileManager {
 
             return {
                 target,
+                name: fileName,
                 source: f.source,
                 size: f.size
             }
@@ -50,7 +51,8 @@ export default class FileManager {
 }
 
 type ReceiveFileRequest = {
-    target: String,
-    source: String,
+    target: string,
+    name: string
+    source: string,
     size: number,
 }

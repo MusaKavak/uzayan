@@ -6,6 +6,7 @@
 mod file_in;
 mod file_out;
 mod frontend;
+mod progress;
 mod tcp;
 mod udp;
 

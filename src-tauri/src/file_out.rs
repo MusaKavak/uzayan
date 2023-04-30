@@ -3,7 +3,6 @@ use std::{
     io::{Read, Result, Write},
     net::TcpStream,
     path::Path,
-    sync::atomic::AtomicU8,
     thread,
     time::Duration,
 };
@@ -11,27 +10,14 @@ use std::{
 use json::object;
 use tauri::{command, Window};
 
+use crate::progress::{send_progress_bar_request, ProgressUpdate};
+
 #[derive(serde::Deserialize)]
 pub struct FileToUpload {
     source: String,
     target: String,
 }
 
-#[derive(serde::Serialize, Clone)]
-pub struct ProgressRequest {
-    id: u8,
-    is_input: bool,
-}
-
-#[derive(serde::Serialize, Clone)]
-pub struct ProgressUpdate {
-    id: u8,
-    name: String,
-    progress: f32,
-    ratio: String,
-}
-
-static ID: AtomicU8 = AtomicU8::new(0);
 static mut BYTES_WROTE: u64 = 0;
 
 #[command]
@@ -39,23 +25,8 @@ pub fn send_files(window: Window, address: String, files_to_upload: Vec<FileToUp
     thread::spawn(move || {
         let mut stream = get_stream(address).unwrap();
         let mut status = [0u8; 1];
-        let id = ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        window
-            .emit(
-                "progress_bar_request",
-                ProgressRequest {
-                    id,
-                    is_input: false,
-                },
-            )
-            .unwrap();
 
-        let progress_update_base = ProgressUpdate {
-            id,
-            name: String::from(""),
-            progress: 0.0,
-            ratio: String::from(""),
-        };
+        let progress_update_base = send_progress_bar_request(&window, false);
         let denominator = format!("/{}", files_to_upload.len());
 
         for (i, f) in files_to_upload.iter().enumerate() {
