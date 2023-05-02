@@ -15,7 +15,7 @@ use crate::progress::{send_progress_bar_request, ProgressUpdate};
 pub struct FileToDownload {
     target: String,
     name: String,
-    source: String,
+    id: String,
     size: usize,
 }
 #[derive(Clone, serde::Serialize)]
@@ -35,7 +35,12 @@ struct UpdateProgressRequest {
 static mut BYTES_READ: usize = 0;
 
 #[command]
-pub fn receive_files(window: Window, address: String, files_to_receive: Vec<FileToDownload>) {
+pub fn receive_files(
+    window: Window,
+    address: String,
+    transfer_type: String,
+    files_to_receive: Vec<FileToDownload>,
+) {
     thread::spawn(move || {
         let mut stream = get_stream(address).unwrap();
 
@@ -45,7 +50,13 @@ pub fn receive_files(window: Window, address: String, files_to_receive: Vec<File
         for (i, f) in files_to_receive.iter().enumerate() {
             let file_to_download = create_file(&f.target).unwrap();
 
-            let json = object! {path : f.source.clone()};
+            let json = object! {
+                transferType : transfer_type.clone(),
+                id : f.id.clone(),
+                size: f.size.to_string()
+            };
+
+            println!("{:?}", json);
             let request_string = json::stringify(json) + "\n";
             stream.write(request_string.as_bytes()).unwrap();
 
@@ -69,7 +80,7 @@ pub fn receive_files(window: Window, address: String, files_to_receive: Vec<File
             }
         }
 
-        stream.write(String::from("done").as_bytes()).unwrap();
+        stream.write(String::from("done\n").as_bytes()).unwrap();
     });
 }
 

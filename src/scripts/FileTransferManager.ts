@@ -2,7 +2,7 @@ import { exists } from "@tauri-apps/api/fs"
 import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
 import { Public } from "./Public"
-import { basename, join } from "@tauri-apps/api/path";
+import { join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api";
 import { Socket } from "../connection/Socket";
 import { FileToDownload } from "../types/local/FileToTransfer";
@@ -10,25 +10,23 @@ import { FileToDownload } from "../types/local/FileToTransfer";
 export default class FileManager {
 
 
-    async downloadFiles(files: Array<FileToDownload>, downloadLocation?: string) {
+    async downloadFiles(files: Array<FileToDownload>, transferType: string, downloadLocation?: string) {
         const basePath = downloadLocation || await this.getDownloadFileLocation()
         if (!basePath) return
 
         const filesToReceive: ReceiveFileRequest[] = await Promise.all(files.map(async (f) => {
-            const fileName = await basename(f.source)
-            const target = await join(basePath, fileName)
+            const target = await join(basePath, f.name)
 
             return {
                 target,
-                name: fileName,
-                source: f.source,
+                name: f.name,
+                id: f.id,
                 size: f.size
             }
         }))
-
-        await invoke("receive_files", { address: Socket.connectedServer, filesToReceive })
+        console.log(filesToReceive[0])
+        await invoke("receive_files", { address: Socket.connectedServer, transferType, filesToReceive })
     }
-
 
     async getDownloadFileLocation(): Promise<string | undefined> {
         const path = Public.settings.DonwloadFileLocation
@@ -53,6 +51,6 @@ export default class FileManager {
 type ReceiveFileRequest = {
     target: string,
     name: string
-    source: string,
+    id: string,
     size: number,
 }

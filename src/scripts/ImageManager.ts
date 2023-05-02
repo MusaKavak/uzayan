@@ -67,7 +67,9 @@ export default class ImageManager {
             clss: "image-thumbnail",
             listener: {
                 event: "click",
-                callback: () => this.fileManager.requestImage(image.id, image.name, image.size)
+                callback: () => {
+                    this.fileManager.downloadFiles([{ size: image.size, id: image.id, name: image.name }], "ImageTransfer")
+                }
             }
         })
     }

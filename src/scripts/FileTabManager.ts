@@ -92,7 +92,7 @@ export default class FileTabManager {
             listener: {
                 event: "click",
                 callback: () => {
-                    this.fileManager.downloadFiles([{ source: f.path, size: f.size }])
+                    this.fileManager.downloadFiles([{ id: f.path, size: f.size, name: f.name }], "FileTransfer")
                 }
             }
         })
@@ -205,7 +205,7 @@ export default class FileTabManager {
                     listener: {
                         event: "click",
                         callback: () => {
-                            this.fileManager.downloadFiles(this.filesToRequest)
+                            this.fileManager.downloadFiles(this.filesToRequest, "FileTransfer")
                         }
                     }
                 }),
@@ -269,13 +269,13 @@ export default class FileTabManager {
     private filesToRequest: FileToDownload[] = []
 
     private addToRequestList(f: File) {
-        const item = { source: f.path, size: f.size }
+        const item = { id: f.path, size: f.size, name: f.name }
         if (!this.filesToRequest.includes(item)) {
             this.filesToRequest.push(item)
         }
     }
     private removeFromRequestList(f: File) {
-        const item = { source: f.path, size: f.size }
+        const item = { id: f.path, size: f.size, name: f.name }
         this.filesToRequest = this.filesToRequest.filter(f => f != item)
     }
 

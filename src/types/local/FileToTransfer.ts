@@ -7,6 +7,7 @@ export type FileRequest = {
 }
 
 export type FileToDownload = {
-    source: string,
+    id: string,
+    name: string
     size: number,
 }
