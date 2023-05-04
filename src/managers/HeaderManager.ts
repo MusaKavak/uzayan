@@ -1,7 +1,7 @@
 import { WebviewWindow, appWindow } from "@tauri-apps/api/window"
-import { Socket } from "../connection/Socket"
+import Socket from "../connection/Socket"
 import { listen } from "@tauri-apps/api/event"
-import { Public } from "./Public"
+import Public from "../utils/Public"
 import { HeaderSvg } from "../assets/header.svg"
 
 export default class HeaderManager {

@@ -1,6 +1,6 @@
 import { AppSettings } from "../types/local/Settings"
 
-export class Public {
+export default class Public {
     static settings: AppSettings
     static base64head = "data:image/webp;base64, "
     static isWindowOpen = false

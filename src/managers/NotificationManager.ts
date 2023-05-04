@@ -1,8 +1,8 @@
 import NotificationSvg from "../assets/notification.svg";
-import { Socket } from "../connection/Socket";
+import Socket from "../connection/Socket";
 import { Notification } from "../types/network/Notification";
-import { Public } from "./Public";
-import WindowLayoutManager from "./WindowLayoutManager";
+import Public from "../utils/Public";
+import WindowManager from "./WindowManager";
 
 export default class NotificationManager {
     private svg = new NotificationSvg()
@@ -14,7 +14,7 @@ export default class NotificationManager {
     private headsUpNotifications: { [key: string]: HTMLElement } = {}
     private groups: { [groupKey: string]: { container: HTMLElement } } = {}
 
-    constructor(private windowLayoutManager: WindowLayoutManager) { }
+    constructor(private windowManager: WindowManager) { }
 
     syncNotifications(nfs: Notification[]) {
         if (this.notificationTab != null) {
@@ -69,7 +69,7 @@ export default class NotificationManager {
     private showHeadsUp(key: string, element: HTMLElement) {
         const headsUp = element.cloneNode(true) as HTMLElement
         this.headsUpNotifications[key] = headsUp
-        this.windowLayoutManager.openWindowForNotification()
+        this.windowManager.openWindowForNotification()
         this.headsUpContainer?.appendChild(headsUp)
         this.unbounceNotification(key)
     }

@@ -1,10 +1,10 @@
 import IOSvg from "../assets/io.svg"
-import { Public } from "./Public"
+import Public from "../utils/Public"
 import { open } from "@tauri-apps/api/shell"
 import { listen } from "@tauri-apps/api/event"
 import { join } from "@tauri-apps/api/path"
 
-export default class IOManager {
+export default class IOProgressManager {
     private svg = new IOSvg()
     private ioContainer = document.getElementById("io-container")
 

@@ -1,8 +1,8 @@
 import { ImageThumbnail } from "../types/network/ImageThumbnail";
 import { unix } from "dayjs"
-import { Public } from "./Public";
-import { Socket } from "../connection/Socket";
-import FileManager from "./FileTransferManager";
+import Public from "../utils/Public";
+import Socket from "../connection/Socket";
+import FileTransfer from "../utils/FileTransfer";
 
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
@@ -10,7 +10,7 @@ export default class ImageManager {
     loadMoreButton = this.getLoadMoreButton()
     lastImageIndex = 0
 
-    constructor(private fileManager: FileManager) {
+    constructor(private fileManager: FileTransfer) {
         this.imagesTab?.appendChild(this.loadMoreButton)
     }
 

@@ -1,7 +1,7 @@
 import { readTextFile } from "@tauri-apps/api/fs"
 import { resolveResource } from "@tauri-apps/api/path"
 import { ApperanceSettings, AppSettings } from "../types/local/Settings"
-import { Public } from "./Public"
+import Public from "../utils/Public"
 
 async function getAppSettings(): Promise<AppSettings> {
     const settings = await readTextFile(await resolveResource("resources/settings/app.settings.json"))

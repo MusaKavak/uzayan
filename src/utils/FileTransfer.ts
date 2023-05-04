@@ -1,14 +1,13 @@
 import { exists } from "@tauri-apps/api/fs"
 import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
-import { Public } from "./Public"
+import Public from "../utils/Public"
 import { join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api";
-import { Socket } from "../connection/Socket";
+import Socket from "../connection/Socket";
 import { FileToDownload } from "../types/local/FileToTransfer";
 
-export default class FileManager {
-
+export default class FileTransfer {
 
     async downloadFiles(files: Array<FileToDownload>, transferType: TransferType, downloadLocation?: string) {
         const basePath = downloadLocation || await this.getDownloadFileLocation()

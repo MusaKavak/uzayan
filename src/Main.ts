@@ -1,32 +1,32 @@
-import { Socket } from "./connection/Socket";
-import { ConnectionState } from "./connection/ConnectionState";
-import MediaSessionManager from "./scripts/MediaSessionManager";
-import NotificationManager from "./scripts/NotificationManager";
-import HeaderManager from "./scripts/HeaderManager";
-import WindowLayoutManager from "./scripts/WindowLayoutManager";
-import TabsManager from "./scripts/TabsManager";
-import ImageManager from "./scripts/ImageManager";
-import FileTabManager from "./scripts/FileTabManager";
-import IOManager from "./scripts/IOManager";
-import FileManager from "./scripts/FileTransferManager";
-import { loadSettings } from "./scripts/Settings";
-import { DialogManager } from "./scripts/DialogManager";
+import Socket from "./connection/Socket";
+import ConnectionState from "./connection/ConnectionState";
+import MediaSessionManager from "./managers/MediaSessionManager";
+import NotificationManager from "./managers/NotificationManager";
+import HeaderManager from "./managers/HeaderManager";
+import WindowManager from "./managers/WindowManager";
+import TabsManager from "./managers/TabsManager";
+import ImageManager from "./managers/ImageManager";
+import FileManager from "./managers/FileManager";
+import IOProgressManager from "./managers/IOProgressManager";
+import FileTransfer from "./utils/FileTransfer";
+import { loadSettings } from "./utils/Settings";
+import DialogManager from "./managers/DialogManager";
 
 async function Main() {
     //document.addEventListener('contextmenu', event => event.preventDefault());
     await loadSettings()
     const dialogManager = new DialogManager()
     const headerManager = new HeaderManager()
-    const windowLayoutManager = new WindowLayoutManager(document.body)
+    const windowManager = new WindowManager(document.body)
     const mediaSessionManager = new MediaSessionManager()
-    const notificationManager = new NotificationManager(windowLayoutManager)
-    const ioManager = new IOManager()
-    const fileTransferManager = new FileManager(ioManager)
-    const fileTabManager = new FileTabManager(fileTransferManager, dialogManager)
-    const imageManager = new ImageManager(fileTransferManager)
+    const notificationManager = new NotificationManager(windowManager)
+    const fileTransfer = new FileTransfer()
+    const fileManager = new FileManager(fileTransfer, dialogManager)
+    const imageManager = new ImageManager(fileTransfer)
     const connectionState = new ConnectionState(headerManager)
-    new TabsManager(fileTabManager)
-    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileTabManager)
+    new IOProgressManager()
+    new TabsManager(fileManager)
+    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileManager)
 }
 
 

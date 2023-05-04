@@ -1,8 +1,8 @@
 import { SessionSvg } from "../assets/session.svg";
-import { Socket } from "../connection/Socket";
+import Socket from "../connection/Socket";
 import { MediaSession } from "../types/network/MediaSession";
 import { MediaSessionState } from "../types/network/MediaSessionState";
-import { Public } from "./Public";
+import Public from "../utils/Public";
 
 export default class MediaSessionManager {
   private svg = new SessionSvg()

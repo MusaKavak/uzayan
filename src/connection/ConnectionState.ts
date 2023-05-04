@@ -1,9 +1,9 @@
 import { invoke } from "@tauri-apps/api"
 import qrcode from "qrcode"
-import HeaderManager from "../scripts/HeaderManager"
-import { Socket } from "./Socket"
+import HeaderManager from "../managers/HeaderManager"
+import Socket from "./Socket"
 
-export class ConnectionState {
+export default class ConnectionState {
     canvas = document.getElementById("qrcode-canvas")
     pairCode = "123414"
 

@@ -1,20 +1,20 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
-import MediaSessionManager from '../scripts/MediaSessionManager'
+import MediaSessionManager from '../managers/MediaSessionManager'
 import { ConnectionObject } from '../types/local/ConnectionObject'
-import NotificationManager from '../scripts/NotificationManager'
-import { ConnectionState } from './ConnectionState'
-import ImageManager from '../scripts/ImageManager'
-import FileTabManager from '../scripts/FileTabManager'
+import NotificationManager from '../managers/NotificationManager'
+import ConnectionState from './ConnectionState'
+import ImageManager from '../managers/ImageManager'
+import FileManager from '../managers/FileManager'
 
-export class Socket {
+export default class Socket {
 
     constructor(
         private connectionState: ConnectionState,
         private mediaSessionManager: MediaSessionManager,
         private notificationManger: NotificationManager,
         private imageManager: ImageManager,
-        private fileTabManager: FileTabManager
+        private fileManager: FileManager
     ) { this.inititialize() }
 
     private async inititialize() {
@@ -47,7 +47,7 @@ export class Socket {
             case "RemoveNotification": { this.notificationManger.removeNotification(message.input); break }
             case "Notifications": { this.notificationManger.syncNotifications(message.input); break }
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.input); break }
-            case "FileSystem": { this.fileTabManager.createFiles(message.input); break }
+            case "FileSystem": { this.fileManager.createFiles(message.input); break }
             default: break;
         }
     }

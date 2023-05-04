@@ -1,17 +1,17 @@
 import { basename, extname, join } from "@tauri-apps/api/path";
 import FileSvg from "../assets/file.svg";
-import { Socket } from "../connection/Socket";
+import Socket from "../connection/Socket";
 import { File } from "../types/network/File";
-import { DialogManager } from "./DialogManager";
-import FileManager from "./FileTransferManager";
-import { Public } from "./Public";
+import DialogManager from "./DialogManager";
+import FileTransfer from "../utils/FileTransfer";
+import Public from "../utils/Public";
 import { open } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
 import { FileToDownload } from "../types/local/FileToTransfer";
 
-export default class FileTabManager {
+export default class FileManager {
 
     private filesTab = document.getElementById("files-tab-body")
     private svg = new FileSvg()
@@ -22,7 +22,7 @@ export default class FileTabManager {
     unlistenDropListener?: UnlistenFn
 
     constructor(
-        private fileManager: FileManager,
+        private fileManager: FileTransfer,
         private dialogManager: DialogManager) {
         this.filesTab?.classList.toggle("select")
     }

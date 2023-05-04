@@ -1,7 +1,7 @@
 import { appWindow, currentMonitor, LogicalPosition, LogicalSize } from "@tauri-apps/api/window"
-import { Public } from "./Public"
+import Public from "../utils/Public"
 
-export default class WindowLayoutManager {
+export default class WindowManager {
     private size = new LogicalSize(0, 0)
     private position = new LogicalPosition(0, 0)
     private blockMouseEvents = false

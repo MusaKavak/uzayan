@@ -1,6 +1,6 @@
-import { Public } from "./Public"
+import Public from "../utils/Public"
 
-export class DialogManager {
+export default class DialogManager {
     private dialogContainer = document.getElementById("dialog-container")
     private activeDialog?: HTMLElement
 
