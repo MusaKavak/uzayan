@@ -10,7 +10,7 @@ import { FileToDownload } from "../types/local/FileToTransfer";
 export default class FileManager {
 
 
-    async downloadFiles(files: Array<FileToDownload>, transferType: string, downloadLocation?: string) {
+    async downloadFiles(files: Array<FileToDownload>, transferType: TransferType, downloadLocation?: string) {
         const basePath = downloadLocation || await this.getDownloadFileLocation()
         if (!basePath) return
 
@@ -54,3 +54,5 @@ type ReceiveFileRequest = {
     id: string,
     size: number,
 }
+
+type TransferType = "FileTransfer" | "ImageTransfer"
