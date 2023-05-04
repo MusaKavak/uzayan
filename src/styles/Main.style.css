@@ -108,3 +108,12 @@ html {
 .button:hover {
     background-color: var(--clr-background-bright);
 }
+
+#mouse-event-block {
+    position: absolute;
+    width: calc(100% - 4rem);
+    height: 2px;
+    top: 0;
+    left: 2rem;
+    z-index: 20;
+}

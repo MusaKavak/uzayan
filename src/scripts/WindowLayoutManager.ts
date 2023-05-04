@@ -4,6 +4,7 @@ import { Public } from "./Public"
 export default class WindowLayoutManager {
     private size = new LogicalSize(0, 0)
     private position = new LogicalPosition(0, 0)
+    private blockMouseEvents = false
 
     constructor(private body: HTMLElement) { this.setWindowOnStartup() }
 
@@ -50,6 +51,9 @@ export default class WindowLayoutManager {
     private setListeners() {
         this.body.onmouseenter = this.openWindow.bind(this)
         this.body.onmouseleave = this.closeWindow.bind(this)
+        this.body.onmouseover = () => { this.blockMouseEvents = false }
+        const mouseEventBlock = document.getElementById("mouse-event-block")
+        if (mouseEventBlock) mouseEventBlock.onmouseenter = () => this.blockMouseEvents = true
     }
 
     async openWindow() {
@@ -63,7 +67,7 @@ export default class WindowLayoutManager {
     }
 
     async closeWindow() {
-        if (!Public.isWindowPinned) {
+        if (!Public.isWindowPinned && !this.blockMouseEvents) {
             setTimeout(() => {
                 if (Public.isWindowOpen) {
                     this.body.classList.remove("window-open")
