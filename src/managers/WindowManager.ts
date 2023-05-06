@@ -14,7 +14,7 @@ export default class WindowManager {
 
         this.setWindowSize()
 
-        this.setWindowPosition(Public.settings.WindowPositionFromLeft, 0)
+        this.setWindowPosition(Public.settings.Position.WindowPositionFromLeft, 0)
 
         this.setListeners()
 
@@ -24,7 +24,7 @@ export default class WindowManager {
         }
     }
 
-    async setWindowSize(width: number = Public.settings.BarWidth, height: number = Public.settings.BarHeightWhenClosed) {
+    async setWindowSize(width: number = Public.settings.Size.BarWidth, height: number = Public.settings.Size.BarHeightWhenClosed) {
         this.size.width = width
         this.size.height = height
         await appWindow.setMinSize(this.size)
@@ -35,17 +35,14 @@ export default class WindowManager {
     async setWindowPosition(x: number, y: number) {
         this.position.x = x
         this.position.y = y
-        if (Public.settings.IsWindowCentered) {
+        if (Public.settings.Position.IsWindowCentered) {
             const size = (await currentMonitor())?.size
-            if (size != null) this.position.x = size.width - Public.settings.BarWidth
+            if (size != null) this.position.x = size.width - Public.settings.Size.BarWidth
         }
 
         //This feature is not working sometimes at first run. So run it two times (Tauri version: 1.2)
         await appWindow.setPosition(this.position)
         setTimeout(() => appWindow.setPosition(this.position), 100);
-
-        //This method doesn't just work on startup, it also works when user preferences change. So update settings
-        Public.settings.WindowPositionFromLeft = x
     }
 
     private setListeners() {
@@ -63,7 +60,7 @@ export default class WindowManager {
                 this.setWindowSize(undefined, 600)
                 this.body.classList.add("window-open")
             }
-        }, Public.settings.WindowOpenDelay);
+        }, Public.settings.Duration.WindowOpenDelay);
     }
 
     async closeWindow() {
@@ -74,9 +71,9 @@ export default class WindowManager {
                     setTimeout(() => {
                         this.setWindowSize()
                         Public.isWindowOpen = false
-                    }, Public.settings.TransitionDuration);
+                    }, Public.settings.Duration.TransitionDuration);
                 }
-            }, Public.settings.WindowOpenDelay);
+            }, Public.settings.Duration.WindowOpenDelay);
         }
     }
 

@@ -131,7 +131,7 @@ export default class IOProgressManager {
         progress?.classList.add("removing")
         setTimeout(() => {
             progress?.remove()
-        }, Public.settings.TransitionDuration)
+        }, Public.settings.Duration.TransitionDuration)
     }
 
     private getHeader(isInput: boolean): HTMLElement {

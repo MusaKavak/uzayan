@@ -44,7 +44,7 @@ export default class TabsManager {
             Socket.send("FileSystemRequest", { path: "" })
             this.fileManager.setDragAndDropEvents()
         }
-        if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: Public.settings.ImageCountPerRequest })
+        if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: 10 })
     }
 
 }

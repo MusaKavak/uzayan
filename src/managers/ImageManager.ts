@@ -34,7 +34,7 @@ export default class ImageManager {
 
     private loadMore() {
         const start = this.lastImageIndex || 0
-        Socket.send("ImageThumbnailRequest", { start, length: Public.settings.ImageCountPerRequest })
+        Socket.send("ImageThumbnailRequest", { start, length: 10 })
     }
 
     private getLoadMoreButton(): HTMLElement {

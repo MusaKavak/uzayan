@@ -17,7 +17,9 @@
         "all": true,
         "scope": [
           "$RESOURCE/resources/settings/*",
-          "$RESOURCE/resources/lang/**/*"
+          "$RESOURCE/resources/lang/**/*",
+          "$APPCONFIG/*",
+          "$CONFIG/com.tauri.dev"
         ]
       }
     },
