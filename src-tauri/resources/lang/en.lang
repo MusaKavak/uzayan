@@ -1,0 +1,52 @@
+{
+    "AppSettings": {
+        "Size": {
+            "Self": "Size",
+            "BarWidth": {
+                "Title": "Bar Width",
+                "Description": ""
+            },
+            "BarHeightWhenClosed": {
+                "Title": "Bar Height",
+                "Description": "Height of the bar while it's not active"
+            }
+        },
+        "Position": {
+            "Self": "Position",
+            "IsWindowCentered": {
+                "Title": "Keep Centered",
+                "Description": "Keeps the window on center of the screen"
+            },
+            "WindowPositionFromLeft": {
+                "Title": "Space From Left",
+                "Description": ""
+            }
+        },
+        "DownloadLocation": {
+            "Self": "Downloads",
+            "RememberDownloadLocation": {
+                "Title": "Ask Everytime",
+                "Description": ""
+            },
+            "DonwloadFileLocation": {
+                "Title": "Download Location",
+                "Description": "Path to folder where files and images will be downloaded"
+            }
+        },
+        "Duration": {
+            "Self": "Duration",
+            "WindowOpenDelay": {
+                "Title": "Window Open Delay",
+                "Description": "Duration for opening window after cursor placed on it"
+            },
+            "NotificationDuration": {
+                "Title": "Notification Duration",
+                "Description": "Showtime of Heads-Up Notifications"
+            },
+            "TransitionDuration": {
+                "Title": "Animations",
+                "Description": ""
+            }
+        }
+    }
+}

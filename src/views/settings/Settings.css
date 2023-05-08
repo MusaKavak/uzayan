@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: var(--clr-background);
+    color: var(--clr-primary);
+    --sidebar-width: 15rem;
+}
+
+#sidebar {
+    height: 100vh;
+    width: var(--sidebar-width);
+    position: fixed;
+    background-color: var(--clr-background-bright);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--gap);
+}
+
+#sidebar>div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+}
+
+#sidebar button {
+    width: 100%;
+    flex-shrink: 0;
+    border-radius: 15px;
+    outline: transparent;
+    border: none;
+    color: var(--clr-primary);
+    background-color: var(--clr-background-bright);
+    padding: 5px;
+    font-size: medium;
+    cursor: pointer;
+}
+
+#actions button {
+    background-color: var(--clr-background);
+}
+
+#sidebar button:hover {
+    filter: brightness(200%);
+}
+
+#setting-sections {
+    position: absolute;
+    left: var(--sidebar-width);
+    height: 100vh;
+    overflow: auto;
+    width: calc(100% - var(--sidebar-width));
+}
+
+.setting-section {
+    background-color: var(--clr-background-bright);
+    box-shadow: var(--box-shadow);
+    margin: 2rem;
+    border-radius: var(--border-radius);
+    padding: var(--gap);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+
+.setting-card {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-top: 2px solid var(--clr-background);
+}
+
+.setting-section .setting-card:nth-child(2) {
+    border: none;
+}
+
+.setting-card-title {
+    color: var(--clr-primary);
+}
+
+.setting-card-description {
+    font-size: small;
+    color: var(--clr-primary-dark)
+}
+
+.setting-card-input {
+    display: flex;
+}
+
+.setting-card:hover input {
+    background-color: var(--clr-background) !important;
+}
+
+.setting-card input[type="text"] {
+    outline: none;
+    border: none;
+    text-align: right;
+    font-size: medium;
+    background-color: var(--clr-background-bright);
+    color: var(--clr-accent);
+    margin-right: 2px;
+}

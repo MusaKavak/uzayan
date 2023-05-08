@@ -9,7 +9,7 @@ export type AppSettings = {
     }
     DownloadLocation: {
         RememberDownloadLocation: boolean
-        DonwloadFileLocation?: string
+        DonwloadFileLocation: string
     }
     Duration: {
         WindowOpenDelay: number

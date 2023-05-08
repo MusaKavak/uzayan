@@ -9,12 +9,16 @@ import ImageManager from "./managers/ImageManager";
 import FileManager from "./managers/FileManager";
 import IOProgressManager from "./managers/IOProgressManager";
 import FileTransfer from "./utils/FileTransfer";
-import { loadSettings } from "./utils/Settings";
+import { getAppSettings, loadApperanceSettings } from "./utils/Settings";
 import DialogManager from "./managers/DialogManager";
+import Public from "./utils/Public";
 
 async function Main() {
     //document.addEventListener('contextmenu', event => event.preventDefault());
-    await loadSettings()
+
+    Public.settings = await getAppSettings()
+    await loadApperanceSettings(Public.settings)
+
     const dialogManager = new DialogManager()
     const headerManager = new HeaderManager()
     const windowManager = new WindowManager(document.body)

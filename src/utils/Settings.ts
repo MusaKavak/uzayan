@@ -1,7 +1,6 @@
 import { createDir, exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs"
 import { appConfigDir, join } from "@tauri-apps/api/path"
 import { ApperanceSettings, AppSettings, DefaultApperanceSettings, DefaultAppSettings } from "../types/local/Settings"
-import Public from "../utils/Public"
 
 async function getSettingsFile<T>(base: T, name: string): Promise<T> {
     const filePath = await join(await appConfigDir(), `${name}.settings.json`)
@@ -33,7 +32,7 @@ export async function getApperanceSettings(): Promise<ApperanceSettings> {
     return await getSettingsFile(DefaultApperanceSettings, "apperance")
 }
 
-async function loadApperanceSettings(as: AppSettings) {
+export async function loadApperanceSettings(as: AppSettings) {
     const html = document.querySelector("html")
     const apperanceSettings = await getApperanceSettings()
 
@@ -47,9 +46,4 @@ async function loadApperanceSettings(as: AppSettings) {
     )
 
     html?.style.setProperty("--transition", `${as.Duration.TransitionDuration}ms`)
-}
-
-export async function loadSettings() {
-    Public.settings = await getAppSettings()
-    loadApperanceSettings(Public.settings)
 }

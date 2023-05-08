@@ -66,7 +66,9 @@ export default class HeaderManager {
                 callback: () => {
                     new WebviewWindow("settings", {
                         url: './src/views/settings/settings.html',
-                        title: "Uzayan - Settings"
+                        title: "Uzayan - Settings",
+                        minWidth: 500,
+                        minHeight: 500
                     })
                 }
             }
