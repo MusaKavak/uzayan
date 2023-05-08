@@ -1,5 +1,6 @@
-import { AppSettings } from "../../../types/local/Settings";
+import { AppSettings, AppearanceSettings } from "../../../types/local/Settings";
 
 export class SettingsStore {
     static appSettings: AppSettings
+    static appearanceSettings: AppearanceSettings
 }

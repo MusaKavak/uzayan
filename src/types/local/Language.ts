@@ -22,6 +22,27 @@ export type Language = {
             TransitionDuration: SettingCardContent
         }
     }
+    AppearanceSettings: {
+        Colors: {
+            Self: string
+            "--clr-background": string
+            "--clr-background-bright": string
+            "--clr-background-dark": string
+            "--clr-primary": string
+            "--clr-primary-dark": string
+            "--clr-accent": string
+            "--clr-accent-dark": string
+            "--clr-accent-transparent": string
+            "--clr-shadow": string
+            [key: string]: string
+        }
+        Appearance: {
+            Self: string
+            "--border-radius": SettingCardContent
+            "--gap": SettingCardContent
+            "--box-shadow": SettingCardContent
+        }
+    }
 }
 
 export type SettingCardContent = {

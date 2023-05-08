@@ -43,3 +43,20 @@ export function createBooleanInput<T extends Record<K, boolean>, K extends keyof
 
     return input
 }
+
+export function createColorInput<T extends Record<K, string>, K extends keyof T>(target: T, key: K, name: string): HTMLElement {
+    const container = document.createElement("div")
+    container.classList.add("color-input")
+    container.innerHTML = `<div>${name}</div>`
+
+    const input = document.createElement("input")
+    input.value = target[key]
+    input.setAttribute("type", "color")
+
+    input.onchange = () => {
+        target[key] = input.value as T[K]
+    }
+
+    container.appendChild(input)
+    return container
+}

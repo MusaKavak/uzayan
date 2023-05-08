@@ -48,5 +48,34 @@
                 "Description": ""
             }
         }
+    },
+    "AppearanceSettings": {
+        "Colors": {
+            "Self": "Colors",
+            "--clr-background": "Background Color",
+            "--clr-background-bright": "Bright Background Color",
+            "--clr-background-dark": "Dark Background Color",
+            "--clr-primary": "Primary Color",
+            "--clr-primary-dark": "Dark Primary Color",
+            "--clr-accent": "Accent Color",
+            "--clr-accent-dark": "Dark Accent Color",
+            "--clr-accent-transparent": "Transparent Accent Color",
+            "--clr-shadow": "Shadow Color"
+        },
+        "Appearance": {
+            "Self": "Appearance",
+            "--border-radius": {
+                "Title": "Border Radius",
+                "Description": ""
+            },
+            "--gap": {
+                "Title": "Gap",
+                "Description": ""
+            },
+            "--box-shadow": {
+                "Title": "Box Shadow",
+                "Description": ""
+            }
+        }
     }
 }

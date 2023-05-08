@@ -1,9 +1,9 @@
 import { createDir, exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs"
 import { appConfigDir, join } from "@tauri-apps/api/path"
-import { ApperanceSettings, AppSettings, DefaultApperanceSettings, DefaultAppSettings } from "../types/local/Settings"
+import { AppearanceSettings, AppSettings, DefaultApperanceSettings as DefaultAppearanceSettings, DefaultAppSettings } from "../types/local/Settings"
 
 async function getSettingsFile<T>(base: T, name: string): Promise<T> {
-    const filePath = await join(await appConfigDir(), `${name}.settings.json`)
+    const filePath = await join(await appConfigDir(), `${name}.settings`)
     let settings: T = base
 
     if (await exists(filePath)) {
@@ -20,7 +20,7 @@ async function getSettingsFile<T>(base: T, name: string): Promise<T> {
 }
 
 export async function writeSettingsFile<T>(settings: T, name: string) {
-    const filePath = await join(await appConfigDir(), `${name}.settings.json`)
+    const filePath = await join(await appConfigDir(), `${name}.settings`)
     await writeTextFile(filePath, JSON.stringify(settings, null, 2))
 }
 
@@ -28,16 +28,20 @@ export async function getAppSettings(): Promise<AppSettings> {
     return await getSettingsFile(DefaultAppSettings, "app")
 }
 
-export async function getApperanceSettings(): Promise<ApperanceSettings> {
-    return await getSettingsFile(DefaultApperanceSettings, "apperance")
+export async function getAppearanceSettings(): Promise<AppearanceSettings> {
+    return await getSettingsFile(DefaultAppearanceSettings, "appearance")
 }
 
-export async function loadApperanceSettings(as: AppSettings) {
+export async function loadAppearanceSettings(as: AppSettings) {
     const html = document.querySelector("html")
-    const apperanceSettings = await getApperanceSettings()
+    const appearanceSettings = await getAppearanceSettings()
 
-    for (const key in apperanceSettings) {
-        html?.style.setProperty(key, apperanceSettings[key])
+    for (const key in appearanceSettings.Colors) {
+        html?.style.setProperty(key, appearanceSettings.Colors[key])
+    }
+
+    for (const key in appearanceSettings.Appearance) {
+        html?.style.setProperty(key, appearanceSettings.Appearance[key])
     }
 
     html?.style.setProperty(
