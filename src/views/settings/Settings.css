@@ -24,11 +24,23 @@ body {
     padding: var(--gap);
 }
 
-#sidebar>div {
+#sidebar div {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap);
+}
+
+#icon {
+    display: flex;
+    justify-content: center;
+}
+
+#icon svg {
+    background-color: var(--clr-background);
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
 }
 
 #sidebar button {
@@ -149,4 +161,12 @@ body {
 
 .color-input input::-webkit-color-swatch {
     border-radius: 0;
+}
+
+.fill {
+    fill: var(--clr-primary);
+}
+
+.fill-accent {
+    fill: var(--clr-accent);
 }
