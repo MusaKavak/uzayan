@@ -61,7 +61,7 @@ export type AppearanceSettings = {
         [key: string]: string
     }
 }
-export const DefaultApperanceSettings: AppearanceSettings = {
+export const DefaultAppearanceSettings: AppearanceSettings = {
     Colors: {
         "--clr-background": "#15152c",
         "--clr-background-bright": "#232347",

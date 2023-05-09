@@ -1,6 +1,6 @@
 import { createDir, exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs"
 import { appConfigDir, join } from "@tauri-apps/api/path"
-import { AppearanceSettings, AppSettings, DefaultApperanceSettings as DefaultAppearanceSettings, DefaultAppSettings } from "../types/local/Settings"
+import { AppearanceSettings, AppSettings, DefaultAppearanceSettings, DefaultAppSettings } from "../types/local/Settings"
 
 async function getSettingsFile<T>(base: T, name: string): Promise<T> {
     const filePath = await join(await appConfigDir(), `${name}.settings`)
