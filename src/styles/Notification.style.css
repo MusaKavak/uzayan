@@ -1,18 +1,26 @@
 #recent-notifications-container {
     max-height: 0;
+    border-radius: var(--border-radius);
 }
 
-.notification-avaliable #recent-notifications-container {
-    max-height: 60vh;
+#recent-notifications-container:has(.notification) {
+    max-height: 100vh;
     box-shadow: var(--box-shadow);
     margin-top: var(--gap);
-    border-radius: var(--border-radius);
 }
 
 #recent-notifications-container .notification {
-    border-radius: var(--border-radius);
-    animation: bounce 5s forwards;
+    transition: var(--transition);
+    padding: 0 !important;
+    max-height: 0px !important;
+    overflow: hidden !important;
 }
+
+#recent-notifications-container .notification.active {
+    max-height: 200px !important;
+    padding: var(--gap) !important;
+}
+
 
 #notifications-tab-body>div,
 #notifications-tab-body>label {
@@ -143,20 +151,30 @@
     color: var(--clr-primary-dark);
 }
 
-@keyframes bounce {
-    0% {
-        max-height: 0 !important;
-    }
-
-    10% {
-        max-height: 200px !important;
-    }
-
-    90% {
-        max-height: 200px !important;
+/* @keyframes bounce {
+    from {
+        background-color: red;
+        max-height: 0px !important;
+        padding: 0;
     }
 
     to {
-        max-height: 0 !important;
+        background-color: blue;
+        padding: var(--gap);
     }
 }
+
+@keyframes unbounce {
+    from {
+        background-color: green;
+        max-height: 200px !important;
+        padding: var(--gap);
+    }
+
+    to {
+        background-color: orange;
+        max-height: 0px !important;
+        padding: 0;
+    }
+
+} */

@@ -4,14 +4,17 @@ import { Notification } from "../types/network/Notification";
 import Public from "../utils/Public";
 import WindowManager from "./WindowManager";
 
+
 export default class NotificationManager {
     private svg = new NotificationSvg()
 
+    private body = document.getElementById("body")
     private headsUpContainer = document.getElementById("recent-notifications-container")
     private notificationTab = document.getElementById("notifications-tab-body")
 
     private notifications: { [key: string]: HTMLElement } = {}
     private headsUpNotifications: { [key: string]: HTMLElement } = {}
+    private getHUPCount = () => Object.keys(this.headsUpNotifications).length
     private groups: { [groupKey: string]: { container: HTMLElement } } = {}
 
     constructor(private windowManager: WindowManager) { }
@@ -69,17 +72,40 @@ export default class NotificationManager {
     private showHeadsUp(key: string, element: HTMLElement) {
         const headsUp = element.cloneNode(true) as HTMLElement
         this.headsUpNotifications[key] = headsUp
-        this.windowManager.openWindowForNotification()
         this.headsUpContainer?.appendChild(headsUp)
-        this.unbounceNotification(key)
+        headsUp.classList.add("active")
+        // document.body.classList.add("notification-avaliable")
+
+        this.removeHeadsUp(key)
+
+        if (!Public.isWindowOpen)
+            this.windowManager.setWindowSize(undefined, (this.getHUPCount() + 1) * 200)
+
     }
 
 
-    private unbounceNotification(key: string) {
+    private removeHeadsUp(key: string) {
+
         setTimeout(() => {
-            this.headsUpNotifications[key]?.remove()
-            delete this.headsUpNotifications[key]
-        }, 5000);
+            this.windowManager.setWindowSize(undefined, this.body?.offsetHeight)
+            setTimeout(() => {
+                this.headsUpNotifications[key].classList.remove("active")
+                setTimeout(() => {
+                    this.headsUpNotifications[key]?.remove()
+                    delete this.headsUpNotifications[key]
+                    if (this.getHUPCount() == 0) {
+                        document.body.classList.remove("notification-avaliable")
+                        this.windowManager.setWindowSize()
+                    }
+                }, Public.settings.Duration.TransitionDuration);
+            }, Public.settings.Duration.NotificationDuration);
+        }, Public.settings.Duration.TransitionDuration)
+
+
+
+
+
+
     }
 
     private createGroup(): HTMLElement {

@@ -49,5 +49,10 @@ export async function loadAppearanceSettings(as: AppSettings) {
         `${as.Size.BarHeightWhenClosed - 1}px`
     )
 
+    html?.style.setProperty(
+        "--notification-duration",
+        `${as.Duration.NotificationDuration}ms`
+    )
+
     html?.style.setProperty("--transition", `${as.Duration.TransitionDuration}ms`)
 }

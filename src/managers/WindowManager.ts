@@ -84,12 +84,10 @@ export default class WindowManager {
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
             this.body.classList.remove("notification-avaliable")
-            setTimeout(() => {
-                if (!Public.isWindowOpen) {
-                    this.setWindowSize()
-                }
-            }, 500);
-        }, 4500);
+            if (!Public.isWindowOpen) {
+                this.setWindowSize()
+            }
+        }, Public.settings.Duration.NotificationDuration + (2 * Public.settings.Duration.TransitionDuration));
 
     }
 }

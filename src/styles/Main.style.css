@@ -11,9 +11,10 @@
 html {
     width: 100vw;
     height: 100vh;
-    /* --clr-background: rgb(21, 21, 44);
+    --clr-background: rgb(21, 21, 44);
     --clr-background-bright: rgb(35, 35, 71);
     --clr-background-dark: rgb(21, 21, 44);
+    --clr-foreground: rgb(35, 35, 71);
     --clr-primary: rgb(234, 234, 234);
     --clr-primary-dark: rgb(179, 179, 179);
     --clr-accent: rgb(255, 102, 0);
@@ -21,13 +22,13 @@ html {
     --clr-accent-transparent: rgba(255, 102, 0, 0.7);
     --clr-shadow: rgb(0, 0, 0);
 
-    --sz-window-height-when-closed: 8px; */
+    --sz-window-height-when-closed: 8px;
     --sz-icon: 2rem;
 
     --border-radius: 15px;
     --gap: 0.7rem;
     --box-shadow: 0 0 8px 1px var(--clr-shadow);
-    /* --transition: .5s; */
+    --transition: .5s;
 
     color: var(--clr-primary);
     overflow: hidden;
@@ -45,32 +46,35 @@ html {
 
 #body {
     width: 100%;
-    max-height: 100vh;
+    height: min-content;
     min-height: var(--sz-window-height-when-closed);
-    position: relative;
+    position: absolute;
     background-color: var(--clr-background);
-    padding: 0 var(--gap);
-    padding-bottom: var(--sz-window-height-when-closed);
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    padding: 0 var(--gap) var(--sz-window-height-when-closed);
+    border-radius: 0 0 15px 15px;
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid var(--clr-primary);
     overflow: auto;
+    transition: var(--transition);
+}
+
+.window-open #body {
+    min-height: 100vh !important;
 }
 
 .container {
     max-height: 0;
-    transition: var(--transition) ease-in-out;
+    transition: var(--transition);
     height: min-content;
     flex-shrink: 0;
     overflow: hidden;
 }
 
-.window-open .card:has(*) {
-    padding: var(--gap);
+.card {
     box-shadow: var(--box-shadow);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
+    background-color: var(--clr-foreground);
 }
 
 .window-open .container:has(*) {

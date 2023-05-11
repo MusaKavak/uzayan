@@ -21,7 +21,7 @@ async function Main() {
 
     const dialogManager = new DialogManager()
     const headerManager = new HeaderManager()
-    const windowManager = new WindowManager(document.body)
+    const windowManager = new WindowManager(document.getElementById("body")!!)
     const mediaSessionManager = new MediaSessionManager()
     const notificationManager = new NotificationManager(windowManager)
     const fileTransfer = new FileTransfer()
