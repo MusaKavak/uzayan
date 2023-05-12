@@ -14,7 +14,7 @@ html {
     --clr-background: rgb(21, 21, 44);
     --clr-background-bright: rgb(35, 35, 71);
     --clr-background-dark: rgb(21, 21, 44);
-    --clr-foreground: rgb(35, 35, 71);
+    /* --clr-foreground: rgb(35, 35, 71); */
     --clr-primary: rgb(234, 234, 234);
     --clr-primary-dark: rgb(179, 179, 179);
     --clr-accent: rgb(255, 102, 0);
@@ -45,42 +45,39 @@ html {
 }
 
 #body {
-    width: 100%;
+    width: 100vw;
     height: min-content;
-    min-height: var(--sz-window-height-when-closed);
     position: absolute;
     background-color: var(--clr-background);
     padding: 0 var(--gap) var(--sz-window-height-when-closed);
     border-radius: 0 0 15px 15px;
-    display: flex;
-    flex-direction: column;
     border-bottom: 1px solid var(--clr-primary);
     overflow: auto;
     transition: var(--transition);
-}
-
-.window-open #body {
-    min-height: 100vh !important;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
     max-height: 0;
     transition: var(--transition);
-    height: min-content;
-    flex-shrink: 0;
     overflow: hidden;
-}
-
-.card {
-    box-shadow: var(--box-shadow);
-    border-radius: var(--border-radius);
-    background-color: var(--clr-foreground);
 }
 
 .window-open .container:has(*) {
     margin-top: var(--gap);
     max-height: 50vh;
     overflow: auto;
+    padding: var(--gap);
+}
+
+.card {
+    border-radius: var(--border-radius);
+    background-color: var(--clr-foreground);
+}
+
+.window-open .card {
+    box-shadow: var(--box-shadow);
 }
 
 .fill {
@@ -100,13 +97,14 @@ html {
 }
 
 .button {
-    background-color: var(--clr-background);
+    background-color: var(--clr-foreground);
     flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition);
     cursor: pointer;
+    color: var(--clr-primary);
 }
 
 .button:hover {

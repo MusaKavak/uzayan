@@ -19,7 +19,7 @@ export default class FileManager {
     private isSelectionOpen = false
     private currentPath?: string
 
-    unlistenDropListener?: UnlistenFn
+    unlistenDropListener: UnlistenFn = () => { }
 
     constructor(
         private fileManager: FileTransfer,
@@ -34,6 +34,7 @@ export default class FileManager {
             this.filesTab.appendChild(this.getBody(file.children))
             this.allowToCreate = false
             this.currentPath = file.path
+            this.filesToRequest = []
         }
     }
 
@@ -55,7 +56,7 @@ export default class FileManager {
 
         return Public.createElement({
             type: "label",
-            clss: "directory-item " + (f.isFile ? "file" : ""),
+            clss: "directory-item card " + (f.isFile ? "file" : ""),
             innerHtml: `
                 <span class="file-icon">${this.getFileIcon(f.isFile, f.extension)}</span>
                 <span>${f.name || '-'}</span>

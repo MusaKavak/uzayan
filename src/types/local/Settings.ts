@@ -46,6 +46,7 @@ export type AppearanceSettings = {
         "--clr-background": string
         "--clr-background-bright": string
         "--clr-background-dark": string
+        "--clr-foreground": string
         "--clr-primary": string
         "--clr-primary-dark": string
         "--clr-accent": string
@@ -66,6 +67,7 @@ export const DefaultAppearanceSettings: AppearanceSettings = {
         "--clr-background": "#15152c",
         "--clr-background-bright": "#232347",
         "--clr-background-dark": "#15152c",
+        "--clr-foreground": "#b95dbf",
         "--clr-primary": "#eaeaea",
         "--clr-primary-dark": "#b3b3b3",
         "--clr-accent": "#ff6600",

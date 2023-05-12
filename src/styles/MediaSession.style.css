@@ -5,20 +5,22 @@
 }
 
 .session {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--gap);
-    position: relative;
     padding-top: var(--gap);
+    width: 100%;
+    position: relative;
     border-top: 1px solid var(--clr-accent);
 }
 
 .session:first-child {
     border: none;
     padding-top: 0;
+}
+
+.session-content {
+    width: 100%;
+    display: flex;
+    gap: var(--gap);
+    margin-bottom: var(--gap);
 }
 
 .session-image {
@@ -31,8 +33,17 @@
 .session-info {
     height: 4rem;
     flex-grow: 1;
-    line-break: anywhere;
+    overflow: hidden;
 }
+
+.session-info>div {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--clr-primary);
+}
+
 
 .session-controls {
     width: 100%;

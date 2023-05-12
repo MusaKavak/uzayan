@@ -19,7 +19,7 @@ export default class TabsManager {
                 if (this.currentActive != i) {
                     this.invokeAction(t.getAttribute("action"))
                     t.classList.add("active")
-                    this.tabBodies[i]?.classList.add("active")
+                    this.tabBodies[i]?.classList.remove("inactive")
                     this.currentActive = i
                 } else this.currentActive = -1
             })
@@ -34,17 +34,28 @@ export default class TabsManager {
 
     private deactivateCurrent() {
         this.tabIcons[this.currentActive]?.classList.remove("active")
-        this.tabBodies[this.currentActive]?.classList.remove("active")
-        if (this.fileManager.unlistenDropListener) this.fileManager.unlistenDropListener()
+        this.tabBodies[this.currentActive]?.classList.add("inactive")
+        this.fileManager.unlistenDropListener()
     }
 
     private invokeAction(action?: string | null) {
-        if (action == "GetNotifications") Socket.send("NotificationsRequest", "")
-        if (action == "GetFiles") {
-            Socket.send("FileSystemRequest", { path: "" })
-            this.fileManager.setDragAndDropEvents()
+        switch (action) {
+            case "GetNotifications": {
+                Socket.send("NotificationsRequest", undefined)
+                break
+            }
+            case "GetFiles": {
+                Socket.send("FileSystemRequest", { path: "" })
+                this.fileManager.setDragAndDropEvents()
+                break
+            }
+            case "GetImages": {
+                Socket.send("ImageThumbnailRequest", { start: 0, length: 10 })
+                break;
+            }
+            default:
+                break;
         }
-        if (action == "GetImages") Socket.send("ImageThumbnailRequest", { start: 0, length: 10 })
     }
 
 }

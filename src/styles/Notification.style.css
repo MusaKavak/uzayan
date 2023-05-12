@@ -22,12 +22,9 @@
 }
 
 
-#notifications-tab-body>div,
-#notifications-tab-body>label {
+#notifications-tab-body>.notification-group {
     width: 100%;
     margin-top: var(--gap);
-    box-shadow: var(--box-shadow);
-    border-radius: var(--border-radius);
     overflow: hidden;
 }
 
@@ -139,6 +136,10 @@
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+.notification-title span {
+    color: var(--clr-primary);
 }
 
 .notification-title img {

@@ -14,7 +14,7 @@ async function getSettingsFile<T>(base: T, name: string): Promise<T> {
         const configDir = await appConfigDir()
         if (!(await exists(configDir))) await createDir(configDir)
     }
-
+    console.log(settings)
     await writeSettingsFile(settings, name)
     return settings
 }

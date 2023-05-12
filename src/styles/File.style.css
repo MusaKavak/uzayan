@@ -5,12 +5,12 @@
     flex-direction: column;
 }
 
-#files-tab-body.active {
+#files-tab-body {
     padding-top: calc(var(--header-height) + var(--gap));
 }
 
 #directory-header {
-    background-color: var(--clr-background);
+    background-color: var(--clr-foreground);
     z-index: 1;
     height: var(--header-height);
     display: flex;
@@ -36,6 +36,7 @@
     flex-grow: 1;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: var(--clr-primary);
 }
 
 #directory-drop {
@@ -110,17 +111,17 @@
 .directory-item {
     flex-grow: 1;
     height: 6rem;
-    background-color: var(--clr-background);
     cursor: pointer;
     padding: var(--gap);
-    border-radius: var(--border-radius);
     transition: var(--transition);
     line-break: anywhere;
     border: 1px solid transparent;
-    box-shadow: var(--box-shadow);
     position: relative;
 }
 
+.directory-item span {
+    color: var(--clr-primary);
+}
 
 .directory-item:hover,
 .select .directory-item.file {
@@ -128,7 +129,7 @@
 }
 
 .select .directory-item:has(input:checked) {
-    border: 1px solid var(--clr-accent);
+    border: 10px solid var(--clr-accent);
 }
 
 .file-icon {

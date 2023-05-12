@@ -11,31 +11,27 @@
 }
 
 .tab.active {
-    background-color: var(--clr-background-dark);
-    filter: brightness(200%);
+    background-color: var(--clr-background-bright);
 }
 
 #tab-bodies-container {
     overflow: hidden;
     margin: 0;
-    display: none;
-    max-height: 50vh;
-    transition: var(--transition);
+    flex-grow: 1;
+    position: relative;
 }
 
-#tab-bodies-container:has(.active) {
-    display: block;
-}
 
 .tab-body {
     width: 100%;
-    transition: var(--transition);
-    max-height: 0;
-    overflow: hidden;
+    height: 100%;
+    position: relative;
+    overflow: auto;
+    padding: var(--gap);
+    padding-bottom: 0;
 }
 
-.tab-body.active {
-    max-height: 50vh;
-    padding: var(--gap);
-    overflow: auto;
+.tab-body.inactive {
+    overflow: hidden;
+    display: none !important;
 }

@@ -61,13 +61,22 @@ export default class MediaSessionManager {
       clss: "session",
       id: "session-" + token,
       children: [
-        this.getImage(session.albumArt, session.albumName, token),
-        this.getSessionInfo(session),
+        this.getSessionContent(session, token),
         this.getSessionControls(session)
       ]
     })
 
     this.container?.appendChild(element)
+  }
+
+  private getSessionContent(session: MediaSession, token: string): HTMLElement {
+    return Public.createElement({
+      clss: "session-content",
+      children: [
+        this.getImage(session.albumArt, session.albumName, token),
+        this.getSessionInfo(session),
+      ]
+    })
   }
 
   private getSessionControls(session: MediaSession): HTMLElement | undefined {

@@ -85,7 +85,6 @@ export default class NotificationManager {
 
 
     private removeHeadsUp(key: string) {
-
         setTimeout(() => {
             this.windowManager.setWindowSize(undefined, this.body?.offsetHeight)
             setTimeout(() => {
@@ -100,17 +99,11 @@ export default class NotificationManager {
                 }, Public.settings.Duration.TransitionDuration);
             }, Public.settings.Duration.NotificationDuration);
         }, Public.settings.Duration.TransitionDuration)
-
-
-
-
-
-
     }
 
     private createGroup(): HTMLElement {
         return Public.createElement({
-            clss: "notification-group"
+            clss: "notification-group card"
         })
     }
 

@@ -39,6 +39,7 @@ export default class ImageManager {
 
     private getLoadMoreButton(): HTMLElement {
         return Public.createElement({
+            clss: "button card",
             id: "load-more-image-button",
             content: "Load More",
             listener: {
@@ -50,7 +51,7 @@ export default class ImageManager {
 
     private getDateContainer(date: string | undefined): HTMLElement {
         const container = Public.createElement({
-            clss: "image-date-container",
+            clss: "image-date-container card",
             innerHtml: `<div class="date-container-header">${date}</div>`
         })
         container.setAttribute("date", date || "")
