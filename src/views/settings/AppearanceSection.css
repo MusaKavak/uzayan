@@ -1,0 +1,39 @@
+.theme-card {
+    background-color: var(--clr-background);
+    width: 100%;
+    padding: 2rem;
+    border: 2px solid black;
+}
+
+.theme-card-body {
+    background-color: var(--clr-foreground);
+    padding: var(--gap);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.theme-card-body>div {
+    width: 100%;
+}
+
+.card-font {
+    color: var(--clr-font);
+}
+
+.card-font-faded {
+    color: var(--clr-font-faded);
+}
+
+.theme-card-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.theme-card-button {
+    color: var(--clr-font);
+    background-color: var(--clr-accent);
+    border-radius: var(--border-radius);
+    border: none;
+    outline: none;
+    padding: 3px 5px;
+}

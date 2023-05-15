@@ -11,8 +11,8 @@ SettingsStore.appSettings = await getAppSettings()
 SettingsStore.appearanceSettings = await getAppearanceSettings()
 await loadAppearanceSettings(SettingsStore.appSettings)
 const lang = await getLanguageFile(SettingsStore.appSettings.LanguageCode)
+createAppearanceSettings(lang.Appearance)
 createAppSettings(lang.AppSettings)
-createAppearanceSettings(lang.AppearanceSettings)
 
 
 const icon = document.getElementById("icon")

@@ -76,7 +76,7 @@ html {
     background-color: var(--clr-foreground);
 }
 
-.window-open .card {
+.window-open .card:has(*) {
     box-shadow: var(--box-shadow);
 }
 

@@ -42,42 +42,30 @@ export const DefaultAppSettings: AppSettings = {
 }
 
 export type AppearanceSettings = {
-    Colors: {
-        "--clr-background": string
-        "--clr-background-bright": string
-        "--clr-background-dark": string
-        "--clr-foreground": string
-        "--clr-primary": string
-        "--clr-primary-dark": string
-        "--clr-accent": string
-        "--clr-accent-dark": string
-        "--clr-accent-transparent": string
-        "--clr-shadow": string
-        [key: string]: string
-    }
-    Appearance: {
-        "--border-radius": string
-        "--gap": string
-        "--box-shadow": string
-        [key: string]: string
-    }
+    "--clr-background": string
+    "--clr-foreground": string
+    "--clr-highlight": string
+    "--clr-font": string
+    "--clr-font-faded": string
+    "--clr-accent": string
+    "--clr-shadow": string
+    "--clr-border": string
+    "--border-radius": string
+    "--gap": string
+    "--box-shadow": string
+    [key: string]: string
 }
+
 export const DefaultAppearanceSettings: AppearanceSettings = {
-    Colors: {
-        "--clr-background": "#15152c",
-        "--clr-background-bright": "#232347",
-        "--clr-background-dark": "#15152c",
-        "--clr-foreground": "#b95dbf",
-        "--clr-primary": "#eaeaea",
-        "--clr-primary-dark": "#b3b3b3",
-        "--clr-accent": "#ff6600",
-        "--clr-accent-dark": "#c54f00",
-        "--clr-accent-transparent": "#ff6600b3",
-        "--clr-shadow": "#000000",
-    },
-    Appearance: {
-        "--border-radius": "15px",
-        "--gap": ".7rem",
-        "--box-shadow": " 0 0 8px 1px var(--clr-shadow)"
-    }
+    "--clr-background": "#15152c",
+    "--clr-foreground": "#b95dbf",
+    "--clr-highlight": "#b95dff",
+    "--clr-font": "#eaeaea",
+    "--clr-font-faded": "#b3b3b3",
+    "--clr-accent": "#ff6600",
+    "--clr-shadow": "#000000",
+    "--clr-border": "#000000",
+    "--border-radius": "15px",
+    "--gap": ".7rem",
+    "--box-shadow": " 0 0 8px 1px var(--clr-shadow)"
 }

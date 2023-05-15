@@ -5,11 +5,15 @@
     align-items: center;
     justify-content: center;
     gap: .3rem;
-    padding: 0 .3rem;
     transition: 0.5s;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
 }
 
-.show-connection-state.window-open #connection-state,
-.show-connection-state.window-opening #connection-state {
-    max-height: 400px;
+.show-connection-state #connection-state {
+    max-height: 50vh;
+    margin-top: var(--gap);
+    padding: var(--gap);
+    box-shadow: var(--box-shadow);
 }
