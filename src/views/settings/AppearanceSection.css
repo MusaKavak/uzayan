@@ -1,5 +1,15 @@
+#apprearance-settings-section {
+    box-shadow: 0 0 0 999px rgba(0, 0, 0, .8);
+    display: flex;
+    flex-wrap: wrap;
+    --tranparent-backround: repeating-conic-gradient(gray 0 25%, transparent 0 50%)
+}
+
 .theme-card {
+    background-image: var(--tranparent-backround);
+    background-size: 1rem 1rem;
     background-color: var(--clr-background);
+    background-blend-mode: hard-light;
     width: 100%;
     padding: 2rem;
     border: 2px solid black;
@@ -36,4 +46,75 @@
     border: none;
     outline: none;
     padding: 3px 5px;
+}
+
+.color-input {
+    min-width: 10rem;
+    flex-grow: 1;
+    height: 10rem;
+    position: relative;
+    padding: var(--gap);
+    z-index: 3;
+}
+
+.color-input>div {
+    color: white;
+    text-shadow: 0px 0px 10px black, 0px 0px 10px black, 0px 0px 10px black;
+    cursor: default;
+    z-index: 4;
+    position: absolute;
+}
+
+
+.color-input input[type="color"] {
+    position: absolute;
+    width: 100%;
+    height: 8rem;
+    border: none;
+    margin: 0;
+    border-radius: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.color-input input::-webkit-color-swatch-wrapper {
+    padding: 0;
+    outline: none;
+}
+
+.color-input input::-webkit-color-swatch {
+    border-radius: 0;
+}
+
+.transparency-container {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    color: dark;
+    justify-content: space-between;
+    background-image: var(--tranparent-backround);
+    background-size: 1rem 1rem;
+}
+
+.transparency-container input {
+    -webkit-appearance: none;
+    background-color: transparent;
+    background-image: linear-gradient(90deg, transparent, black);
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+
+.transparency-container input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: white;
+    width: 5px;
+    height: 2rem;
 }

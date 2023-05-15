@@ -11,6 +11,7 @@ body {
     background-color: var(--clr-background);
     color: var(--clr-primary);
     --sidebar-width: 15rem;
+    z-index: 0;
 }
 
 #sidebar {
@@ -22,6 +23,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     padding: var(--gap);
+    z-index: 1;
 }
 
 #sidebar div {
@@ -29,6 +31,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: var(--gap);
+    z-index: 2;
 }
 
 #icon {
@@ -70,6 +73,7 @@ body {
     height: 100vh;
     overflow: auto;
     width: calc(100% - var(--sidebar-width));
+    z-index: 1;
 }
 
 .setting-section {
@@ -79,6 +83,7 @@ body {
     border-radius: var(--border-radius);
     padding: var(--gap);
     position: relative;
+    z-index: 2;
 }
 
 .section-title {
@@ -127,41 +132,6 @@ body {
     margin-right: 2px;
 }
 
-.color-input {
-    width: 100%;
-    height: 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.color-input div {
-    z-index: 3;
-    color: white;
-    text-shadow: 0px 0px 10px black, 0px 0px 10px black, 0px 0px 10px black;
-    cursor: default;
-}
-
-.color-input input {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: none;
-    margin: 0;
-    border-radius: 0;
-    padding: 0;
-    cursor: pointer;
-}
-
-.color-input input::-webkit-color-swatch-wrapper {
-    padding: 0;
-    outline: none;
-}
-
-.color-input input::-webkit-color-swatch {
-    border-radius: 0;
-}
 
 .fill {
     fill: var(--clr-primary);

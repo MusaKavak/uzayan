@@ -9,7 +9,7 @@ export function createAppearanceSettings(lang: Language["Appearance"]) {
     createSettingSection(lang.Self, [
         mainThemeCard,
         ...createColorInputs(SettingsStore.appearanceSettings, lang.Variables)
-    ])
+    ], "apprearance-settings-section")
 }
 
 function createThemeCard(variables: AppearanceSettings): HTMLElement {
@@ -59,23 +59,20 @@ function createColorInputs(variables: AppearanceSettings, lang: Language["Appear
         }
         //----------------------------------//
         const transparencyContainer = document.createElement("div")
-
-        const transparencyLabel = document.createElement("span")
-        transparencyLabel.textContent = transparency.toString()
+        transparencyContainer.classList.add("transparency-container")
 
         const transparencyInput = getRangeInput()
         transparencyInput.value = transparency.toString()
         transparencyInput.oninput = () => {
-            transparencyLabel.textContent = transparencyInput.value
             transparency = parseInt(transparencyInput.value)
             update()
         }
 
         transparencyContainer.appendChild(transparencyInput)
-        transparencyContainer.appendChild(transparencyLabel)
         //----------------------------------//
 
         const container = document.createElement("div")
+        container.classList.add("color-input")
         container.innerHTML = `<div class="color-input-title">${lang[key]}</div>`
         container.appendChild(colorInput)
         container.appendChild(transparencyContainer)
