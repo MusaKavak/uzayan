@@ -1,11 +1,11 @@
-import { exists } from "@tauri-apps/api/fs"
 import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
-import Public from "../utils/Public"
 import { join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api";
 import Socket from "../connection/Socket";
 import { FileToDownload } from "../types/local/FileToTransfer";
+import Public from "./Public";
+import { exists } from "@tauri-apps/api/fs";
 
 export default class FileTransfer {
 
@@ -28,8 +28,8 @@ export default class FileTransfer {
     }
 
     async getDownloadFileLocation(): Promise<string | undefined> {
-        const path = Public.settings.DonwloadFileLocation
-        const remember = Public.settings.RememberDownloadLocation
+        const path = Public.settings.DownloadLocation.DonwloadFileLocation
+        const remember = Public.settings.DownloadLocation.RememberDownloadLocation
         if (path != undefined && remember && await exists(path)) return path
 
         const pathOptions = {
