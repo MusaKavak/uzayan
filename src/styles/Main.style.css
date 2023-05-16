@@ -74,9 +74,11 @@ html {
 .card {
     border-radius: var(--border-radius);
     background-color: var(--clr-foreground);
+    border: 1px solid transparent;
 }
 
 .window-open .card:has(*) {
+    border-color: var(--clr-border);
     box-shadow: var(--box-shadow);
 }
 

@@ -36,12 +36,8 @@ export async function loadAppearanceSettings(as: AppSettings) {
     const html = document.querySelector("html")
     const appearanceSettings = await getAppearanceSettings()
 
-    for (const key in appearanceSettings.Colors) {
-        html?.style.setProperty(key, appearanceSettings.Colors[key])
-    }
-
-    for (const key in appearanceSettings.Appearance) {
-        html?.style.setProperty(key, appearanceSettings.Appearance[key])
+    for (const key in appearanceSettings) {
+        html?.style.setProperty(key, appearanceSettings[key])
     }
 
     html?.style.setProperty(

@@ -57,14 +57,14 @@ export type AppearanceSettings = {
 }
 
 export const DefaultAppearanceSettings: AppearanceSettings = {
-    "--clr-background": "#15152c",
-    "--clr-foreground": "#b95dbf",
-    "--clr-highlight": "#b95dff",
-    "--clr-font": "#eaeaea",
-    "--clr-font-faded": "#b3b3b3",
-    "--clr-accent": "#ff6600",
-    "--clr-shadow": "#000000",
-    "--clr-border": "#000000",
+    "--clr-background": "#0a1124dd",
+    "--clr-foreground": "#1f103dff",
+    "--clr-highlight": "#77767bff",
+    "--clr-font": "#ffffffff",
+    "--clr-font-faded": "#77767bff",
+    "--clr-accent": "#c50ed2ff",
+    "--clr-shadow": "#000000ff",
+    "--clr-border": "#ffffffff",
     "--border-radius": "15px",
     "--gap": ".7rem",
     "--box-shadow": " 0 0 8px 1px var(--clr-shadow)"

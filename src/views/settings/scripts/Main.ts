@@ -1,11 +1,11 @@
 import { appWindow } from "@tauri-apps/api/window"
-import { getLanguageFile } from "../../utils/Language"
-import { getAppSettings, getAppearanceSettings, loadAppearanceSettings } from "../../utils/Settings"
-import { createAppSettings } from "./scripts/AppSettings"
-import { createAppearanceSettings } from "./scripts/AppearanceSettings"
-import { SettingsStore } from "./scripts/SettingsStore"
+import { getLanguageFile } from "../../../utils/Language"
+import { getAppSettings, getAppearanceSettings, loadAppearanceSettings } from "../../../utils/Settings"
+import { createAppSettings } from "./AppSettings"
+import { createAppearanceSettings } from "./AppearanceSettings"
+import { SettingsStore } from "./SettingsStore"
 import { emit } from "@tauri-apps/api/event"
-import { appIcon } from "../../assets/app.svg"
+import { appIcon } from "../../../assets/app.svg"
 
 SettingsStore.appSettings = await getAppSettings()
 SettingsStore.appearanceSettings = await getAppearanceSettings()

@@ -68,7 +68,10 @@ export default class HeaderManager {
                         url: './src/views/settings/settings.html',
                         title: "Uzayan - Settings",
                         minWidth: 500,
-                        minHeight: 500
+                        minHeight: 500,
+                        height: 600,
+                        width: 900,
+                        transparent: true,
                     })
                 }
             }
