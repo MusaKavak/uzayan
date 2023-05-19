@@ -1,6 +1,6 @@
 export type MediaSessionState = {
-    token?: string,
-    isActive?: boolean,
+    token: string,
+    isActive: boolean,
     duration?: number,
     position?: number,
     isRated?: boolean,

@@ -3,7 +3,7 @@ export type MediaSession = {
     albumName?: string
     artist?: string
     duration?: number
-    isPlaying?: boolean
+    isPlaying: boolean
     packageName?: string
     position?: number
     ratingType?: string

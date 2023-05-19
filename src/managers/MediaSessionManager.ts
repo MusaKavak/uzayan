@@ -17,19 +17,15 @@ export default class MediaSessionManager {
   }
 
   updateMediaSessionState(state: MediaSessionState) {
-    const controls = document.getElementById("session-control-" + state.token)
+    const session = document.getElementById("session-" + state.token)
     const progressBar = document.getElementById("session-progress-bar-" + state.token)
 
-    if (state.isActive) controls?.classList.add("playing")
-    else controls?.classList.remove("playing")
+    state.isActive ? session?.classList.add("playing") : session?.classList.remove("playing")
 
-    if (progressBar != null && state.position != undefined && state.duration != undefined) {
-      const newProgressBar = this.getProgressBar(state.position, state.duration, state.token)
-      const startRatio = (100 * state.position) / state.duration
-      const duration = (state.duration - state.position) / 1000
-      newProgressBar?.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${duration}s;`)
-      if (newProgressBar != undefined) progressBar.replaceWith(newProgressBar)
-    }
+    if (progressBar && state.duration && state.position) {
+      const newProgressBar = this.getProgressBar(state.token, state.duration, state.position)
+      if (newProgressBar) progressBar.replaceWith(newProgressBar)
+    } else progressBar?.remove()
   }
 
   updateMediaSession(session: MediaSession) {
@@ -58,13 +54,17 @@ export default class MediaSessionManager {
   private createSessionElement(session: MediaSession) {
     const token = session.token
     const element = Public.createElement({
-      clss: "session",
+      clss: `session ${session.isPlaying ? 'playing' : ''}`,
       id: "session-" + token,
       children: [
+        this.getProgressBar(session.token, session.duration, session.position),
         this.getSessionContent(session, token),
         this.getSessionControls(session)
-      ]
+      ],
     })
+
+    if (session.duration)
+      element.onclick = (ev: MouseEvent) => this.setCurrentPosition(element, ev, session.duration!!, session.token)
 
     this.container?.appendChild(element)
   }
@@ -81,10 +81,10 @@ export default class MediaSessionManager {
 
   private getSessionControls(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
-      clss: `session-controls ${session.isPlaying ? 'playing' : ''}`,
+      clss: `session-controls`,
       id: "session-control-" + session.token,
       children: [
-        this.getProgressBar(session.position, session.duration, session.token),
+        //this.getProgressBar(session.position, session.duration, session.token),
         this.getActions(session.token)
       ]
     })
@@ -107,38 +107,29 @@ export default class MediaSessionManager {
   }
 
   private getAction(clss: string, icon: string, action: string, token: string): HTMLElement | undefined {
-    const callback = () => { this.sendAction(token, action) }
-    return Public.createElement({
+    const actionElement = Public.createElement({
       clss,
-      listener: {
-        event: "click",
-        callback
-      },
       innerHtml: icon
     })
+    actionElement.addEventListener("click", (event: MouseEvent) => {
+      event.stopPropagation()
+      this.sendAction(token, action)
+    })
+    return actionElement
   }
 
-  private getProgressBar(position?: number, duration?: number, token?: string): HTMLElement | undefined {
-    if (duration != undefined && position != undefined) {
-      const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + token })
-      const startRatio = (100 * position) / duration
-      const remainDuration = (duration - position) / 1000
+  private getProgressBar(token: string, duration?: number, position?: number): HTMLElement | undefined {
+    if (!duration && !position) return
 
-      progressBar.addEventListener("click", (ev: MouseEvent) => {
-        const rect = progressBar.getBoundingClientRect()
-        const x = ev.clientX - rect.left
-        const xPercent = (x / rect.width) * 100
-        if (xPercent > 0 && xPercent < 100) {
-          const position = Math.floor((xPercent / 100) * duration)
-          this.sendAction(token, "seekTo", position.toString())
-        }
-      })
+    const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + token })
 
-      progressBar.setAttribute("style", `--startPoint: ${startRatio}%; --duration: ${remainDuration}s;`)
-      return progressBar
-    }
-    return
+    const startRatio = (100 * position!!) / duration!!
+    const remainDuration = duration!! - position!!
+
+    progressBar.setAttribute("style", `--start: ${startRatio}%; --duration: ${remainDuration}ms;`)
+    return progressBar
   }
+
   private getSessionInfo(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
       clss: "session-info",
@@ -157,6 +148,17 @@ export default class MediaSessionManager {
     })
     image.setAttribute("src", art ? Public.base64head + art : "")
     return image
+  }
+
+  private setCurrentPosition(source: HTMLElement, ev: MouseEvent, duration: number, token: string) {
+    const rect = source.getBoundingClientRect()
+    const x = ev.clientX - rect.left
+    const xPercent = (x / rect.width) * 100
+    console.log(xPercent)
+    if (xPercent > 0 && xPercent < 100) {
+      const position = Math.floor((xPercent / 100) * duration)
+      this.sendAction(token, "seekTo", position.toString())
+    }
   }
 
   private sendAction(token: string | undefined, action: string, value: any = 0) {

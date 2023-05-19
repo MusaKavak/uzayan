@@ -56,12 +56,14 @@ html {
     transition: var(--transition);
     display: flex;
     flex-direction: column;
+    z-index: 0;
 }
 
 .container {
     max-height: 0;
     transition: var(--transition);
     overflow: hidden;
+    z-index: 1;
 }
 
 .window-open .container:has(*) {
