@@ -2,7 +2,6 @@ use std::io::{BufRead, BufReader, Write};
 use std::net::{Shutdown::Both, TcpStream};
 use std::thread;
 
-use if_addrs::get_if_addrs;
 use tauri::{command, Window};
 
 use crate::frontend::{emit, set_window};
@@ -76,15 +75,4 @@ unsafe fn listen_for_messages() {
             None => {}
         };
     });
-}
-
-#[command]
-pub fn get_ip_address() -> String {
-    let addresses = get_if_addrs().expect("Can't get Ip Addresses");
-    for addrs in addresses {
-        if !addrs.is_loopback() && addrs.ip().is_ipv4() {
-            return addrs.ip().to_string();
-        }
-    }
-    String::from("")
 }
