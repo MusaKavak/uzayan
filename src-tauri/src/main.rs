@@ -8,7 +8,6 @@ mod file_out;
 mod frontend;
 mod progress;
 mod tcp;
-mod tools;
 mod udp;
 
 #[macro_use]
@@ -18,9 +17,8 @@ extern crate json;
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            tools::get_ip_address,
-            tools::get_hostname,
-            udp::listen_socket,
+            udp::get_socket_addr,
+            udp::listen_for_pair,
             tcp::connect,
             tcp::emit_message,
             file_in::receive_files,

@@ -10,6 +10,7 @@ import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
 import { FileToDownload } from "../types/local/FileToTransfer";
+import ConnectionState from "../connection/ConnectionState";
 
 export default class FileManager {
 
@@ -324,10 +325,11 @@ export default class FileManager {
                 target
             }
         }))
-
-        console.log(filesToUpload)
-
-        await invoke("send_files", { address: Socket.connectedServer, filesToUpload })
+        if (ConnectionState.connectedAddress)
+            await invoke("send_files", {
+                address: ConnectionState.connectedAddress,
+                filesToUpload
+            })
     }
 }
 

@@ -27,10 +27,10 @@ async function Main() {
     const fileTransfer = new FileTransfer()
     const fileManager = new FileManager(fileTransfer, dialogManager)
     const imageManager = new ImageManager(fileTransfer)
-    const connectionState = new ConnectionState(headerManager)
+    new ConnectionState(headerManager)
     new IOProgressManager()
     new TabsManager(fileManager)
-    new Socket(connectionState, mediaSessionManager, notificationManager, imageManager, fileManager)
+    new Socket(mediaSessionManager, notificationManager, imageManager, fileManager)
 }
 
 

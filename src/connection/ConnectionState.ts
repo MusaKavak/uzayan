@@ -1,58 +1,84 @@
 import { invoke } from "@tauri-apps/api"
 import qrcode from "qrcode"
 import HeaderManager from "../managers/HeaderManager"
-import Socket from "./Socket"
+import { listen } from "@tauri-apps/api/event"
+import { NetworkMessage } from "../types/network/NetworkMessage"
+import { BackendMessage } from "../types/local/BackendMessage"
+import { PairRequest } from "../types/network/PairRequest"
 
 export default class ConnectionState {
-    canvas = document.getElementById("qrcode-canvas")
-    pairCode = "123414"
+    static connectedAddress?: string
+
+    private connectionStateContainer = document.getElementById("connection-state")
+    private pairCode = "123414"
 
     constructor(
         private headerManager: HeaderManager
-    ) { }
-
-    async sendTestMessageToLastConnectedDevice() {
-        const ip = localStorage.getItem("ConnectedDeviceIp")
-        const port = localStorage.getItem("ConnectedDevicePort")
-
-        if ((ip != null && ip.length > 0)
-            && (port != null && port.length > 0)) {
-            if (await Socket.connect(ip, port)) {
-                console.log("w")
-                Socket.send("TestConnection", "")
-                this.removeQrCode()
-                this.headerManager.sync()
-                console.log("Connected To: " + ip)
-            }
-        }
-
+    ) {
+        this.listenForPair().then(() => this.connectedToLastAddress())
     }
 
-    async pair(address: string, input: { port: number, code: string }) {
-        if (input.code == this.pairCode) {
-            if (await Socket.connect(address, input.port)) {
-                setTimeout(() => {
-                    Socket.send("TestConnection", null)
-                }, 500);
-                this.removeQrCode()
-                this.headerManager.sync()
-                localStorage.setItem("ConnectedDeviceIp", address)
-                localStorage.setItem("ConnectedDevicePort", input.port.toString())
-            }
+
+    async listenForPair() {
+        invoke("listen_for_pair")
+
+        await listen<BackendMessage>("UdpMessage", (message) => {
+            const networkMessage = JSON.parse(message.payload.message) as NetworkMessage<PairRequest>
+            if (networkMessage.event == "Pair")
+                this.pair(message.payload.address, networkMessage.payload)
+        })
+
+        const udpSocketAddress = await invoke<SocketAddress>("get_socket_addr")
+        this.showQrCode(udpSocketAddress)
+    }
+
+    private async connectedToLastAddress() {
+        const address = localStorage.getItem("ConnectedAddress")
+        if (address && address.length > 0) this.connect(address)
+    }
+
+    private async pair(address: string, pairRequest: PairRequest) {
+        if (pairRequest.code == this.pairCode) {
+            await this.connect(`${address}:${pairRequest.port}`)
         }
     }
 
-    showQrCode(port: string) {
-        if (this.canvas != null) {
-            invoke("get_ip_address").then((address) => {
-                document.body.classList.add("show-connection-state")
-                qrcode.toCanvas(this.canvas, `http://uzayan-pair?ip=${address}&port=${port}&code=${this.pairCode}`)
-            })
+    private async connect(address: string) {
+        const isConnected = await invoke<boolean>("connect", { address })
+        console.log(isConnected)
+        if (isConnected) {
+            ConnectionState.connectedAddress = address
+            this.removeQrCode()
+            this.headerManager.sync()
+            localStorage.setItem("ConnectedAddress", address)
         }
     }
 
-    removeQrCode() {
+    private showQrCode(address: SocketAddress) {
+        if (this.connectionStateContainer) {
+            document.body.classList.add("show-connection-state")
+            this.connectionStateContainer.appendChild(this.getQrCode(address))
+            //TODO Add Manual Infotmation
+        }
+    }
+
+    private getQrCode(address: SocketAddress): HTMLElement {
+        const canvas = document.createElement("canvas")
+        qrcode.toCanvas(
+            canvas,
+            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}&name=${address.name}`
+        )
+        return canvas
+    }
+
+    private removeQrCode() {
         document.body.classList.remove("show-connection-state")
-        this.canvas?.remove()
+        if (this.connectionStateContainer) this.connectionStateContainer.innerHTML = ""
     }
+}
+
+type SocketAddress = {
+    ip: string,
+    port: number,
+    name: string
 }

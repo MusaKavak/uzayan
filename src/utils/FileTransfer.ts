@@ -2,10 +2,10 @@ import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
 import { join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api";
-import Socket from "../connection/Socket";
 import { FileToDownload } from "../types/local/FileToTransfer";
 import Public from "./Public";
 import { exists } from "@tauri-apps/api/fs";
+import ConnectionState from "../connection/ConnectionState";
 
 export default class FileTransfer {
 
@@ -24,7 +24,12 @@ export default class FileTransfer {
             }
         }))
         console.log(filesToReceive[0])
-        await invoke("receive_files", { address: Socket.connectedServer, transferType, filesToReceive })
+        if (ConnectionState.connectedAddress)
+            await invoke("receive_files", {
+                address: ConnectionState.connectedAddress,
+                transferType,
+                filesToReceive
+            })
     }
 
     async getDownloadFileLocation(): Promise<string | undefined> {
