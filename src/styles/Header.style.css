@@ -18,10 +18,14 @@
 #header-actions>div:hover,
 .pinned #header-action-pin {
     cursor: pointer;
-    --clr-primary: var(--clr-accent)
+    --clr-font: var(--clr-accent)
 }
 
 #header-container svg {
     height: var(--sz-icon);
     width: var(--sz-icon);
+}
+
+#app-icon {
+    stroke-width: 30px;
 }

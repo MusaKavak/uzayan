@@ -29,7 +29,6 @@ body {
     z-index: 1;
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius);
-    border: 1px solid var(--clr-border);
 }
 
 #sidebar div {
@@ -89,7 +88,6 @@ body {
     padding: var(--gap);
     position: relative;
     z-index: 2;
-    border: 1px solid var(--clr-border);
 }
 
 .section-title {
@@ -138,12 +136,10 @@ body {
     margin-right: 2px;
 }
 
-.fill {
-    fill: var(--clr-primary);
+.stroke {
+    stroke: var(--clr-font);
 }
 
-.fill-accent {
-    fill: var(--clr-accent);
+.stroke-accent {
+    stroke: var(--clr-accent);
 }
-
-.button {}

@@ -49,7 +49,6 @@ export type AppearanceSettings = {
     "--clr-font-faded": string
     "--clr-accent": string
     "--clr-shadow": string
-    "--clr-border": string
     "--border-radius": string
     "--gap": string
     "--box-shadow": string

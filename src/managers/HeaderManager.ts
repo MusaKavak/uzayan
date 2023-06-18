@@ -3,6 +3,7 @@ import Socket from "../connection/Socket"
 import { listen } from "@tauri-apps/api/event"
 import Public from "../utils/Public"
 import { HeaderSvg } from "../assets/header.svg"
+import { appIcon } from "../assets/app.svg"
 
 export default class HeaderManager {
     private svg = new HeaderSvg()
@@ -115,7 +116,7 @@ export default class HeaderManager {
         return Public.createElement({
             id: "header-icon",
             title: "Uzayan",
-            innerHtml: this.svg.appIcon
+            innerHtml: appIcon
         })
     }
 }
