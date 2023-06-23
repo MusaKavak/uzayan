@@ -1,41 +1,48 @@
 #media-session-container {
+
+    height: 6rem;
+    padding: 0;
+    scroll-snap-type: y mandatory;
+    overflow: auto;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--gap);
 }
 
 .session {
-    padding-top: var(--gap);
-    width: 100%;
-    position: relative;
-    border-top: 1px solid var(--clr-accent);
-    z-index: 2;
-}
-
-.session:first-child {
-    border: none;
-    padding-top: 0;
-}
-
-.session-content {
-    width: 100%;
     display: flex;
+    overflow: hidden;
+    height: inherit;
+    width: 100%;
+    z-index: 2;
+    scroll-snap-align: start;
     gap: var(--gap);
-    margin-bottom: var(--gap);
+    scroll-snap-stop: always;
+}
+
+/* .session:first-child {
+    margin-top: 6rem;
+}
+
+.session:last-child {
+    margin-bottom: 6rem;
+} */
+
+.session-image {
+    height: 100%;
+    width: min-content;
+    aspect-ratio: 1/1;
+    box-shadow: var(--box-shadow);
+    object-fit: cover;
     z-index: 3;
 }
 
-.session-image {
-    width: 4rem;
-    height: 4rem;
-    box-shadow: var(--box-shadow);
-    object-fit: cover;
-}
-
-.session-info {
-    height: 4rem;
+.session-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     flex-grow: 1;
-    overflow: hidden;
+    min-width: 0;
+    z-index: 3;
 }
 
 .session-info>div {
@@ -43,70 +50,34 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    color: var(--clr-primary);
+    color: var(--clr-font);
 }
-
 
 .session-controls {
     width: 100%;
-    z-index: 3;
-}
-
-.session-actions {
-    width: 100%;
-    height: 2rem;
     display: flex;
+    z-index: 4;
     align-items: center;
-    justify-content: center;
-    gap: var(--gap);
-}
-
-.session-actions div {
-    height: 100%;
-}
-
-.session-actions svg {
-    height: 100%;
-    width: auto;
-}
-
-.actions-play-pause div {
-    transition: var(--transition);
-}
-
-.action-pause {
-    position: absolute;
-    top: 100%;
-}
-
-.session.playing .action-play {
-    opacity: 0;
-}
-
-.session.playing .action-pause {
-    top: 0;
-}
-
-.actions-play-pause {
-    overflow: hidden;
-    position: relative;
 }
 
 .session-progress-bar {
-    height: 100%;
-    width: var(--start);
-    background-color: var(--clr-accent);
-    opacity: 0.4;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
+    flex-grow: 1;
+    height: var(--sz-icon);
+    position: relative;
     overflow: hidden;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
 }
 
+.session-progress-bar::after {
+    content: '';
+    position: absolute;
+    width: var(--start);
+    height: 100%;
+    background-color: var(--clr-accent);
+}
 
-
-.session.playing .session-progress-bar {
+.playing .session-progress-bar::after {
     animation: progress-bar var(--duration) linear forwards;
 }
 
@@ -118,4 +89,37 @@
     to {
         width: 100%;
     }
+}
+
+.session-actions>div {
+    display: inline-block;
+}
+
+.session-actions svg {
+    height: var(--sz-icon);
+    width: var(--sz-icon);
+}
+
+.actions-play-pause div {
+    height: var(--sz-icon);
+    transition: var(--transition);
+}
+
+.action-pause {
+    position: absolute;
+    top: 100%;
+}
+
+.playing .action-play {
+    opacity: 0;
+}
+
+.playing .action-pause {
+    top: 0;
+}
+
+.actions-play-pause {
+    overflow: hidden;
+    position: relative;
+    display: block;
 }

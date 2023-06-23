@@ -10,18 +10,19 @@ export default class MediaSessionManager {
 
   createMediaSessions(sessions: MediaSession[]) {
     if (this.container != null) {
-      this.container.innerHTML = ""
+      this.container.innerHTML = String()
       sessions.sort((a, b) => a.token > b.token ? 1 : -1)
       sessions.forEach(s => this.createSessionElement(s))
     }
   }
 
   updateMediaSessionState(state: MediaSessionState) {
-    const session = document.getElementById("session-" + state.token)
+    const controls = document.getElementById("session-control-" + state.token)
     const progressBar = document.getElementById("session-progress-bar-" + state.token)
 
-    state.isActive ? session?.classList.add("playing") : session?.classList.remove("playing")
+    state.isActive ? controls?.classList.add("playing") : controls?.classList.remove("playing")
 
+    console.log(`updating... progressBar: ${progressBar != undefined}, duration: ${state.duration}, position:${state.position}`)
     if (progressBar && state.duration && state.position) {
       const newProgressBar = this.getProgressBar(state.token, state.duration, state.position)
       if (newProgressBar) progressBar.replaceWith(newProgressBar)
@@ -54,12 +55,11 @@ export default class MediaSessionManager {
   private createSessionElement(session: MediaSession) {
     const token = session.token
     const element = Public.createElement({
-      clss: `session ${session.isPlaying ? 'playing' : ''}`,
+      clss: "session",
       id: "session-" + token,
       children: [
-        this.getProgressBar(session.token, session.duration, session.position),
-        this.getSessionContent(session, token),
-        this.getSessionControls(session)
+        this.getImage(session.albumArt, session.albumName, token),
+        this.getSessionBody(session)
       ],
     })
 
@@ -69,22 +69,22 @@ export default class MediaSessionManager {
     this.container?.appendChild(element)
   }
 
-  private getSessionContent(session: MediaSession, token: string): HTMLElement {
+  private getSessionBody(session: MediaSession): HTMLElement {
     return Public.createElement({
-      clss: "session-content",
+      clss: "session-body",
       children: [
-        this.getImage(session.albumArt, session.albumName, token),
         this.getSessionInfo(session),
+        this.getSessionControls(session)
       ]
     })
   }
 
   private getSessionControls(session: MediaSession): HTMLElement | undefined {
     return Public.createElement({
-      clss: `session-controls`,
+      clss: `session-controls ${session.isPlaying ? 'playing' : ''}`,
       id: "session-control-" + session.token,
       children: [
-        //this.getProgressBar(session.position, session.duration, session.token),
+        this.getProgressBar(session.token, session.duration, session.position,),
         this.getActions(session.token)
       ]
     })
@@ -119,14 +119,17 @@ export default class MediaSessionManager {
   }
 
   private getProgressBar(token: string, duration?: number, position?: number): HTMLElement | undefined {
-    if (!duration && !position) return
+    console.log(`token: ${token}, duration: ${duration}, position: ${position}`)
 
-    const progressBar = Public.createElement({ clss: "session-progress-bar", id: "session-progress-bar-" + token })
+    const isHidden: boolean = (duration || -1) <= 0 || (position || -1) <= 0
 
-    const startRatio = (100 * position!!) / duration!!
-    const remainDuration = duration!! - position!!
+    const progressBar = Public.createElement({ clss: `session-progress-bar ${isHidden ? "hidden" : ""}`, id: "session-progress-bar-" + token })
 
-    progressBar.setAttribute("style", `--start: ${startRatio}%; --duration: ${remainDuration}ms;`)
+    if (!isHidden && duration! && position!) {
+      const startRatio = (100 * position) / duration
+      const remainDuration = duration - position
+      progressBar.setAttribute("style", `--start: ${startRatio}%; --duration: ${remainDuration}ms;`)
+    }
     return progressBar
   }
 
