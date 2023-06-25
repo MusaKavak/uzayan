@@ -33,8 +33,7 @@ html {
 
 #body {
     width: 100vw;
-    height: min-content;
-    position: absolute;
+    max-height: 100vh;
     background-color: var(--clr-background);
     padding: 0 var(--gap) var(--sz-window-height-when-closed);
     border-radius: 0 0 15px 15px;
@@ -51,6 +50,7 @@ html {
     transition: var(--transition);
     overflow: hidden;
     z-index: 1;
+    flex-shrink: 0;
 }
 
 .window-open .container:has(*) {
