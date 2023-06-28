@@ -1,5 +1,6 @@
 export type Notification = {
     key: string
+    groupKey: string,
     packageName: string
     title?: string
     text?: string,
@@ -9,7 +10,6 @@ export type Notification = {
     smallIcon?: string,
     actions?: string[],
     isGroup: boolean,
-    groupKey: string,
     progressMax?: number,
     progress?: number,
 }

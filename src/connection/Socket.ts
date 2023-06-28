@@ -29,7 +29,7 @@ export default class Socket {
             case "MediaSessions": { this.mediaSessionManager.createMediaSessions(message.payload as []); break }
             case "MediaSessionState": { this.mediaSessionManager.updateMediaSessionState(message.payload); break }
             case "SingleMediaSession": { this.mediaSessionManager.updateMediaSession(message.payload); break }
-            case "Notification": { this.notificationManger.newNotification(message.payload, true); break }
+            case "Notification": { this.notificationManger.createNotification(message.payload, true); break }
             case "RemoveNotification": { this.notificationManger.removeNotification(message.payload); break }
             case "Notifications": { this.notificationManger.syncNotifications(message.payload); break }
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.payload); break }

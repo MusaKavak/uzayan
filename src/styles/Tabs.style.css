@@ -16,10 +16,13 @@
 
 #tab-bodies-container {
     margin: 0;
-    min-height: 300px;
     flex-grow: 1;
     position: relative;
     overflow: auto;
+}
+
+#tab-bodies-container:has(>div:not(.inactive)) {
+    min-height: 300px;
 }
 
 
