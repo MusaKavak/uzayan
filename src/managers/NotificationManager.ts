@@ -45,9 +45,10 @@ export default class NotificationManager {
 
     private createNotificationElement(nf: Notification): HTMLElement {
         const newNotification = Public.createElement({
+            type: "label",
             clss: "notification",
             id: `nf-${this.filterKey(nf.key)}`,
-            innerHtml: '<label class="notification-folder"><input type="checkbox"/></label>',
+            innerHtml: '<input type="checkbox" class="notification-folder"/>',
             children: [
                 this.notificationLargeIcon(nf.largeIcon),
                 this.notificationBody(nf)
@@ -62,7 +63,7 @@ export default class NotificationManager {
             clss: "notification-body",
             children: [
                 this.notificationTitle(nf.title),
-            ].concat(this.notificationText())
+            ].concat(this.notificationText(nf.text, nf.bigText))
         })
     }
 
@@ -87,6 +88,7 @@ export default class NotificationManager {
             }
             return [eText()]
         }
+        if (bigText) return [eBigText()]
         return
     }
 

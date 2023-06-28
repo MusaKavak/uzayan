@@ -1,0 +1,52 @@
+.notification-group {
+    width: 100%;
+    background-color: var(--clr-foreground);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--gap);
+    overflow: hidden;
+}
+
+.notification {
+    display: flex;
+    padding: var(--gap);
+    gap: var(--gap);
+
+}
+
+.notification:has(input:checked) {
+    background-color: var(--clr-highlight);
+}
+
+.notification-folder {
+    display: none;
+}
+
+.notification img {
+    height: 4rem;
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.notification-body {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.notification-body>div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-folder:checked~.notification-body>div {
+    white-space: normal;
+}
+
+.notification-title {
+    color: var(--clr-font);
+}
+
+.notification-text,
+.notification-bigtext {
+    color: var(--clr-font-faded);
+}
