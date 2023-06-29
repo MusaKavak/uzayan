@@ -10,7 +10,7 @@
     display: flex;
     padding: var(--gap);
     gap: var(--gap);
-
+    flex-wrap: wrap;
 }
 
 .notification:has(input:checked) {
@@ -28,17 +28,23 @@
 }
 
 .notification-body {
+    width: 100%;
+    display: flex;
+    gap: var(--gap);
+}
+
+.notification-content {
     flex-grow: 1;
     min-width: 0;
 }
 
-.notification-body>div {
+.notification-content>div {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.notification-folder:checked~.notification-body>div {
+.notification-folder:checked~.notification-body div {
     white-space: normal;
 }
 
@@ -49,4 +55,25 @@
 .notification-text,
 .notification-bigtext {
     color: var(--clr-font-faded);
+}
+
+.notification-actions {
+    display: none;
+    align-items: center;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.notification-folder:checked~.notification-actions {
+    display: flex;
+}
+
+.notification-action {
+    padding: 6px;
+    background-color: var(--clr-accent);
+    cursor: pointer;
+}
+
+.notification-action:hover {
+    background-color: rgb(238, 0, 255);
 }

@@ -1,3 +1,4 @@
+import Socket from "../connection/Socket";
 import { Notification } from "../types/network/Notification";
 import Public from "../utils/Public";
 
@@ -50,17 +51,50 @@ export default class NotificationManager {
             id: `nf-${this.filterKey(nf.key)}`,
             innerHtml: '<input type="checkbox" class="notification-folder"/>',
             children: [
-                this.notificationLargeIcon(nf.largeIcon),
-                this.notificationBody(nf)
+                this.notificationBody(nf),
+                this.notificationActions(nf.key, nf.actions)
             ]
         })
 
         return newNotification
     }
 
+    private notificationActions(key: string, actions?: string[]): HTMLElement | undefined {
+        if (actions && actions.length > 0) {
+            return Public.createElement({
+                clss: "notification-actions",
+                children: actions.map(a => this.action(key, a))
+            })
+        }
+        return
+    }
+
+    private action(key: string, action: string): HTMLElement {
+        return Public.createElement({
+            clss: "notification-action",
+            content: action,
+            listener: {
+                event: "click",
+                callback: () => {
+                    Socket.send("NotificationAction", { key, action })
+                }
+            }
+        })
+    }
+
     private notificationBody(nf: Notification): HTMLElement {
         return Public.createElement({
             clss: "notification-body",
+            children: [
+                this.notificationLargeIcon(nf.largeIcon),
+                this.notificationContent(nf)
+            ]
+        })
+    }
+
+    private notificationContent(nf: Notification): HTMLElement {
+        return Public.createElement({
+            clss: "notification-content",
             children: [
                 this.notificationTitle(nf.title),
             ].concat(this.notificationText(nf.text, nf.bigText))
