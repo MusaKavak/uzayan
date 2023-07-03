@@ -55,7 +55,7 @@ export default class NotificationManager {
                 this.notificationActions(nf.key, nf.actions)
             ]
         })
-
+        newNotification.setAttribute("tabindex", "0")
         return newNotification
     }
 
@@ -97,7 +97,8 @@ export default class NotificationManager {
             clss: "notification-content",
             children: [
                 this.notificationTitle(nf.title),
-            ].concat(this.notificationText(nf.text, nf.bigText))
+                this.notificationText(nf.text, nf.bigText)
+            ]
         })
     }
 
@@ -111,19 +112,18 @@ export default class NotificationManager {
         return
     }
 
-    private notificationText(text?: string, bigText?: string): HTMLElement[] | undefined {
-        const eText = () => Public.createElement({ clss: "notification-text", content: text })
-        const eBigText = () => Public.createElement({ clss: "notification-bigtext", content: bigText })
+    private notificationText(text?: string, bigText?: string): HTMLElement | undefined {
+        if (!text && !bigText) return
 
-        if (text) {
-            if (bigText) {
-                if (text == bigText.substring(0, text.length)) return [eBigText()]
-                else[eText(), eBigText()]
-            }
-            return [eText()]
-        }
-        if (bigText) return [eBigText()]
-        return
+        if (text && bigText && text == bigText.substring(0, text.length)) text = undefined
+
+        return Public.createElement({
+            clss: "notification-text",
+            innerHtml: `
+                <div>${text ? text : ""}</div>
+                <div>${bigText ? bigText : ""}<div>
+            `
+        })
     }
 
     private notificationLargeIcon(largeIcon?: string): HTMLElement | undefined {

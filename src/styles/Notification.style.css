@@ -11,9 +11,10 @@
     padding: var(--gap);
     gap: var(--gap);
     flex-wrap: wrap;
+    transition: var(--transition);
 }
 
-.notification:has(input:checked) {
+.notification:focus {
     background-color: var(--clr-highlight);
 }
 
@@ -22,9 +23,14 @@
 }
 
 .notification img {
-    height: 4rem;
+    height: 1.5rem;
     object-fit: cover;
     aspect-ratio: 1;
+    transition: var(--transition);
+}
+
+.notification:focus img {
+    height: 4rem;
 }
 
 .notification-body {
@@ -38,34 +44,40 @@
     min-width: 0;
 }
 
-.notification-content>div {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.notification-folder:checked~.notification-body div {
-    white-space: normal;
+.notification-content div {
+    user-select: auto;
+    -webkit-user-select: auto;
 }
 
 .notification-title {
     color: var(--clr-font);
 }
 
-.notification-text,
-.notification-bigtext {
+.notification-text {
+    max-height: 0;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.notification-text>div {
     color: var(--clr-font-faded);
 }
 
+.notification:focus .notification-text {
+    max-height: 500px;
+}
+
 .notification-actions {
-    display: none;
+    max-height: 0;
     align-items: center;
     border-radius: var(--border-radius);
     overflow: hidden;
+    display: flex;
+    transition: var(--transition);
 }
 
-.notification-folder:checked~.notification-actions {
-    display: flex;
+.notification:focus .notification-actions {
+    max-height: 100px;
 }
 
 .notification-action {
