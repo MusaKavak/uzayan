@@ -28,7 +28,7 @@ export default class WindowManager {
         this.size.width = width
         this.size.height = height
         await appWindow.setMinSize(this.size)
-        // await appWindow.setMaxSize(this.size)
+        await appWindow.setMaxSize(this.size)
         await appWindow.setSize(this.size)
     }
 
@@ -77,17 +77,19 @@ export default class WindowManager {
         }
     }
 
-    private timeout: NodeJS.Timeout | undefined
-    async openWindowForNotification() {
-        this.setWindowSize(undefined, 600)
-        this.body.classList.add("notification-avaliable")
-        clearTimeout(this.timeout)
-        this.timeout = setTimeout(() => {
-            this.body.classList.remove("notification-avaliable")
-            if (!Public.isWindowOpen) {
-                this.setWindowSize()
-            }
-        }, Public.settings.Duration.NotificationDuration + (2 * Public.settings.Duration.TransitionDuration));
+    async bounceNotification() {
+        if (!Public.isWindowOpen) {
+            this.setWindowSize(undefined, 600)
 
+            setTimeout(() => {
+                this.setWindowSize(undefined, document.body.clientHeight)
+            }, Public.settings.Duration.TransitionDuration);
+        }
+    }
+
+    async unbounceNotification() {
+        if (!Public.isWindowOpen) {
+            this.setWindowSize(undefined, document.body.clientHeight)
+        }
     }
 }

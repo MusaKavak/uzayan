@@ -1,14 +1,15 @@
 import Socket from "../connection/Socket";
 import { Notification } from "../types/network/Notification";
 import Public from "../utils/Public";
+import WindowManager from "./WindowManager";
 
 
 export default class NotificationManager {
 
-    private body = document.getElementById("body")
-    private headsUpContainer = document.getElementById("recent-notifications-container")
+    private headsUpContainer = document.getElementById("headsup-notifications")
     private notificationTab = document.getElementById("notifications-tab-body")
 
+    constructor(private windowManager: WindowManager) { }
 
     syncNotifications(notifications: Notification[]) {
         if (this.notificationTab) this.notificationTab.innerHTML = ""
@@ -27,12 +28,18 @@ export default class NotificationManager {
     }
 
     createNotification(nf: Notification, headsUp: boolean) {
+        const key = `#nf-${this.filterKey(nf.key)}`
+
         const notificationElement = this.createNotificationElement(nf)
+
         const group = this.getGroup(this.filterKey(nf.groupKey))
-        console.log(`#nf-${nf.key}`)
-        const notificationToUpdate = group.querySelector(`#nf-${this.filterKey(nf.key)}`)
+
+        const notificationToUpdate = group.querySelector(key)
         if (notificationToUpdate) notificationToUpdate.replaceWith(notificationElement)
-        else group.appendChild(notificationElement)
+        else {
+            group.appendChild(notificationElement)
+            if (headsUp) this.showHeadsUp(nf)
+        }
     }
 
     private getGroup(groupKey: string): HTMLElement {
@@ -120,8 +127,8 @@ export default class NotificationManager {
         return Public.createElement({
             clss: "notification-text",
             innerHtml: `
-                <div>${text ? text : ""}</div>
-                <div>${bigText ? bigText : ""}<div>
+            <div>${text ? text : ""}</div>
+            <div>${bigText ? bigText : ""}<div>
             `
         })
     }
@@ -133,6 +140,39 @@ export default class NotificationManager {
             return img
         }
         return
+    }
+
+    private showHeadsUp(nf: Notification) {
+        const selector = `#hunf-${this.filterKey(nf.key)}`
+        const element = this.createHeadsUpNotification(nf)
+
+
+        const contains = this.headsUpContainer?.querySelector(selector)
+
+        if (!contains) {
+            this.headsUpContainer?.appendChild(element)
+            setTimeout(() => element.classList.add("bounce"), 1)
+            this.windowManager.bounceNotification()
+        }
+
+        setTimeout(() => {
+            element.classList.remove("bounce")
+            setTimeout(() => {
+                element.remove()
+                this.windowManager.unbounceNotification()
+            }, Public.settings.Duration.TransitionDuration);
+        }, Public.settings.Duration.NotificationDuration);
+    }
+
+    private createHeadsUpNotification(nf: Notification): HTMLElement {
+        return Public.createElement({
+            clss: "headsup-notification",
+            id: `hunf-${this.filterKey(nf.key)}`,
+            children: [
+                this.notificationLargeIcon(nf.largeIcon),
+                this.notificationTitle(nf.title || nf.text || nf.bigText)
+            ]
+        })
     }
 
     private filterKey(key: string): string {
