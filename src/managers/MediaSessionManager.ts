@@ -22,11 +22,8 @@ export default class MediaSessionManager {
 
     state.isActive ? controls?.classList.add("playing") : controls?.classList.remove("playing")
 
-    console.log(`updating... progressBar: ${progressBar != undefined}, duration: ${state.duration}, position:${state.position}`)
-    if (progressBar && state.duration && state.position) {
-      const newProgressBar = this.getProgressBar(state.token, state.duration, state.position)
-      if (newProgressBar) progressBar.replaceWith(newProgressBar)
-    } else progressBar?.remove()
+    const newProgressBar = this.getProgressBar(state.token, state.duration, state.position)
+    progressBar?.replaceWith(newProgressBar)
   }
 
   updateMediaSession(session: MediaSession) {
@@ -62,10 +59,6 @@ export default class MediaSessionManager {
         this.getSessionBody(session)
       ],
     })
-
-    if (session.duration)
-      element.onclick = (ev: MouseEvent) => this.setCurrentPosition(element, ev, session.duration!!, session.token)
-
     this.container?.appendChild(element)
   }
 
@@ -118,18 +111,18 @@ export default class MediaSessionManager {
     return actionElement
   }
 
-  private getProgressBar(token: string, duration?: number, position?: number): HTMLElement | undefined {
-    console.log(`token: ${token}, duration: ${duration}, position: ${position}`)
-
-    const isHidden: boolean = (duration || -1) <= 0 || (position || -1) <= 0
+  private getProgressBar(token: string, duration: number = -1, position: number = -1): HTMLElement {
+    const isHidden: boolean = duration <= 0 || position < 0
 
     const progressBar = Public.createElement({ clss: `session-progress-bar ${isHidden ? "hidden" : ""}`, id: "session-progress-bar-" + token })
 
-    if (!isHidden && duration! && position!) {
+    if (!isHidden) {
       const startRatio = (100 * position) / duration
       const remainDuration = duration - position
       progressBar.setAttribute("style", `--start: ${startRatio}%; --duration: ${remainDuration}ms;`)
+      progressBar.addEventListener("click", (e) => this.setSeekTo(progressBar, e, duration, token))
     }
+
     return progressBar
   }
 
@@ -153,11 +146,10 @@ export default class MediaSessionManager {
     return image
   }
 
-  private setCurrentPosition(source: HTMLElement, ev: MouseEvent, duration: number, token: string) {
+  private setSeekTo(source: HTMLElement, ev: MouseEvent, duration: number, token: string) {
     const rect = source.getBoundingClientRect()
     const x = ev.clientX - rect.left
     const xPercent = (x / rect.width) * 100
-    console.log(xPercent)
     if (xPercent > 0 && xPercent < 100) {
       const position = Math.floor((xPercent / 100) * duration)
       this.sendAction(token, "seekTo", position.toString())
