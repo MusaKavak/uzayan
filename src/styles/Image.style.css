@@ -1,21 +1,22 @@
 .image-date-container {
     display: flex;
     flex-wrap: wrap;
-    width: 100%;
-    flex-shrink: 0;
-    gap: var(--gap);
+    gap: 1px;
     margin-bottom: var(--gap);
     padding: var(--gap);
 }
 
 .date-container-header {
     width: 100%;
-    color: var(--clr-primary);
+    min-width: 0;
+    flex-grow: 1;
+    color: var(--clr-font);
+    margin-bottom: var(--gap);
 }
 
 .image-thumbnail {
-    width: 60px;
-    height: 60px;
+    height: 6rem;
+    aspect-ratio: 1;
     object-fit: cover;
 }
 
