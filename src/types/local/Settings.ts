@@ -48,6 +48,7 @@ export type AppearanceSettings = {
     "--clr-font": string
     "--clr-font-faded": string
     "--clr-accent": string
+    "--clr-accent-highlight": string
     "--clr-shadow": string
     "--border-radius": string
     "--gap": string
@@ -62,8 +63,8 @@ export const DefaultAppearanceSettings: AppearanceSettings = {
     "--clr-font": "#ffffffff",
     "--clr-font-faded": "#77767bff",
     "--clr-accent": "#c50ed2ff",
+    "--clr-accent-highlight": "#c50ed2ff",
     "--clr-shadow": "#000000ff",
-    "--clr-border": "#ffffffff",
     "--border-radius": "15px",
     "--gap": ".7rem",
     "--box-shadow": " 0 0 8px 1px var(--clr-shadow)"

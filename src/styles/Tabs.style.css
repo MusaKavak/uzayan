@@ -11,7 +11,7 @@
 }
 
 .tab.active {
-    background-color: var(--clr-background-bright);
+    background-color: var(--clr-highlight);
 }
 
 #tab-bodies-container {

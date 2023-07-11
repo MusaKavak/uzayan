@@ -97,7 +97,7 @@ html {
 }
 
 .button:hover {
-    background-color: var(--clr-background-bright);
+    background-color: var(--clr-highlight);
 }
 
 #mouse-event-block {

@@ -87,7 +87,7 @@
 }
 
 .notification-action:hover {
-    background-color: rgb(238, 0, 255);
+    background-color: var(--clr-accent-highlight);
 }
 
 #headsup-notifications {

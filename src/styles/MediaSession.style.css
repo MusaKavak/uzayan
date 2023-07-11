@@ -17,6 +17,7 @@
     scroll-snap-align: start;
     gap: var(--gap);
     scroll-snap-stop: always;
+    cursor: default;
 }
 
 /* .session:first-child {

@@ -60,8 +60,8 @@
             "--clr-font": "Font",
             "--clr-font-faded": "Faded Font",
             "--clr-accent": "Accent",
+            "--clr-accent-highlight": "Accent Highlight",
             "--clr-shadow": "Shadow",
-            "--clr-border": "Border",
             "--border-radius": "Border Radius",
             "--gap": "Gap",
             "--box-shadow": "Box Shadow"

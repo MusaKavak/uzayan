@@ -33,8 +33,8 @@ export type Language = {
             "--clr-font": string
             "--clr-font-faded": string
             "--clr-accent": string
+            "--clr-accent-highlight": string
             "--clr-shadow": string
-            "--clr-border": string
             "--border-radius": string
             "--gap": string
             "--box-shadow": string

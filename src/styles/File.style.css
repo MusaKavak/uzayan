@@ -69,7 +69,7 @@
 }
 
 #directory-goback path {
-    fill: var(--clr-primary);
+    fill: var(--clr-font);
 }
 
 #directory-actions {
@@ -125,7 +125,7 @@
 
 .directory-item:hover,
 .select .directory-item.file {
-    background-color: var(--clr-background-bright);
+    background-color: var(--clr-highlight);
 }
 
 .select .directory-item:has(input:checked) {
@@ -173,23 +173,4 @@
 
 .directory-item:focus-within .directory-item-menu {
     display: block;
-}
-
-#drop-field {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-#drop-field>div {
-    height: 10px;
-    width: 65%;
-    background-color: red;
-    overflow: hidden;
 }
