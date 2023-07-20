@@ -7,10 +7,10 @@ import { appIcon } from "../assets/app.svg"
 
 export default class HeaderManager {
     private svg = new HeaderSvg()
-    private headerContainer = document.getElementById("header-container")
+    private subHeader = document.getElementById("sub-header")
 
     constructor() {
-        this.setHeader()
+        this.setSubHeader()
         this.setListeners()
     }
 
@@ -27,10 +27,10 @@ export default class HeaderManager {
         location.reload()
     }
 
-    private setHeader() {
-        if (!this.headerContainer) return
-        this.headerContainer.appendChild(this.getAppIcon())
-        this.headerContainer.appendChild(this.getActions())
+    private setSubHeader() {
+        if (!this.subHeader) return
+        this.subHeader.appendChild(this.getAppIcon())
+        this.subHeader.appendChild(this.getActions())
     }
 
     private getActions(): HTMLElement {
