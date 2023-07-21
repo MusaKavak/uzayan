@@ -40,19 +40,51 @@
 #connection-state {
     max-height: 0;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .3rem;
     transition: 0.5s;
-    box-shadow: none;
-    margin: 0;
-    padding: 0;
 }
 
-.show-connection-state .window-open #connection-state {
+.window-open #connection-state {
     max-height: 50vh;
     margin-top: var(--gap);
+}
+
+#connection-state-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#connection-state-body {
+    width: 100%;
+    display: flex;
+}
+
+#connection-state-body>div {
+    max-width: 50%;
+    flex-grow: 1;
     padding: var(--gap);
-    box-shadow: var(--box-shadow);
+}
+
+#connection-state-body-qr>canvas {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 !important;
+    border-radius: 15px;
+}
+
+#connection-state-body-credentials {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.credential-title {
+    width: min-content;
+    border-bottom: 3px solid var(--clr-font);
+    margin-bottom: 4px;
+    padding-bottom: 2px;
+}
+
+.credential-value {
+    font-size: 1.4rem;
 }

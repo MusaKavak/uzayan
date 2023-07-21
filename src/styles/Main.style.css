@@ -108,3 +108,44 @@ html {
     left: 2rem;
     z-index: 20;
 }
+
+.switch {
+    position: relative;
+    height: 2rem;
+    width: 3.7rem;
+}
+
+.switch>input {
+    display: none;
+}
+
+.switch>div {
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    border-radius: 20px;
+    transition: var(--transition);
+    border: 2px solid var(--clr-font);
+    opacity: .6;
+}
+
+.switch>div::after {
+    content: '';
+    position: absolute;
+    top: .15rem;
+    left: .3rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    background-color: var(--clr-font);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.switch>input:checked~div {
+    border-color: var(--clr-accent);
+}
+
+.switch>input:checked~div::after {
+    background-color: var(--clr-accent);
+    left: 1.8rem;
+}
