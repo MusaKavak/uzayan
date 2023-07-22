@@ -5,19 +5,16 @@
 
 mod file_in;
 mod file_out;
-mod frontend;
 mod progress;
 mod tcp;
 mod udp;
 
-#[macro_use]
-extern crate lazy_static;
 extern crate json;
+extern crate lazy_static;
 
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            udp::get_socket_addr,
             udp::listen_for_pair,
             tcp::connect,
             tcp::emit_message,

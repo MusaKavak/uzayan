@@ -3,8 +3,6 @@ import qrcode from "qrcode"
 import HeaderManager from "../managers/HeaderManager"
 import { listen } from "@tauri-apps/api/event"
 import { NetworkMessage } from "../types/network/NetworkMessage"
-import { BackendMessage } from "../types/local/BackendMessage"
-import { PairRequest } from "../types/network/PairRequest"
 import Public from "../utils/Public"
 
 export default class ConnectionState {
@@ -17,11 +15,11 @@ export default class ConnectionState {
     constructor(
         private headerManager: HeaderManager
     ) {
-        this.createConnectionStateElement()
-        this.listenForPair().then()
+        this.initConnectionState()
     }
 
-    private async createConnectionStateElement() {
+    private async initConnectionState() {
+        if (await this.connectToLastServer()) return
         const header = this.connectionStateHeader()
         const body = await this.connectionStateBody()
 
@@ -33,8 +31,8 @@ export default class ConnectionState {
         if (ConnectionState.connectedAddress && ConnectionState.connectedDevice) {
             return Public.createElement({})
         } else {
-            const socketAddress = await invoke<SocketAddress>("get_socket_addr")
-
+            const socketAddress = await invoke<SocketAddress>("listen_for_pair")
+            this.listenForPair()
             return Public.createElement({
                 id: "connection-state-body",
                 children: [
@@ -97,52 +95,73 @@ export default class ConnectionState {
     }
 
     async listenForPair() {
-        invoke("listen_for_pair")
+        const unlisten = await listen<UdpMessage>("UdpMessage", (udp) => {
+            console.log(udp)
+            if (udp.payload.message == "!!!!!Error") {
+                this.connectionError()
+                return
+            }
 
-        await listen<BackendMessage>("UdpMessage", (message) => {
-            const networkMessage = JSON.parse(message.payload.message) as NetworkMessage<PairRequest>
+            const networkMessage = JSON.parse(udp.payload.message) as NetworkMessage<PairRequest>
             if (networkMessage.event == "Pair")
-                this.pair(message.payload.address, networkMessage.payload)
+                this.pair(udp.payload.address, networkMessage.payload)
+            unlisten()
         })
 
     }
 
-    private async connectedToLastAddress() {
-        const address = localStorage.getItem("ConnectedAddress")
-        if (address && address.length > 0) this.connect(address)
+    private async connectToLastServer(): Promise<boolean> {
+        const address = localStorage.getItem("ConnedtedServer")
+        if (address && address.length > 0) return this.connect(address)
+        return false
     }
 
-    private async pair(address: string, pairRequest: PairRequest) {
+    private pair(address: string, pairRequest: PairRequest) {
         if (pairRequest.code == this.pairCode) {
-            await this.connect(`${address}:${pairRequest.port}`)
+            this.connect(`${address}:${pairRequest.port}`)
         }
     }
 
-    private async connect(address: string) {
+    private async connect(address: string): Promise<boolean> {
         const isConnected = await invoke<boolean>("connect", { address })
         if (isConnected) {
             ConnectionState.connectedAddress = address
             this.headerManager.sync()
-            localStorage.setItem("ConnectedAddress", address)
-        }
+            localStorage.setItem("ConnedtedServer", address)
+        } else this.connectionError()
+
+        return isConnected
     }
 
     private qrCode(address: SocketAddress): HTMLElement {
         const canvas = document.createElement("canvas")
-        canvas.setAttribute("id", "")
         qrcode.toCanvas(
             canvas,
-            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}&name=${address.name}`
+            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}`
         )
         return Public.createElement({
             id: "connection-state-body-qr",
             children: [canvas]
         })
     }
+
+    private connectionError() {
+        console.log("!!!!!!!!Connection!!!!!!!!")
+    }
+}
+
+type UdpMessage = {
+    message: string,
+    address: string
 }
 
 type SocketAddress = {
     ip: string,
     port: number,
+}
+
+type PairRequest = {
+    port: number,
+    code: string,
     name: string
 }

@@ -4,22 +4,19 @@ use std::thread;
 
 use tauri::{command, Window};
 
-use crate::frontend::{emit, set_window};
-
 static mut STREAM: Option<TcpStream> = None;
 static mut IS_CONNECTED: bool = false;
 
 #[command]
 pub fn connect(window: Window, address: String) -> bool {
     unsafe {
-        set_window(window);
         if !IS_CONNECTED {
             match TcpStream::connect(&address) {
                 Ok(mut stream) => {
                     stream.write(&[200]).unwrap();
                     STREAM = Some(stream);
                     IS_CONNECTED = true;
-                    listen_for_messages();
+                    listen_for_messages(window);
                     println!("Connected To: {}", address);
                     return true;
                 }
@@ -35,7 +32,7 @@ pub fn connect(window: Window, address: String) -> bool {
 }
 
 #[command]
-pub fn emit_message(message: String) {
+pub fn emit_message(window: Window, message: String) {
     unsafe {
         thread::spawn(move || match &mut STREAM {
             Some(stream) => {
@@ -44,19 +41,22 @@ pub fn emit_message(message: String) {
                     stream.shutdown(Both).unwrap();
                     STREAM = None;
                     IS_CONNECTED = false;
+                    window.emit("Disconnected", "").unwrap();
                     panic!("Error while writing to stream {}", e);
                 });
             }
-            None => println!("There is no stream avaliable!"),
+            None => {
+                window.emit("Disconnected", String::new()).unwrap();
+                println!("There is no stream avaliable!")
+            }
         });
     };
 }
 
-unsafe fn listen_for_messages() {
-    thread::spawn(|| {
+unsafe fn listen_for_messages(window: Window) {
+    thread::spawn(move || {
         match &mut STREAM {
             Some(stream) => {
-                let address = stream.peer_addr().unwrap().ip().to_string();
                 let mut reader = BufReader::new(stream);
 
                 loop {
@@ -66,11 +66,12 @@ unsafe fn listen_for_messages() {
                         break;
                     }
                     println!("Received New Line ({})", line.len());
-                    emit("TcpMessage", line, address.clone());
+                    window.emit("TcpMessage", line).unwrap();
                 }
                 println!("Disconnected From Server");
                 STREAM = None;
                 IS_CONNECTED = false;
+                window.emit("Disconnect", "").unwrap();
             }
             None => {}
         };

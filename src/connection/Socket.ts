@@ -5,7 +5,6 @@ import { NetworkMessage } from '../types/network/NetworkMessage'
 import NotificationManager from '../managers/NotificationManager'
 import ImageManager from '../managers/ImageManager'
 import FileManager from '../managers/FileManager'
-import { BackendMessage } from '../types/local/BackendMessage'
 
 export default class Socket {
 
@@ -17,8 +16,8 @@ export default class Socket {
     ) { this.inititialize() }
 
     private async inititialize() {
-        await listen<BackendMessage>('TcpMessage', (event) => {
-            const json = JSON.parse(event.payload.message)
+        await listen<string>('TcpMessage', (tcp) => {
+            const json = JSON.parse(tcp.payload)
             this.call(json)
 
         })
