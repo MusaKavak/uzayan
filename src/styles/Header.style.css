@@ -40,15 +40,15 @@
 #connection-state {
     max-height: 0;
     overflow: hidden;
-    transition: 0.5s;
+    transition: var(--transition);
 }
 
-.window-open #connection-state {
+.show-connection-state .window-open #connection-state {
     max-height: 50vh;
-    margin-top: var(--gap);
 }
 
 #connection-state-header {
+    margin-top: var(--gap);
     display: flex;
     align-items: center;
     justify-content: space-between;

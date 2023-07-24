@@ -7,7 +7,7 @@ import Public from "../utils/Public"
 
 export default class ConnectionState {
     static connectedAddress?: string
-    static connectedDevice?: string
+    static connectedDeviceName?: string
 
     private pairCode = "123414"
     private connectionStateContainer = document.getElementById("connection-state")
@@ -15,24 +15,33 @@ export default class ConnectionState {
     constructor(
         private headerManager: HeaderManager
     ) {
-        this.initConnectionState()
+        this.listenConnectionError()
+        this.connectToLastServer().then((isConnected) => {
+            if (!isConnected) this.initConnectionState()
+        })
     }
 
     private async initConnectionState() {
-        if (await this.connectToLastServer()) return
         const header = this.connectionStateHeader()
         const body = await this.connectionStateBody()
 
+        this.connectionStateContainer!.innerHTML = "";
+
         this.connectionStateContainer?.appendChild(header)
-        this.connectionStateContainer?.appendChild(body)
+        if (body) this.connectionStateContainer?.appendChild(body)
     }
 
-    private async connectionStateBody(): Promise<HTMLElement> {
-        if (ConnectionState.connectedAddress && ConnectionState.connectedDevice) {
-            return Public.createElement({})
-        } else {
+    private async connectionStateBody(): Promise<HTMLElement | undefined> {
+        if (ConnectionState.connectedAddress && ConnectionState.connectedDeviceName) {
+            document.body.classList.remove("show-connection-state")
+            return
+        }
+        else {
             const socketAddress = await invoke<SocketAddress>("listen_for_pair")
             this.listenForPair()
+
+            document.body.classList.add("show-connection-state")
+
             return Public.createElement({
                 id: "connection-state-body",
                 children: [
@@ -65,8 +74,10 @@ export default class ConnectionState {
     }
 
     private connectionStateHeader(): HTMLElement {
-        if (ConnectionState.connectedAddress && ConnectionState.connectedDevice) {
-            return Public.createElement({})
+        if (ConnectionState.connectedAddress && ConnectionState.connectedDeviceName) {
+            return Public.createElement({
+                id: "connection-state-header",
+            })
         } else {
             return Public.createElement({
                 id: "connection-state-header",
@@ -80,7 +91,6 @@ export default class ConnectionState {
         const checkbox = document.createElement("input")
         checkbox.setAttribute("type", "checkbox")
         checkbox.addEventListener("change", () => {
-            console.log(checkbox.checked)
         })
 
         return Public.createElement({
@@ -96,7 +106,6 @@ export default class ConnectionState {
 
     async listenForPair() {
         const unlisten = await listen<UdpMessage>("UdpMessage", (udp) => {
-            console.log(udp)
             if (udp.payload.message == "!!!!!Error") {
                 this.connectionError()
                 return
@@ -111,24 +120,34 @@ export default class ConnectionState {
     }
 
     private async connectToLastServer(): Promise<boolean> {
-        const address = localStorage.getItem("ConnedtedServer")
-        if (address && address.length > 0) return this.connect(address)
+        const address = localStorage.getItem("ConnectedAddress")
+        const name = localStorage.getItem("ConnectedDeviceName")
+        if (
+            (address && address.length > 0) &&
+            (name && name.length > 0)
+        ) {
+            return this.connect(address, name)
+        }
         return false
     }
 
     private pair(address: string, pairRequest: PairRequest) {
         if (pairRequest.code == this.pairCode) {
-            this.connect(`${address}:${pairRequest.port}`)
+            this.connect(`${address}:${pairRequest.port}`, pairRequest.name, true)
         }
     }
 
-    private async connect(address: string): Promise<boolean> {
+    private async connect(address: string, name: string, showError: boolean = false): Promise<boolean> {
         const isConnected = await invoke<boolean>("connect", { address })
         if (isConnected) {
             ConnectionState.connectedAddress = address
+            ConnectionState.connectedDeviceName = name
             this.headerManager.sync()
-            localStorage.setItem("ConnedtedServer", address)
-        } else this.connectionError()
+            document.body.classList.remove("disconnected")
+            localStorage.setItem("ConnectedAddress", address)
+            localStorage.setItem("ConnectedDeviceName", name)
+            await this.initConnectionState()
+        } else if (showError) this.connectionError()
 
         return isConnected
     }
@@ -145,8 +164,15 @@ export default class ConnectionState {
         })
     }
 
-    private connectionError() {
-        console.log("!!!!!!!!Connection!!!!!!!!")
+    private async listenConnectionError() {
+        await listen("Disconnected", () => this.connectionError())
+    }
+
+    private async connectionError() {
+        ConnectionState.connectedAddress = undefined
+        ConnectionState.connectedDeviceName = undefined
+        document.body.classList.add("disconnected")
+        await this.initConnectionState()
     }
 }
 

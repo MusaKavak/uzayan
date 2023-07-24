@@ -71,7 +71,7 @@ unsafe fn listen_for_messages(window: Window) {
                 println!("Disconnected From Server");
                 STREAM = None;
                 IS_CONNECTED = false;
-                window.emit("Disconnect", "").unwrap();
+                window.emit("Disconnected", "").unwrap();
             }
             None => {}
         };

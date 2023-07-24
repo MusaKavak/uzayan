@@ -116,7 +116,13 @@ export default class HeaderManager {
         return Public.createElement({
             id: "header-icon",
             title: "Uzayan",
-            innerHtml: appIcon
+            innerHtml: appIcon,
+            listener: {
+                "event": "click",
+                "callback": () => {
+                    document.body.classList.toggle("show-connection-state")
+                }
+            }
         })
     }
 }
