@@ -4,44 +4,85 @@ import HeaderManager from "../managers/HeaderManager"
 import { listen } from "@tauri-apps/api/event"
 import { NetworkMessage } from "../types/network/NetworkMessage"
 import Public from "../utils/Public"
+import ConnectionStateSvg from "../assets/connection_state.svg"
 
 export default class ConnectionState {
     static connectedAddress?: string
     static connectedDeviceName?: string
 
     private pairCode = "123414"
-    private connectionStateContainer = document.getElementById("connection-state")
-
+    private connectionStateWrapper = document.getElementById("connection-state-wrapper")
+    private svg = new ConnectionStateSvg()
     constructor(
         private headerManager: HeaderManager
     ) {
         this.listenConnectionError()
         this.connectToLastServer().then((isConnected) => {
-            if (!isConnected) this.initConnectionState()
+            if (!isConnected) this.initConnectionState("PairCredentials")
         })
     }
 
-    private async initConnectionState() {
-        const header = this.connectionStateHeader()
-        const body = await this.connectionStateBody()
+    private async initConnectionState(type: "PairCredentials" | "DeviceActions" | "Error") {
+        let child: HTMLElement
+        if (type == "PairCredentials") child = await this.pairCredentials()
+        if (type == "DeviceActions") child = this.deviceActions()
+        if (type == "Error") child = this.connectionStateError()
 
-        this.connectionStateContainer!.innerHTML = "";
 
-        this.connectionStateContainer?.appendChild(header)
-        if (body) this.connectionStateContainer?.appendChild(body)
+        this.connectionStateWrapper!.innerHTML = "";
+        this.connectionStateWrapper?.appendChild(child!)
     }
 
-    private async connectionStateBody(): Promise<HTMLElement | undefined> {
-        if (ConnectionState.connectedAddress && ConnectionState.connectedDeviceName) {
-            document.body.classList.remove("show-connection-state")
-            return
-        }
-        else {
-            const socketAddress = await invoke<SocketAddress>("listen_for_pair")
-            this.listenForPair()
+    private async pairCredentials(): Promise<HTMLElement> {
+        const body = await this.pairCredentialsBody()
+        if (!body) return this.connectionStateError()
+        else
+            return Public.createElement({
+                clss: "connection-state",
+                children: [
+                    this.secureConnectionHeader(),
+                    body
+                ]
+            })
+    }
 
+    private deviceActions(): HTMLElement {
+        //TODO DeviceActions
+        return Public.createElement({
+            clss: "connection-state",
+            content: ConnectionState.connectedDeviceName
+        })
+    }
+
+    private connectionStateError(): HTMLElement {
+        document.body.classList.add("show-connection-state")
+        return Public.createElement({
+            clss: "connection-state type-error",
+            children: [
+                Public.createElement({
+                    id: "connection-error-title",
+                    innerHtml: `
+                        <span>${this.svg.connectionError}</span>
+                        <span>An Error Occurred</span>
+                    `
+                }),
+                Public.createElement({
+                    id: "refresh-button",
+                    content: "Refresh",
+                    listener: {
+                        event: "click",
+                        callback: () => { this.initConnectionState("PairCredentials") }
+                    }
+                })
+            ]
+        })
+    }
+
+    private async pairCredentialsBody(): Promise<HTMLElement | undefined> {
+        const socketAddress = await invoke<SocketAddress>("listen_for_pair")
+        if (socketAddress.ip.length > 0 && socketAddress.port != 0) {
             document.body.classList.add("show-connection-state")
-
+            this.listenForPair()
             return Public.createElement({
                 id: "connection-state-body",
                 children: [
@@ -49,7 +90,7 @@ export default class ConnectionState {
                     this.credentials(socketAddress)
                 ]
             })
-        }
+        } else return
     }
 
     private credentials(socketAddress: SocketAddress): HTMLElement {
@@ -73,18 +114,12 @@ export default class ConnectionState {
         })
     }
 
-    private connectionStateHeader(): HTMLElement {
-        if (ConnectionState.connectedAddress && ConnectionState.connectedDeviceName) {
-            return Public.createElement({
-                id: "connection-state-header",
-            })
-        } else {
-            return Public.createElement({
-                id: "connection-state-header",
-                innerHtml: `<span>Enable Secure Connection</span>`,
-                children: [this.secureConnectionCheckbox()]
-            })
-        }
+    private secureConnectionHeader(): HTMLElement {
+        return Public.createElement({
+            id: "connection-state-header",
+            innerHtml: `<span>Enable Secure Connection</span>`,
+            children: [this.secureConnectionCheckbox()]
+        })
     }
 
     private secureConnectionCheckbox(): HTMLElement {
@@ -146,7 +181,7 @@ export default class ConnectionState {
             document.body.classList.remove("disconnected")
             localStorage.setItem("ConnectedAddress", address)
             localStorage.setItem("ConnectedDeviceName", name)
-            await this.initConnectionState()
+            await this.initConnectionState("DeviceActions")
         } else if (showError) this.connectionError()
 
         return isConnected
@@ -172,7 +207,7 @@ export default class ConnectionState {
         ConnectionState.connectedAddress = undefined
         ConnectionState.connectedDeviceName = undefined
         document.body.classList.add("disconnected")
-        await this.initConnectionState()
+        await this.initConnectionState("Error")
     }
 }
 

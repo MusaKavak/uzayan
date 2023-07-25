@@ -14,10 +14,6 @@
     display: flex;
 }
 
-#header-actions {
-    display: flex;
-}
-
 #header-actions svg {
     scale: 0.7;
 }
@@ -37,13 +33,13 @@
     stroke-width: 30px;
 }
 
-#connection-state {
+.connection-state {
     max-height: 0;
     overflow: hidden;
     transition: var(--transition);
 }
 
-.show-connection-state .window-open #connection-state {
+.show-connection-state .window-open .connection-state {
     max-height: 50vh;
 }
 
@@ -87,4 +83,34 @@
 
 .credential-value {
     font-size: 1.4rem;
+}
+
+.connection-state.type-error {
+    display: flex;
+    justify-content: space-between;
+}
+
+#connection-error-title {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin: var(--gap) 0;
+}
+
+#refresh-button {
+    margin: var(--gap) 0;
+    width: min-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px var(--gap);
+    border-radius: var(--border-radius);
+    color: var(--clr-font);
+    border: 2px solid var(--clr-font);
+    background-color: var(--clr-foreground);
+    cursor: pointer;
+}
+
+#refresh-button:hover {
+    background-color: var(--clr-highlight);
 }
