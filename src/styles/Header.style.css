@@ -36,39 +36,47 @@
 .connection-state {
     max-height: 0;
     overflow: hidden;
-    transition: var(--transition);
+    transition: max-height var(--transition);
 }
 
-.show-connection-state .window-open .connection-state {
+.show-connection-state .window-open .type-pc {
+    border-top: 1px solid var(--clr-font);
     max-height: 50vh;
 }
 
-#connection-state-header {
+.show-connection-state .window-open .type-da,
+.show-connection-state .window-open .type-ce {
+    border-top: 1px solid var(--clr-font);
+    max-height: 4rem;
+}
+
+/*pc =  Pair Credentals */
+#pc-header {
     margin-top: var(--gap);
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-#connection-state-body {
+#pc-body {
     width: 100%;
     display: flex;
 }
 
-#connection-state-body>div {
+#pc-body>div {
     max-width: 50%;
     flex-grow: 1;
     padding: var(--gap);
 }
 
-#connection-state-body-qr>canvas {
+#pc-body-qr>canvas {
     width: 100% !important;
     height: auto !important;
     aspect-ratio: 1 !important;
     border-radius: 15px;
 }
 
-#connection-state-body-credentials {
+#pc-body-credentials {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -85,19 +93,41 @@
     font-size: 1.4rem;
 }
 
-.connection-state.type-error {
+/*da = Device Actions */
+
+.connection-state.type-da {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#ca-connected-device-name {
+    background-color: rgba(0, 197, 43, 0.5);
+    color: rgb(0, 243, 53);
+    padding: 5px 7px;
+    margin: var(--gap) 0;
+    border-radius: var(--border-radius);
+    cursor: default;
+    max-width: 25%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/*ce = Connection Error*/
+.connection-state.type-ce {
     display: flex;
     justify-content: space-between;
 }
 
-#connection-error-title {
+#ce-title {
     display: flex;
     align-items: center;
     gap: 3px;
     margin: var(--gap) 0;
 }
 
-#refresh-button {
+#ce-refresh-button {
     margin: var(--gap) 0;
     width: min-content;
     display: flex;
@@ -111,6 +141,6 @@
     cursor: pointer;
 }
 
-#refresh-button:hover {
+#ce-refresh-button:hover {
     background-color: var(--clr-highlight);
 }

@@ -33,12 +33,13 @@ export default class ConnectionState {
         this.connectionStateWrapper?.appendChild(child!)
     }
 
+    //-----PairCredentials-----//
     private async pairCredentials(): Promise<HTMLElement> {
         const body = await this.pairCredentialsBody()
         if (!body) return this.connectionStateError()
         else
             return Public.createElement({
-                clss: "connection-state",
+                clss: "connection-state type-pc",
                 children: [
                     this.secureConnectionHeader(),
                     body
@@ -46,78 +47,10 @@ export default class ConnectionState {
             })
     }
 
-    private deviceActions(): HTMLElement {
-        //TODO DeviceActions
-        return Public.createElement({
-            clss: "connection-state",
-            content: ConnectionState.connectedDeviceName
-        })
-    }
-
-    private connectionStateError(): HTMLElement {
-        document.body.classList.add("show-connection-state")
-        return Public.createElement({
-            clss: "connection-state type-error",
-            children: [
-                Public.createElement({
-                    id: "connection-error-title",
-                    innerHtml: `
-                        <span>${this.svg.connectionError}</span>
-                        <span>An Error Occurred</span>
-                    `
-                }),
-                Public.createElement({
-                    id: "refresh-button",
-                    content: "Refresh",
-                    listener: {
-                        event: "click",
-                        callback: () => { this.initConnectionState("PairCredentials") }
-                    }
-                })
-            ]
-        })
-    }
-
-    private async pairCredentialsBody(): Promise<HTMLElement | undefined> {
-        const socketAddress = await invoke<SocketAddress>("listen_for_pair")
-        if (socketAddress.ip.length > 0 && socketAddress.port != 0) {
-            document.body.classList.add("show-connection-state")
-            this.listenForPair()
-            return Public.createElement({
-                id: "connection-state-body",
-                children: [
-                    this.qrCode(socketAddress),
-                    this.credentials(socketAddress)
-                ]
-            })
-        } else return
-    }
-
-    private credentials(socketAddress: SocketAddress): HTMLElement {
-        return Public.createElement({
-            id: "connection-state-body-credentials",
-            children: [
-                this.credential("Address", socketAddress.ip),
-                this.credential("Port", socketAddress.port),
-                this.credential("Code", this.pairCode)
-            ]
-        })
-    }
-
-    private credential(title: string, value: string | number): HTMLElement {
-        return Public.createElement({
-            clss: "credential",
-            innerHtml: `
-                <div class="credential-title">${title}</div>
-                <div class="credential-value">${value}</div>
-            `
-        })
-    }
-
     private secureConnectionHeader(): HTMLElement {
         return Public.createElement({
-            id: "connection-state-header",
-            innerHtml: `<span>Enable Secure Connection</span>`,
+            id: "pc-header",
+            innerHtml: `<span>Secure Connection</span>`,
             children: [this.secureConnectionCheckbox()]
         })
     }
@@ -139,6 +72,98 @@ export default class ConnectionState {
         })
     }
 
+    private async pairCredentialsBody(): Promise<HTMLElement | undefined> {
+        const socketAddress = await invoke<SocketAddress>("listen_for_pair")
+        if (socketAddress.ip.length > 0 && socketAddress.port != 0) {
+            document.body.classList.add("show-connection-state")
+            this.listenForPair()
+            return Public.createElement({
+                id: "pc-body",
+                children: [
+                    this.qrCode(socketAddress),
+                    this.credentials(socketAddress)
+                ]
+            })
+        } else return
+    }
+
+    private qrCode(address: SocketAddress): HTMLElement {
+        const canvas = document.createElement("canvas")
+        qrcode.toCanvas(
+            canvas,
+            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}`
+        )
+        return Public.createElement({
+            id: "pc-body-qr",
+            children: [canvas]
+        })
+    }
+
+    private credentials(socketAddress: SocketAddress): HTMLElement {
+        return Public.createElement({
+            id: "pc-body-credentials",
+            children: [
+                this.credential("Address", socketAddress.ip),
+                this.credential("Port", socketAddress.port),
+                this.credential("Code", this.pairCode)
+            ]
+        })
+    }
+
+    private credential(title: string, value: string | number): HTMLElement {
+        return Public.createElement({
+            clss: "pc-credential",
+            innerHtml: `
+                <div class="credential-title">${title}</div>
+                <div class="credential-value">${value}</div>
+            `
+        })
+    }
+
+    //-----DeviceActions-----//
+    private deviceActions(): HTMLElement {
+        document.body.classList.remove("show-connection-state")
+
+        return Public.createElement({
+            clss: "connection-state type-da",
+            innerHtml: `
+                <div title="Connected to: ${ConnectionState.connectedDeviceName}" id="ca-connected-device-name">${ConnectionState.connectedDeviceName}</div>
+            `,
+            children: [this.createDeviceActions()]
+        })
+    }
+
+    private createDeviceActions(): HTMLElement | undefined {
+        //TODO
+        return
+    }
+
+    //-----Error-----//
+    private connectionStateError(): HTMLElement {
+        document.body.classList.add("show-connection-state")
+        return Public.createElement({
+            clss: "connection-state type-ce",
+            children: [
+                Public.createElement({
+                    id: "ce-title",
+                    innerHtml: `
+                        <span>${this.svg.connectionError}</span>
+                        <span>An Error Occurred</span>
+                    `
+                }),
+                Public.createElement({
+                    id: "ce-refresh-button",
+                    content: "Refresh",
+                    listener: {
+                        event: "click",
+                        callback: () => { this.initConnectionState("PairCredentials") }
+                    }
+                })
+            ]
+        })
+    }
+
+    //-----Utils-----//
     async listenForPair() {
         const unlisten = await listen<UdpMessage>("UdpMessage", (udp) => {
             if (udp.payload.message == "!!!!!Error") {
@@ -160,10 +185,8 @@ export default class ConnectionState {
         if (
             (address && address.length > 0) &&
             (name && name.length > 0)
-        ) {
-            return this.connect(address, name)
-        }
-        return false
+        ) return this.connect(address, name)
+        else return false
     }
 
     private pair(address: string, pairRequest: PairRequest) {
@@ -178,25 +201,12 @@ export default class ConnectionState {
             ConnectionState.connectedAddress = address
             ConnectionState.connectedDeviceName = name
             this.headerManager.sync()
-            document.body.classList.remove("disconnected")
             localStorage.setItem("ConnectedAddress", address)
             localStorage.setItem("ConnectedDeviceName", name)
             await this.initConnectionState("DeviceActions")
         } else if (showError) this.connectionError()
 
         return isConnected
-    }
-
-    private qrCode(address: SocketAddress): HTMLElement {
-        const canvas = document.createElement("canvas")
-        qrcode.toCanvas(
-            canvas,
-            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}`
-        )
-        return Public.createElement({
-            id: "connection-state-body-qr",
-            children: [canvas]
-        })
     }
 
     private async listenConnectionError() {
@@ -206,7 +216,6 @@ export default class ConnectionState {
     private async connectionError() {
         ConnectionState.connectedAddress = undefined
         ConnectionState.connectedDeviceName = undefined
-        document.body.classList.add("disconnected")
         await this.initConnectionState("Error")
     }
 }
