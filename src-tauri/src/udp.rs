@@ -1,5 +1,5 @@
 use if_addrs::get_if_addrs;
-use std::{net::UdpSocket, thread};
+use std::{net::UdpSocket, thread, time::Duration};
 use tauri::{command, Window};
 
 #[derive(Clone, serde::Serialize)]
@@ -14,13 +14,20 @@ pub struct SocketAddress {
     port: u16,
 }
 
+static mut LISTENING_SOCKET: Option<SocketAddress> = None;
+
 #[command]
 pub fn listen_for_pair(window: Window) -> SocketAddress {
     let mut _error = String::new();
 
+    unsafe {
+        if let Some(listening_socket) = &LISTENING_SOCKET {
+            return listening_socket.clone();
+        }
+    }
+
     match get_ip_address() {
         Ok(ip) => {
-            println!("LocalIp:{}", ip);
             match UdpSocket::bind(ip.clone() + ":0") {
                 Ok(socket) => {
                     let port = socket.local_addr().unwrap().port();
@@ -29,7 +36,13 @@ pub fn listen_for_pair(window: Window) -> SocketAddress {
                         listen(window, socket);
                     });
 
-                    return SocketAddress { ip, port };
+                    let socket_address = SocketAddress { ip, port };
+
+                    unsafe {
+                        LISTENING_SOCKET = Some(socket_address.clone());
+                    }
+
+                    return socket_address;
                 }
                 Err(e) => {
                     _error = format!("Error While Udp Binding:\n {}", e.to_string());
@@ -53,11 +66,21 @@ pub fn listen_for_pair(window: Window) -> SocketAddress {
 
 fn listen(window: Window, socket: UdpSocket) {
     let mut buf = [0; 200];
+
+    socket
+        .set_read_timeout(Some(Duration::from_secs(600)))
+        .unwrap();
+
     match socket.recv_from(&mut buf) {
         Ok((amt, address)) => {
             let buf = &mut buf[..amt];
             let received_message = String::from_utf8(buf.to_vec()).unwrap();
             let address = address.ip().to_string();
+
+            unsafe {
+                LISTENING_SOCKET = None;
+            }
+
             window
                 .emit(
                     "UdpMessage",
@@ -70,6 +93,11 @@ fn listen(window: Window, socket: UdpSocket) {
         }
         Err(e) => {
             println!("Error While Receiving Udp Message:\n{}", e.to_string());
+
+            unsafe {
+                LISTENING_SOCKET = None;
+            }
+
             window
                 .emit(
                     "UdpMessage",

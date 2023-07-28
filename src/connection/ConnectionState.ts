@@ -19,6 +19,7 @@ export default class ConnectionState {
         private headerManager: HeaderManager,
         private dialogManager: DialogManager
     ) {
+        this.loadLastSCPreference()
         this.listenConnectionError()
         this.connectToLastServer().then((isConnected) => {
             if (!isConnected) this.initConnectionState("PairCredentials")
@@ -87,9 +88,12 @@ export default class ConnectionState {
 
     private secureConnectionCheckbox(): HTMLElement {
         const checkbox = document.createElement("input")
+        checkbox.checked = this.isConnectionSecure
         checkbox.setAttribute("type", "checkbox")
         checkbox.addEventListener("change", () => {
             this.isConnectionSecure = checkbox.checked
+            localStorage.setItem("SecureConnection", checkbox.checked ? "1" : "0")
+            this.initConnectionState("PairCredentials")
         })
 
         return Public.createElement({
@@ -122,7 +126,7 @@ export default class ConnectionState {
         const canvas = document.createElement("canvas")
         qrcode.toCanvas(
             canvas,
-            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}`
+            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}&secure=${this.isConnectionSecure}`
         )
         return Public.createElement({
             id: "pc-body-qr",
@@ -248,6 +252,13 @@ export default class ConnectionState {
         ConnectionState.connectedAddress = undefined
         ConnectionState.connectedDeviceName = undefined
         await this.initConnectionState("Error")
+    }
+
+    private loadLastSCPreference() {
+        const isSecure = localStorage.getItem("SecureConnection")
+        if (isSecure && isSecure == "1") {
+            this.isConnectionSecure = true
+        }
     }
 }
 
