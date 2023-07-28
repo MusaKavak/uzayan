@@ -5,16 +5,19 @@ import { listen } from "@tauri-apps/api/event"
 import { NetworkMessage } from "../types/network/NetworkMessage"
 import Public from "../utils/Public"
 import ConnectionStateSvg from "../assets/connection_state.svg"
+import DialogManager from "../managers/DialogManager"
 
 export default class ConnectionState {
     static connectedAddress?: string
     static connectedDeviceName?: string
 
     private pairCode = "123414"
+    private isConnectionSecure = false
     private connectionStateWrapper = document.getElementById("connection-state-wrapper")
     private svg = new ConnectionStateSvg()
     constructor(
-        private headerManager: HeaderManager
+        private headerManager: HeaderManager,
+        private dialogManager: DialogManager
     ) {
         this.listenConnectionError()
         this.connectToLastServer().then((isConnected) => {
@@ -50,8 +53,35 @@ export default class ConnectionState {
     private secureConnectionHeader(): HTMLElement {
         return Public.createElement({
             id: "pc-header",
+            innerHtml: ``,
+            children: [
+                this.secureConnectionTitle(),
+                this.secureConnectionCheckbox()
+            ]
+        })
+    }
+
+    private secureConnectionTitle(): HTMLElement {
+        return Public.createElement({
+            id: "pc-header-title",
             innerHtml: `<span>Secure Connection</span>`,
-            children: [this.secureConnectionCheckbox()]
+            children: [
+                Public.createElement({
+                    type: "span",
+                    id: "secure-connection-info",
+                    innerHtml: this.svg.info,
+                    listener: {
+                        event: "click",
+                        callback: () => {
+                            this.dialogManager.showDialog(`
+                                The secure connection encrypts your messages between devices. 
+                                Therefore, the messages may be slightly larger than the insecure connection. 
+                                The secure connection is a must if you DO NOT trust the network to which you're connected.
+                            `, () => { })
+                        }
+                    }
+                })
+            ]
         })
     }
 
@@ -59,6 +89,7 @@ export default class ConnectionState {
         const checkbox = document.createElement("input")
         checkbox.setAttribute("type", "checkbox")
         checkbox.addEventListener("change", () => {
+            this.isConnectionSecure = checkbox.checked
         })
 
         return Public.createElement({
