@@ -11,7 +11,7 @@ export default class ConnectionState {
     static connectedAddress?: string
     static connectedDeviceName?: string
 
-    private pairCode = "123414"
+    private pairCode = ""
     private isConnectionSecure = false
     private connectionStateWrapper = document.getElementById("connection-state-wrapper")
     private svg = new ConnectionStateSvg()
@@ -111,6 +111,7 @@ export default class ConnectionState {
         const socketAddress = await invoke<SocketAddress>("listen_for_pair")
         if (socketAddress.ip.length > 0 && socketAddress.port != 0) {
             document.body.classList.add("show-connection-state")
+            this.generatePairCode()
             this.listenForPair()
             return Public.createElement({
                 id: "pc-body",
@@ -258,6 +259,13 @@ export default class ConnectionState {
         const isSecure = localStorage.getItem("SecureConnection")
         if (isSecure && isSecure == "1") {
             this.isConnectionSecure = true
+        }
+    }
+
+    private generatePairCode() {
+        this.pairCode = ''
+        for (let i = 0; i < 6; i++) {
+            this.pairCode += Math.floor(Math.random() * 10)
         }
     }
 }
