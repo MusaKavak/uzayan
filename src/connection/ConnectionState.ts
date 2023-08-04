@@ -218,31 +218,35 @@ export default class ConnectionState {
     private async connectToLastServer(): Promise<boolean> {
         const address = localStorage.getItem("ConnectedAddress")
         const name = localStorage.getItem("ConnectedDeviceName")
+        const secure = localStorage.getItem("ConnectedDeviceSecurity")
         if (
             (address && address.length > 0) &&
-            (name && name.length > 0)
-        ) return this.connect(address, name)
+            (name && name.length > 0) &&
+            (secure && secure.length > 0)
+        ) return this.connect(address, name, secure == "SECURE" ? true : false)
         else return false
     }
 
     private pair(address: string, pairRequest: PairRequest) {
         if (pairRequest.code == this.pairCode) {
-            this.connect(`${address}:${pairRequest.port}`, pairRequest.name, true)
+            this.connect(`${address}:${pairRequest.port}`, pairRequest.name, this.isConnectionSecure, true)
         }
     }
 
-    private async connect(address: string, name: string, showError: boolean = false): Promise<boolean> {
-        const isConnected = await invoke<boolean>("connect", { address })
-        if (isConnected) {
+    private async connect(address: string, name: string, secure: boolean, showError: boolean = false): Promise<boolean> {
+        const isConnected = await invoke<number>("connect", { address, secure })
+        console.log(isConnected)
+        if (isConnected != 0) {
             ConnectionState.connectedAddress = address
             ConnectionState.connectedDeviceName = name
             this.headerManager.sync()
             localStorage.setItem("ConnectedAddress", address)
             localStorage.setItem("ConnectedDeviceName", name)
+            localStorage.setItem("ConnectedDeviceSecurity", secure ? "SECURE" : "NOT")
             await this.initConnectionState("DeviceActions")
         } else if (showError) this.connectionError()
 
-        return isConnected
+        return isConnected == 0 ? false : true
     }
 
     private async listenConnectionError() {
