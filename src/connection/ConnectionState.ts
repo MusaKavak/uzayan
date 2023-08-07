@@ -228,7 +228,7 @@ export default class ConnectionState {
     }
 
     private pair(address: string, pairRequest: PairRequest) {
-        if (pairRequest.code == this.pairCode) {
+        if (pairRequest.code.toString() == this.pairCode) {
             this.connect(`${address}:${pairRequest.port}`, pairRequest.name, this.isConnectionSecure, true)
         }
     }
@@ -286,6 +286,6 @@ type SocketAddress = {
 
 type PairRequest = {
     port: number,
-    code: string,
+    code: number,
     name: string
 }
