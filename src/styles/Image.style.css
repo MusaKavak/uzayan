@@ -26,4 +26,5 @@
     transition: var(--transition);
     width: fit-content;
     margin: 0 auto var(--gap);
+    box-shadow: var(--box-shadow);
 }

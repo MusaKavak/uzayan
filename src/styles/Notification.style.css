@@ -3,6 +3,7 @@
     background-color: var(--clr-foreground);
     border-radius: var(--border-radius);
     margin-bottom: var(--gap);
+    box-shadow: var(--box-shadow);
     overflow: hidden;
 }
 
@@ -106,9 +107,11 @@
     overflow: hidden;
     height: 0;
     padding: 0;
+    width: 100%;
     transition: var(--transition);
     background-color: var(--clr-foreground);
     border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
 }
 
 .headsup-notification.bounce {
