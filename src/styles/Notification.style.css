@@ -15,7 +15,7 @@
     transition: var(--transition);
 }
 
-.notification:focus {
+.notification:focus-within {
     background-color: var(--clr-highlight);
 }
 
@@ -30,7 +30,7 @@
     transition: var(--transition);
 }
 
-.notification:focus img {
+.notification:focus-within img {
     height: 4rem;
 }
 
@@ -64,7 +64,7 @@
     color: var(--clr-font-faded);
 }
 
-.notification:focus .notification-text {
+.notification:focus-within .notification-text {
     max-height: 500px;
 }
 
@@ -75,9 +75,15 @@
     overflow: hidden;
     display: flex;
     transition: var(--transition);
+    flex-wrap: nowrap;
+    gap: 2px;
 }
 
-.notification:focus .notification-actions {
+.notification-actions:has(.notification-reply-action) {
+    width: 100%;
+}
+
+.notification:focus-within .notification-actions {
     max-height: 100px;
 }
 
@@ -89,6 +95,42 @@
 
 .notification-action:hover {
     background-color: var(--clr-accent-highlight);
+}
+
+.notification-reply-action {
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100%;
+    background-color: var(--clr-accent);
+}
+
+.notification-reply-input {
+    height: 100%;
+    outline: none;
+    background-color: transparent;
+    border: none;
+    color: var(--clr-font);
+    flex-grow: 1;
+    padding: 0 var(--gap);
+}
+
+.notification-reply-input::placeholder {
+    color: var(--clr-font-faded);
+}
+
+.notification-reply-send {
+    width: 2rem;
+    flex-grow: 0;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.notification-reply-send svg {
+    height: 100%;
+    width: auto;
+
 }
 
 #headsup-notifications {

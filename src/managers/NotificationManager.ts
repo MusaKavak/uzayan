@@ -1,3 +1,4 @@
+import NotificationSvg from "../assets/notification.svg";
 import Socket from "../connection/Socket";
 import { Notification } from "../types/network/Notification";
 import Public from "../utils/Public";
@@ -8,6 +9,7 @@ export default class NotificationManager {
 
     private headsUpContainer = document.getElementById("headsup-notifications")
     private notificationTab = document.getElementById("notifications-tab-body")
+    private svg = new NotificationSvg()
 
     constructor(private windowManager: WindowManager) { }
 
@@ -70,7 +72,9 @@ export default class NotificationManager {
         if (actions && actions.length > 0) {
             return Public.createElement({
                 clss: "notification-actions",
-                children: actions.map(a => this.action(key, a))
+                children: actions.map(a =>
+                    a.substring(0, 7) == "*REPLY*" ? this.replyAction(key, a) : this.action(key, a)
+                )
             })
         }
         return
@@ -83,10 +87,38 @@ export default class NotificationManager {
             listener: {
                 event: "click",
                 callback: () => {
-                    Socket.send("NotificationAction", { key, action })
+                    Socket.send("NotificationAction", { key, action, input: "" })
                 }
             }
         })
+    }
+
+    private replyAction(key: string, action: string): HTMLElement {
+        const input = document.createElement("input")
+        input.setAttribute("type", "text")
+        input.setAttribute("class", "notification-reply-input")
+        input.setAttribute("placeholder", action.substring(7))
+        input.required = true
+        return Public.createElement({
+            clss: "notification-reply-action",
+            children: [
+                input,
+                Public.createElement({
+                    clss: "notification-reply-send",
+                    //TODO Change It To Icon
+                    innerHtml: this.svg.send,
+                    listener: {
+                        event: "click",
+                        callback: () => {
+                            if (input.validity.valid)
+                                Socket.send("NotificationAction", { key, action, input: input.value })
+                        }
+                    }
+                })
+            ]
+
+        })
+
     }
 
     private notificationBody(nf: Notification): HTMLElement {
