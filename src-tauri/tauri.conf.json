@@ -17,7 +17,8 @@
         "all": true,
         "scope": [
           "$RESOURCE/resources/lang/*",
-          "$APPCONFIG/*",
+          "$RESOURCE/resources/icons/*",
+          "$APPCONFIG/**/*",
           "$CONFIG/com.tauri.dev"
         ]
       }
@@ -48,7 +49,8 @@
         "signingIdentity": null
       },
       "resources": [
-        "resources/lang/*.lang"
+        "resources/lang/*",
+        "resources/icons/*"
       ],
       "shortDescription": "",
       "targets": "all",
