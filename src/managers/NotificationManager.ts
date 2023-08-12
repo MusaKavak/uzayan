@@ -99,26 +99,26 @@ export default class NotificationManager {
         input.setAttribute("placeholder", action.substring(7))
         input.required = true
 
-        const replyAction = Public.createElement({
+        const postButton = Public.createElement({
+            clss: "notification-reply-send",
+            listener: {
+                event: "click",
+                callback: () => {
+                    if (input.validity.valid)
+                        Socket.send("NotificationAction", { key, action, input: input.value })
+                }
+            }
+        })
+
+        IconProvider.get("post").then(i => postButton.innerHTML = i)
+
+        return Public.createElement({
             clss: "notification-reply-action",
             children: [
                 input,
-                Public.createElement({
-                    clss: "notification-reply-send",
-                    listener: {
-                        event: "click",
-                        callback: () => {
-                            if (input.validity.valid)
-                                Socket.send("NotificationAction", { key, action, input: input.value })
-                        }
-                    }
-                })
+                postButton
             ]
         })
-
-        IconProvider.get("post").then(i => replyAction.innerHTML = i)
-
-        return replyAction
     }
 
     private notificationBody(nf: Notification): HTMLElement {
