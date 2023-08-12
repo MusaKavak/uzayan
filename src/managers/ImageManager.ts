@@ -2,7 +2,7 @@ import { ImageThumbnail } from "../types/network/ImageThumbnail";
 import { unix } from "dayjs"
 import Public from "../utils/Public";
 import Socket from "../connection/Socket";
-import FileTransfer from "../utils/FileTransfer";
+import FileTransferManager from "./FileTransferManager";
 
 export default class ImageManager {
     imagesTab = document.getElementById("images-tab-body")
@@ -10,7 +10,7 @@ export default class ImageManager {
     loadMoreButton = this.getLoadMoreButton()
     lastImageIndex = 0
 
-    constructor(private fileManager: FileTransfer) {
+    constructor(private fileManager: FileTransferManager) {
         this.imagesTab?.appendChild(this.loadMoreButton)
     }
 
@@ -69,7 +69,7 @@ export default class ImageManager {
             listener: {
                 event: "click",
                 callback: () => {
-                    this.fileManager.downloadFiles([{ size: image.size, id: image.id, name: image.name }], "ImageTransfer")
+                    //this.fileManager.downloadFiles([{ size: image.size, id: image.id, name: image.name }], "ImageTransfer")
                 }
             }
         })

@@ -2,7 +2,7 @@ import { basename, extname, join } from "@tauri-apps/api/path";
 import Socket from "../connection/Socket";
 import { File } from "../types/network/File";
 import DialogManager from "./DialogManager";
-import FileTransfer from "../utils/FileTransfer";
+import FileTransferManager from "./FileTransferManager";
 import Public from "../utils/Public";
 import { open } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api";
@@ -22,7 +22,7 @@ export default class FileManager {
     unlistenDropListener: UnlistenFn = () => { }
 
     constructor(
-        private fileManager: FileTransfer,
+        private fileManager: FileTransferManager,
         private dialogManager: DialogManager) {
         this.filesTab?.classList.toggle("select")
     }

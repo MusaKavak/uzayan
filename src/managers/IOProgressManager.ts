@@ -1,11 +1,9 @@
-import IOSvg from "../assets/io.svg"
 import Public from "../utils/Public"
 import { open } from "@tauri-apps/api/shell"
 import { listen } from "@tauri-apps/api/event"
 import { join } from "@tauri-apps/api/path"
 
 export default class IOProgressManager {
-    private svg = new IOSvg()
     private ioContainer = document.getElementById("io-container")
 
     constructor() {
@@ -88,7 +86,7 @@ export default class IOProgressManager {
     private getDone(id: string): HTMLElement {
         return Public.createElement({
             clss: "io-action-done",
-            innerHtml: this.svg.done,
+            innerHtml: "done",
             title: "Done",
             listener: {
                 event: 'click',
@@ -99,7 +97,7 @@ export default class IOProgressManager {
 
     private getOpenFolder(id: string): HTMLElement {
         const openFolderButton = document.createElement("div")
-        openFolderButton.innerHTML = this.svg.folder
+        openFolderButton.innerHTML = "folder"
         openFolderButton.setAttribute("title", "Show In Folder")
         openFolderButton.classList.add("io-action-done", "io-open-folder")
 
@@ -118,7 +116,7 @@ export default class IOProgressManager {
         return Public.createElement({
             clss: "io-action-undone",
             title: "Cancel",
-            innerHtml: this.svg.cancel,
+            innerHtml: "cancel",
             listener: {
                 event: 'click',
                 callback: () => this.removeProgress(id)
@@ -147,7 +145,7 @@ export default class IOProgressManager {
     private getIcon(_isInput: boolean): HTMLElement {
         return Public.createElement({
             clss: "io-header-icon",
-            innerHtml: this.svg.io,
+            innerHtml: "io",
         })
     }
 

@@ -2,14 +2,13 @@ import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
 import { join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api";
-import { FileToDownload } from "../types/local/FileToTransfer";
-import Public from "./Public";
+import Public from "../utils/Public";
 import { exists } from "@tauri-apps/api/fs";
 import ConnectionState from "../connection/ConnectionState";
 
-export default class FileTransfer {
+export default class FileTransferManager {
 
-    async downloadFiles(files: Array<FileToDownload>, transferType: TransferType, downloadLocation?: string) {
+    async downloadFiles(files: Array<{ target: string, source: string }>, transferType: TransferType, downloadLocation?: string) {
         const basePath = downloadLocation || await this.getDownloadFileLocation()
         if (!basePath) return
 
@@ -51,12 +50,3 @@ export default class FileTransfer {
         return
     }
 }
-
-type ReceiveFileRequest = {
-    target: string,
-    name: string
-    id: string,
-    size: number,
-}
-
-type TransferType = "FileTransfer" | "ImageTransfer"

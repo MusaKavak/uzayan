@@ -31,7 +31,7 @@ pub fn connect(window: Window, address: String, secure: bool) -> u8 {
                 }
                 SOCKET = Some(socket);
                 if secure {
-                    match super::tls_client_connection::get() {
+                    match crate::tls_client_connection::get() {
                         Ok(tcc) => {
                             TLS_CONNECTION = Some(tcc);
                             if let (Some(conn), Some(sock)) = (&mut TLS_CONNECTION, &mut SOCKET) {
