@@ -4,8 +4,8 @@ import HeaderManager from "../managers/HeaderManager"
 import { listen } from "@tauri-apps/api/event"
 import { NetworkMessage } from "../types/network/NetworkMessage"
 import Public from "../utils/Public"
-import ConnectionStateSvg from "../assets/connection_state.svg"
 import DialogManager from "../managers/DialogManager"
+import IconProvider from "../utils/IconProvider"
 
 export default class ConnectionState {
     static connectedAddress?: string
@@ -14,7 +14,7 @@ export default class ConnectionState {
     private pairCode = ""
     private isConnectionSecure = false
     private connectionStateWrapper = document.getElementById("connection-state-wrapper")
-    private svg = new ConnectionStateSvg()
+
     constructor(
         private headerManager: HeaderManager,
         private dialogManager: DialogManager
@@ -30,7 +30,7 @@ export default class ConnectionState {
         let child: HTMLElement
         if (type == "PairCredentials") child = await this.pairCredentials()
         if (type == "DeviceActions") child = this.deviceActions()
-        if (type == "Error") child = this.connectionStateError()
+        if (type == "Error") child = await this.connectionStateError()
 
 
         this.connectionStateWrapper!.innerHTML = "";
@@ -45,24 +45,24 @@ export default class ConnectionState {
             return Public.createElement({
                 clss: "connection-state type-pc",
                 children: [
-                    this.secureConnectionHeader(),
+                    await this.secureConnectionHeader(),
                     body
                 ]
             })
     }
 
-    private secureConnectionHeader(): HTMLElement {
+    private async secureConnectionHeader(): Promise<HTMLElement> {
         return Public.createElement({
             id: "pc-header",
             innerHtml: ``,
             children: [
-                this.secureConnectionTitle(),
+                await this.secureConnectionTitle(),
                 this.secureConnectionCheckbox()
             ]
         })
     }
 
-    private secureConnectionTitle(): HTMLElement {
+    private async secureConnectionTitle(): Promise<HTMLElement> {
         return Public.createElement({
             id: "pc-header-title",
             innerHtml: `<span>Secure Connection</span>`,
@@ -70,7 +70,7 @@ export default class ConnectionState {
                 Public.createElement({
                     type: "span",
                     id: "secure-connection-info",
-                    innerHtml: this.svg.info,
+                    innerHtml: await IconProvider.get("information"),
                     listener: {
                         event: "click",
                         callback: () => {
@@ -175,7 +175,7 @@ export default class ConnectionState {
     }
 
     //-----Error-----//
-    private connectionStateError(): HTMLElement {
+    private async connectionStateError(): Promise<HTMLElement> {
         document.body.classList.add("show-connection-state")
         return Public.createElement({
             clss: "connection-state type-ce",
@@ -183,7 +183,7 @@ export default class ConnectionState {
                 Public.createElement({
                     id: "ce-title",
                     innerHtml: `
-                        <span>${this.svg.connectionError}</span>
+                        <span>${await IconProvider.get("disconnected")}</span>
                         <span>An Error Occurred</span>
                     `
                 }),

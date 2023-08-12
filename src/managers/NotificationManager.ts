@@ -1,6 +1,6 @@
-import NotificationSvg from "../assets/notification.svg";
 import Socket from "../connection/Socket";
 import { Notification } from "../types/network/Notification";
+import IconProvider from "../utils/IconProvider";
 import Public from "../utils/Public";
 import WindowManager from "./WindowManager";
 
@@ -9,7 +9,6 @@ export default class NotificationManager {
 
     private headsUpContainer = document.getElementById("headsup-notifications")
     private notificationTab = document.getElementById("notifications-tab-body")
-    private svg = new NotificationSvg()
 
     constructor(private windowManager: WindowManager) { }
 
@@ -99,14 +98,13 @@ export default class NotificationManager {
         input.setAttribute("class", "notification-reply-input")
         input.setAttribute("placeholder", action.substring(7))
         input.required = true
-        return Public.createElement({
+
+        const replyAction = Public.createElement({
             clss: "notification-reply-action",
             children: [
                 input,
                 Public.createElement({
                     clss: "notification-reply-send",
-                    //TODO Change It To Icon
-                    innerHtml: this.svg.send,
                     listener: {
                         event: "click",
                         callback: () => {
@@ -116,9 +114,11 @@ export default class NotificationManager {
                     }
                 })
             ]
-
         })
 
+        IconProvider.get("post").then(i => replyAction.innerHTML = i)
+
+        return replyAction
     }
 
     private notificationBody(nf: Notification): HTMLElement {

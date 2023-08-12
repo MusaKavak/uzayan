@@ -1,5 +1,4 @@
 import { basename, extname, join } from "@tauri-apps/api/path";
-import FileSvg from "../assets/file.svg";
 import Socket from "../connection/Socket";
 import { File } from "../types/network/File";
 import DialogManager from "./DialogManager";
@@ -11,11 +10,11 @@ import { appWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
 import { FileToDownload } from "../types/local/FileToTransfer";
 import ConnectionState from "../connection/ConnectionState";
+import IconProvider from "../utils/IconProvider";
 
 export default class FileManager {
 
     private filesTab = document.getElementById("files-tab-body")
-    private svg = new FileSvg()
     private allowToCreate = true
     private isSelectionOpen = false
     private currentPath?: string
@@ -29,25 +28,27 @@ export default class FileManager {
     }
 
     createFiles(file: File) {
-        if (this.filesTab && this.allowToCreate) {
-            this.filesTab.innerHTML = ""
-            this.filesTab.appendChild(this.getHeader(file))
-            this.filesTab.appendChild(this.getBody(file.children))
-            this.allowToCreate = false
-            this.currentPath = file.path
-            this.filesToRequest = []
-        }
-    }
-
-
-    private getBody(children: File[] | undefined): HTMLElement {
-        return Public.createElement({
-            id: "directory-body",
-            children: children?.map(f => this.getDirectoryItem(f))
+        this.getIcons().then((icons) => {
+            if (this.filesTab && this.allowToCreate) {
+                this.filesTab.innerHTML = ""
+                this.filesTab.appendChild(this.getHeader(icons, file))
+                this.filesTab.appendChild(this.getBody(icons.directory, file.children))
+                this.allowToCreate = false
+                this.currentPath = file.path
+                this.filesToRequest = []
+            }
         })
     }
 
-    private getDirectoryItem(f: File): HTMLElement {
+
+    private getBody(directoryIcon: string, children: File[] | undefined): HTMLElement {
+        return Public.createElement({
+            id: "directory-body",
+            children: children?.map(f => this.getDirectoryItem(directoryIcon, f))
+        })
+    }
+
+    private getDirectoryItem(directoryIcon: string, f: File): HTMLElement {
         const callback = () => {
             if (f.isFile) {
                 //this.addOrRemoveFromRequestList(f)
@@ -59,7 +60,7 @@ export default class FileManager {
             type: "label",
             clss: "directory-item card " + (f.isFile ? "file" : ""),
             innerHtml: `
-                <span class="file-icon">${this.getFileIcon(f.isFile, f.extension)}</span>
+                <span class="file-icon">${this.getFileIcon(directoryIcon, f.isFile, f.extension)}</span>
                 <span>${f.name || '-'}</span>
             `,
             children: [
@@ -163,23 +164,23 @@ export default class FileManager {
         return chbx
     }
 
-    private getHeader(file: File): HTMLElement {
+    private getHeader(icons: Icons, file: File): HTMLElement {
         return Public.createElement({
             id: "directory-header",
             clss: "card",
             children: [
-                this.getHeaderTitle(file),
+                this.getHeaderTitle(icons.back, file),
                 this.getDropMessage(),
-                this.getDirectoryActions()
+                this.getDirectoryActions(icons.actions)
             ]
         })
     }
 
-    private getHeaderTitle(file: File): HTMLElement {
+    private getHeaderTitle(backIcon: string, file: File): HTMLElement {
         return Public.createElement({
             id: "directory-header-title",
             children: [
-                this.getGoBackButton(file.parent, file.isRoot),
+                this.getGoBackButton(backIcon, file.parent, file.isRoot),
                 Public.createElement({
                     id: "directory-name",
                     title: file.name,
@@ -196,12 +197,12 @@ export default class FileManager {
         })
     }
 
-    private getDirectoryActions(): HTMLElement | undefined {
+    private getDirectoryActions(actionIcons: ActionIcons): HTMLElement | undefined {
         return Public.createElement({
             id: "directory-actions",
             children: [
                 Public.createElement({
-                    innerHtml: this.svg.download,
+                    innerHtml: actionIcons.download,
                     title: "Download",
                     clss: "requires-selected",
                     listener: {
@@ -212,13 +213,13 @@ export default class FileManager {
                     }
                 }),
                 Public.createElement({
-                    innerHtml: this.svg.delete,
+                    innerHtml: actionIcons.delete,
                     title: "Delete",
                     clss: "requires-selected",
                     //TODO add delete action
                 }),
                 Public.createElement({
-                    innerHtml: this.svg.select,
+                    innerHtml: actionIcons.select,
                     title: "Select",
                     listener: {
                         event: "click",
@@ -229,7 +230,7 @@ export default class FileManager {
                     }
                 }),
                 Public.createElement({
-                    innerHtml: this.svg.upload,
+                    innerHtml: actionIcons.upload,
                     title: "Upload",
                     listener: {
                         event: "click",
@@ -240,13 +241,13 @@ export default class FileManager {
         })
     }
 
-    private getGoBackButton(parent: File | undefined, isRoot?: boolean): HTMLElement | undefined {
-        if (parent != undefined && !isRoot) {
+    private getGoBackButton(backIcon: string, parent?: File, isRoot?: boolean): HTMLElement | undefined {
+        if (parent && !isRoot) {
             const callback = () => this.fileSystemRequest(parent.path)
 
             return Public.createElement({
                 id: "directory-goback",
-                innerHtml: this.svg.goBack,
+                innerHtml: backIcon,
                 title: parent.name,
                 listener: {
                     event: "click",
@@ -256,9 +257,9 @@ export default class FileManager {
         } else return
     }
 
-    private getFileIcon(isFile?: boolean, extension?: string): string {
+    private getFileIcon(directoryIcon: string, isFile?: boolean, extension?: string,): string {
         if (isFile) return `<span>${extension}</span>`
-        else return `<span>${this.svg.folder}</span>`
+        else return `<span>${directoryIcon}</span>`
 
     }
 
@@ -331,9 +332,36 @@ export default class FileManager {
                 filesToUpload
             })
     }
+
+    private async getIcons(): Promise<Icons> {
+        return {
+            actions: {
+                download: await IconProvider.get("download"),
+                delete: await IconProvider.get("delete"),
+                select: await IconProvider.get("select"),
+                upload: await IconProvider.get("upload"),
+            },
+            back: await IconProvider.get("back"),
+            directory: await IconProvider.get("directory"),
+        }
+    }
 }
 
 type FileToUpload = {
     source: string,
     target: string
 }
+
+type Icons = {
+    actions: ActionIcons,
+    back: string,
+    directory: string,
+}
+
+type ActionIcons = {
+    download: string,
+    delete: string,
+    select: string,
+    upload: string,
+}
+

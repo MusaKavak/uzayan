@@ -2,11 +2,9 @@ import { WebviewWindow, appWindow } from "@tauri-apps/api/window"
 import Socket from "../connection/Socket"
 import { listen } from "@tauri-apps/api/event"
 import Public from "../utils/Public"
-import { HeaderSvg } from "../assets/header.svg"
-import { appIcon } from "../assets/app.svg"
+import IconProvider from "../utils/IconProvider"
 
 export default class HeaderManager {
-    private svg = new HeaderSvg()
     private subHeader = document.getElementById("sub-header")
 
     constructor() {
@@ -27,27 +25,27 @@ export default class HeaderManager {
         location.reload()
     }
 
-    private setSubHeader() {
+    private async setSubHeader() {
         if (!this.subHeader) return
-        this.subHeader.appendChild(this.getAppIcon())
-        this.subHeader.appendChild(this.getActions())
+        this.subHeader.appendChild(await this.getAppIcon())
+        this.subHeader.appendChild(await this.getActions())
     }
 
-    private getActions(): HTMLElement {
+    private async getActions(): Promise<HTMLElement> {
         return Public.createElement({
             id: "header-actions",
             children: [
-                this.getSettingsButton(),
-                this.getPinButton(),
-                this.getReloadButton(),
-                this.getCloseButton()
+                await this.getSettingsButton(),
+                await this.getPinButton(),
+                await this.getReloadButton(),
+                await this.getCloseButton()
             ]
         })
     }
 
-    private getCloseButton(): HTMLElement {
+    private async getCloseButton(): Promise<HTMLElement> {
         return Public.createElement({
-            innerHtml: this.svg.close,
+            innerHtml: await IconProvider.get("close"),
             title: "Close",
             listener: {
                 event: "click",
@@ -58,9 +56,9 @@ export default class HeaderManager {
         })
     }
 
-    private getSettingsButton(): HTMLElement {
+    private async getSettingsButton(): Promise<HTMLElement> {
         return Public.createElement({
-            innerHtml: this.svg.settings,
+            innerHtml: await IconProvider.get("settings"),
             title: "Settings",
             listener: {
                 event: "click",
@@ -79,9 +77,9 @@ export default class HeaderManager {
         })
     }
 
-    private getReloadButton(): HTMLElement {
+    private async getReloadButton(): Promise<HTMLElement> {
         return Public.createElement({
-            innerHtml: this.svg.reload,
+            innerHtml: await IconProvider.get("reload"),
             title: "Reload",
             listener: {
                 event: "click",
@@ -92,10 +90,10 @@ export default class HeaderManager {
         })
     }
 
-    private getPinButton(): HTMLElement {
+    private async getPinButton(): Promise<HTMLElement> {
         return Public.createElement({
             id: "header-action-pin",
-            innerHtml: this.svg.pin,
+            innerHtml: await IconProvider.get("pin"),
             title: "Pin",
             listener: {
                 event: "click",
@@ -112,11 +110,11 @@ export default class HeaderManager {
         })
     }
 
-    private getAppIcon(): HTMLElement {
+    private async getAppIcon(): Promise<HTMLElement> {
         return Public.createElement({
             id: "header-icon",
             title: "Uzayan",
-            innerHtml: appIcon,
+            innerHtml: await IconProvider.get("app"),
             listener: {
                 "event": "click",
                 "callback": () => {

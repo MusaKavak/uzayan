@@ -1,11 +1,10 @@
-import { SessionSvg } from "../assets/session.svg";
 import Socket from "../connection/Socket";
 import { MediaSession } from "../types/network/MediaSession";
 import { MediaSessionState } from "../types/network/MediaSessionState";
+import IconProvider from "../utils/IconProvider";
 import Public from "../utils/Public";
 
 export default class MediaSessionManager {
-  private svg = new SessionSvg()
   private container: HTMLElement | null = document.getElementById("media-session-container")
 
   createMediaSessions(sessions: MediaSession[]) {
@@ -87,23 +86,21 @@ export default class MediaSessionManager {
     return Public.createElement({
       clss: "session-actions",
       children: [
-        this.getAction("action-previous", this.svg.previous, "skipToPrevious", token),
+        this.getAction("action-previous", "previous", "skipToPrevious", token),
         Public.createElement({
           clss: "actions-play-pause", children: [
-            this.getAction("action-play", this.svg.play, "play", token),
-            this.getAction("action-pause", this.svg.pause, "pause", token)
+            this.getAction("action-play", "play", "play", token),
+            this.getAction("action-pause", "pause", "pause", token)
           ]
         }),
-        this.getAction("action-next", this.svg.next, "skipToNext", token),
+        this.getAction("action-next", "next", "skipToNext", token),
       ]
     })
   }
 
-  private getAction(clss: string, icon: string, action: string, token: string): HTMLElement | undefined {
-    const actionElement = Public.createElement({
-      clss,
-      innerHtml: icon
-    })
+  private getAction(clss: string, iconName: string, action: string, token: string): HTMLElement | undefined {
+    const actionElement = Public.createElement({ clss })
+    IconProvider.get(iconName).then(i => actionElement.innerHTML = i)
     actionElement.addEventListener("click", (event: MouseEvent) => {
       event.stopPropagation()
       this.sendAction(token, action)
