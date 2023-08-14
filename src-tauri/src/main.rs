@@ -6,7 +6,7 @@
 mod file_transfer;
 mod main_stream;
 mod progress;
-mod tls_client_connection;
+mod stream;
 mod udp;
 
 extern crate json;
