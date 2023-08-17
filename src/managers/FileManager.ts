@@ -8,7 +8,6 @@ import { open } from "@tauri-apps/api/dialog";
 import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
-import { FileToDownload } from "../types/local/FileToTransfer";
 import ConnectionState from "../connection/ConnectionState";
 import IconProvider from "../utils/IconProvider";
 
@@ -22,7 +21,7 @@ export default class FileManager {
     unlistenDropListener: UnlistenFn = () => { }
 
     constructor(
-        private fileManager: FileTransferManager,
+        private fileTransferManager: FileTransferManager,
         private dialogManager: DialogManager) {
         this.filesTab?.classList.toggle("select")
     }
@@ -95,7 +94,7 @@ export default class FileManager {
             listener: {
                 event: "click",
                 callback: () => {
-                    this.fileManager.downloadFiles([{ id: f.path, size: f.size, name: f.name }], "FileTransfer")
+                    this.fileTransferManager.receiveFiles([{ sourcePath: f.path, fileName: f.name }])
                 }
             }
         })
@@ -208,7 +207,7 @@ export default class FileManager {
                     listener: {
                         event: "click",
                         callback: () => {
-                            this.fileManager.downloadFiles(this.filesToRequest, "FileTransfer")
+                            this.fileTransferManager.receiveFiles(this.filesToRequest)
                         }
                     }
                 }),
@@ -269,16 +268,16 @@ export default class FileManager {
     }
 
 
-    private filesToRequest: FileToDownload[] = []
+    private filesToRequest: { sourcePath: string, fileName: string }[] = []
 
     private addToRequestList(f: File) {
-        const item = { id: f.path, size: f.size, name: f.name }
+        const item = { sourcePath: f.path, fileName: f.name }
         if (!this.filesToRequest.includes(item)) {
             this.filesToRequest.push(item)
         }
     }
     private removeFromRequestList(f: File) {
-        const item = { id: f.path, size: f.size, name: f.name }
+        const item = { sourcePath: f.path, fileName: f.name }
         this.filesToRequest = this.filesToRequest.filter(f => f != item)
     }
 

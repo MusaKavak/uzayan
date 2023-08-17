@@ -8,26 +8,22 @@ import ConnectionState from "../connection/ConnectionState";
 
 export default class FileTransferManager {
 
-    async downloadFiles(files: Array<{ target: string, source: string }>, transferType: TransferType, downloadLocation?: string) {
-        const basePath = downloadLocation || await this.getDownloadFileLocation()
+    async receiveFiles(files: { sourcePath: string, fileName: string }[]) {
+        const basePath = await this.getDownloadFileLocation()
         if (!basePath) return
 
-        const filesToReceive: ReceiveFileRequest[] = await Promise.all(files.map(async (f) => {
-            const target = await join(basePath, f.name)
+        const filesToReceive = await Promise.all(files.map(async (f) => {
+            const target = await join(basePath, f.fileName)
 
-            return {
-                target,
-                name: f.name,
-                id: f.id,
-                size: f.size
-            }
+            return { source: f.sourcePath, target }
         }))
-        console.log(filesToReceive[0])
+
         if (ConnectionState.connectedAddress)
-            await invoke("receive_files", {
+            invoke(
+                "receive_files", {
                 address: ConnectionState.connectedAddress,
-                transferType,
-                filesToReceive
+                secure: ConnectionState.isConnectionSecure,
+                files: filesToReceive
             })
     }
 

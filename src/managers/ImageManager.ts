@@ -16,6 +16,7 @@ export default class ImageManager {
 
     setThumbnail(image: ImageThumbnail) {
         var date = this.getImageDate(image.date)
+        console.log(image)
         if (image.index == 0) {
             this.clearImageContainer()
             this.lastDateContainer = undefined
@@ -69,7 +70,7 @@ export default class ImageManager {
             listener: {
                 event: "click",
                 callback: () => {
-                    //this.fileManager.downloadFiles([{ size: image.size, id: image.id, name: image.name }], "ImageTransfer")
+                    this.fileManager.receiveFiles([{ sourcePath: image.path, fileName: image.name }])
                 }
             }
         })

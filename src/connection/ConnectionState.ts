@@ -10,9 +10,9 @@ import IconProvider from "../utils/IconProvider"
 export default class ConnectionState {
     static connectedAddress?: string
     static connectedDeviceName?: string
+    static isConnectionSecure = false
 
     private pairCode = ""
-    private isConnectionSecure = false
     private connectionStateWrapper = document.getElementById("connection-state-wrapper")
 
     constructor(
@@ -88,10 +88,10 @@ export default class ConnectionState {
 
     private secureConnectionCheckbox(): HTMLElement {
         const checkbox = document.createElement("input")
-        checkbox.checked = this.isConnectionSecure
+        checkbox.checked = ConnectionState.isConnectionSecure
         checkbox.setAttribute("type", "checkbox")
         checkbox.addEventListener("change", () => {
-            this.isConnectionSecure = checkbox.checked
+            ConnectionState.isConnectionSecure = checkbox.checked
             localStorage.setItem("SecureConnection", checkbox.checked ? "1" : "0")
             this.initConnectionState("PairCredentials")
         })
@@ -127,7 +127,7 @@ export default class ConnectionState {
         const canvas = document.createElement("canvas")
         qrcode.toCanvas(
             canvas,
-            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}&secure=${this.isConnectionSecure}`
+            `http://uzayan-pair?ip=${address.ip}&port=${address.port}&code=${this.pairCode}&secure=${ConnectionState.isConnectionSecure}`
         )
         return Public.createElement({
             id: "pc-body-qr",
@@ -229,7 +229,7 @@ export default class ConnectionState {
 
     private pair(address: string, pairRequest: PairRequest) {
         if (pairRequest.code.toString() == this.pairCode) {
-            this.connect(`${address}:${pairRequest.port}`, pairRequest.name, this.isConnectionSecure, true)
+            this.connect(`${address}:${pairRequest.port}`, pairRequest.name, ConnectionState.isConnectionSecure, true)
         }
     }
 
@@ -262,7 +262,7 @@ export default class ConnectionState {
     private loadLastSCPreference() {
         const isSecure = localStorage.getItem("SecureConnection")
         if (isSecure && isSecure == "1") {
-            this.isConnectionSecure = true
+            ConnectionState.isConnectionSecure = true
         }
     }
 
