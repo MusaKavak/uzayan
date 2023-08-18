@@ -7,6 +7,8 @@ import { exists } from "@tauri-apps/api/fs";
 import ConnectionState from "../connection/ConnectionState";
 
 export default class FileTransferManager {
+    private id = 0
+
 
     async receiveFiles(files: { sourcePath: string, fileName: string }[]) {
         const basePath = await this.getDownloadFileLocation()
@@ -23,8 +25,11 @@ export default class FileTransferManager {
                 "receive_files", {
                 address: ConnectionState.connectedAddress,
                 secure: ConnectionState.isConnectionSecure,
+                id: this.id,
                 files: filesToReceive
             })
+
+        this.id++
     }
 
     async getDownloadFileLocation(): Promise<string | undefined> {

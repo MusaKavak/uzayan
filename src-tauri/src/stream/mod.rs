@@ -34,6 +34,10 @@ pub struct Stream<T: Read + Write> {
 }
 
 impl<T: Read + Write> Stream<T> {
+    pub fn read(&mut self, buf: &mut [u8]) -> IoResult<usize> {
+        self.stream.read(buf)
+    }
+
     pub fn write(&mut self, buf: &[u8]) -> IoResult<usize> {
         self.stream.write(buf)
     }
