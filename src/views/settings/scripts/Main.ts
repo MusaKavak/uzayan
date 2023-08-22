@@ -5,7 +5,7 @@ import { createAppSettings } from "./AppSettings"
 import { createAppearanceSettings } from "./AppearanceSettings"
 import { SettingsStore } from "./SettingsStore"
 import { emit } from "@tauri-apps/api/event"
-import { appIcon } from "../../../assets/app.svg"
+import IconProvider from "../../../utils/IconProvider"
 
 SettingsStore.appSettings = await getAppSettings()
 SettingsStore.appearanceSettings = await getAppearanceSettings()
@@ -16,7 +16,7 @@ createAppSettings(lang.AppSettings)
 
 
 const icon = document.getElementById("icon")
-if (icon) icon.innerHTML = appIcon
+if (icon) icon.innerHTML = await IconProvider.get("app")
 
 document.getElementById("ac-cancel")?.addEventListener("click", () => {
     appWindow.close()
