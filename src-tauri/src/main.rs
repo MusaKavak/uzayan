@@ -5,7 +5,6 @@
 
 mod file_transfer;
 mod main_stream;
-mod progress;
 mod stream;
 mod udp;
 

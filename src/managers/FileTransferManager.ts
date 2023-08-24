@@ -1,6 +1,6 @@
 import { appWindow } from "@tauri-apps/api/window"
 import { open } from "@tauri-apps/api/dialog";
-import { join } from "@tauri-apps/api/path";
+import { basename, join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api";
 import Public from "../utils/Public";
 import { exists } from "@tauri-apps/api/fs";
@@ -27,6 +27,27 @@ export default class FileTransferManager {
                 secure: ConnectionState.isConnectionSecure,
                 id: this.id,
                 files: filesToReceive
+            })
+
+        this.id++
+    }
+
+    async sendFiles(files: string[], targetScope: string) {
+        const filesToSend = await Promise.all(files.map(async (f) => {
+            const fileName = await basename(f)
+            const target = targetScope + "/" + fileName
+            return { source: f, target }
+        }))
+
+        console.log(filesToSend)
+
+        if (ConnectionState.connectedAddress)
+            invoke(
+                "send_files", {
+                address: ConnectionState.connectedAddress,
+                secure: ConnectionState.isConnectionSecure,
+                id: this.id,
+                files: filesToSend
             })
 
         this.id++

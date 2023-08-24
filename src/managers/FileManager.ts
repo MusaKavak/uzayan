@@ -315,21 +315,7 @@ export default class FileManager {
     }
 
     private async uploadFiles(filePathsToUpload: string[]) {
-        const filesToUpload: FileToUpload[] = await Promise.all(filePathsToUpload.map(async (p) => {
-            const baseName = await basename(p)
-            console.log(baseName)
-            const extName = await extname(p)
-            const target = await join(this.currentPath!!, `${baseName}.${extName}`)
-            return {
-                source: p,
-                target
-            }
-        }))
-        if (ConnectionState.connectedAddress)
-            await invoke("send_files", {
-                address: ConnectionState.connectedAddress,
-                filesToUpload
-            })
+        this.fileTransferManager.sendFiles(filePathsToUpload, this.currentPath!!)
     }
 
     private async getIcons(): Promise<Icons> {
@@ -344,11 +330,6 @@ export default class FileManager {
             directory: await IconProvider.get("directory"),
         }
     }
-}
-
-type FileToUpload = {
-    source: string,
-    target: string
 }
 
 type Icons = {

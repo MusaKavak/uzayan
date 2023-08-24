@@ -1,3 +1,5 @@
+use super::FileTransferObject;
+use crate::{file_transfer::ProgressUpdate, stream::Stream};
 use std::{
     fs::File,
     io::{Read, Write},
@@ -5,21 +7,7 @@ use std::{
     thread,
     time::Duration,
 };
-
 use tauri::{command, Window};
-
-use crate::{file_transfer::ProgressUpdate, stream::Stream};
-
-use super::FileTransferObject;
-
-#[derive(Clone, serde::Serialize)]
-
-struct UpdateProgressRequest {
-    progress_id: u8,
-    ratio: f32,
-}
-
-static mut BYTES_READ: usize = 0;
 
 #[command]
 pub fn receive_files(
@@ -58,7 +46,6 @@ unsafe fn receive<T: Read + Write>(
     let mut buf: [u8; 4096] = [0; 4096];
 
     for (i, file) in files_to_receive.iter().enumerate() {
-        BYTES_READ = 0;
         let path = Path::new(&file.target);
 
         if path.exists() {
@@ -106,8 +93,8 @@ unsafe fn start_transfer<T: Read + Write>(
         name,
         perc: String::new(),
         isout: false,
-        error: None,
-        path: None,
+        error: String::new(),
+        path: String::new(),
     };
 
     let progress = thread::spawn(move || loop {
@@ -126,8 +113,8 @@ unsafe fn start_transfer<T: Read + Write>(
         thread::sleep(Duration::from_millis(1000));
     });
 
+    let mut buf: [u8; 4096] = [0; 4096];
     while TOTAL_READ < size {
-        let mut buf: [u8; 4096] = [0; 4096];
         let bytes_read = stream.read(&mut buf).unwrap();
 
         target_file.write_all(&mut buf[..bytes_read]).unwrap();
