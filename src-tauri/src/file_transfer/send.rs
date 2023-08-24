@@ -109,7 +109,7 @@ unsafe fn start_transfer<T: Read + Write>(
 
         let mut payload = pu.clone();
 
-        payload.perc = format!("{:.2}%", perc);
+        payload.perc = format!("{:.0}%", perc);
 
         println!("Prog{perc}");
 

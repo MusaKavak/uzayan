@@ -1,6 +1,7 @@
 import { open } from "@tauri-apps/api/shell"
 import { listen } from "@tauri-apps/api/event"
 import Public from "../utils/Public"
+import IconProvider from "../utils/IconProvider"
 
 export default class IOProgressManager {
     private ioContainer = document.getElementById("io-container")
@@ -18,18 +19,18 @@ export default class IOProgressManager {
         })
     }
 
-    private createProgressBar(progress: ProgressUpdate) {
+    private async createProgressBar(progress: ProgressUpdate) {
         const pb = Public.createElement({
             clss: "io-progress",
             id: `p-${progress.id}`,
             innerHtml: `
-                <div class="io-progress-name">${progress.name}</div>
-                <div class="io-progress-perc">${progress.perc}</div>
+                <div class="io-progress-icon">${await IconProvider.get(progress.isout ? "upload" : "download")}</div>
+                <div class="io-progress-bar style="--perc:0;"><div>${progress.name}</div></div>      
             `,
             children: [
                 Public.createElement({
                     clss: "io-progress-actions",
-                    content: "Actions"
+                    innerHtml: `<div class="io-progress-perc">0</div>`
                 })
             ]
         })
@@ -38,7 +39,8 @@ export default class IOProgressManager {
     }
 
     private updateProgressBar(pb: Element, payload: ProgressUpdate) {
-        throw new Error("Method not implemented.")
+        (pb.querySelector(".io-progress-bar") as HTMLElement | null)?.style.setProperty("--perc", payload.perc)
+        pb.querySelector(".io-progress-perc")!!.textContent = payload.perc
     }
 
 

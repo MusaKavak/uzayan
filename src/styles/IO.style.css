@@ -1,0 +1,57 @@
+.io-progress {
+    height: 2rem;
+    width: 100%;
+    margin-bottom: var(--gap);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    gap: 4px;
+}
+
+.io-progress:last-child {
+    margin-bottom: 0;
+}
+
+.io-progress-icon {
+    background-color: var(--clr-accent);
+    height: inherit;
+}
+
+.io-progress-icon svg {
+    height: inherit;
+    width: auto;
+    padding: 0 2px 0 4px;
+}
+
+.io-progress-bar {
+    background-image:
+        linear-gradient(90deg,
+            var(--clr-accent) var(--perc),
+            var(--perc),
+            var(--clr-highlight));
+    height: inherit;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.io-progress-bar div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.io-progress-actions {
+    background-color: var(--clr-accent);
+    height: inherit;
+    min-width: 20%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 4px 0 2px;
+    flex-shrink: 0;
+}
