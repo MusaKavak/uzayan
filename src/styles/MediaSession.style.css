@@ -1,11 +1,19 @@
 #media-session-container {
-
     height: 6rem;
     padding: 0;
     scroll-snap-type: y mandatory;
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
+}
+
+#media-session-container::-webkit-scrollbar {
+    width: 3px;
+}
+
+#media-session-container::-webkit-scrollbar-thumb {
+    background-color: var(--clr-accent);
+    border-radius: var(--border-radius);
 }
 
 .session {
@@ -18,23 +26,21 @@
     gap: var(--gap);
     scroll-snap-stop: always;
     cursor: default;
+    padding-right: var(--gap);
 }
-
-/* .session:first-child {
-    margin-top: 6rem;
-}
-
-.session:last-child {
-    margin-bottom: 6rem;
-} */
 
 .session-image {
     height: 100%;
-    width: min-content;
-    aspect-ratio: 1/1;
-    box-shadow: var(--box-shadow);
+    width: auto;
+    aspect-ratio: 1;
     object-fit: cover;
     z-index: 3;
+    background-color: var(--clr-highlight);
+}
+
+.session-image svg {
+    scale: .75;
+    --clr-font: var(--clr-foreground);
 }
 
 .session-body {
@@ -59,6 +65,7 @@
     display: flex;
     z-index: 4;
     align-items: center;
+    gap: var(--gap);
 }
 
 .session-progress-bar {
@@ -67,7 +74,8 @@
     position: relative;
     overflow: hidden;
     border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+    background-color: var(--clr-highlight);
+    cursor: pointer;
 }
 
 .session-progress-bar::after {
@@ -92,17 +100,34 @@
     }
 }
 
+.session-actions {
+    border-radius: var(--border-radius);
+    display: flex;
+    overflow: hidden;
+    height: 2rem;
+    background-color: var(--clr-highlight);
+}
+
 .session-actions>div {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: inherit;
 }
 
 .session-actions svg {
-    height: var(--sz-icon);
-    width: var(--sz-icon);
+    --clr-font: var(--clr-accent);
+    height: inherit;
+    width: auto;
+    cursor: pointer;
+}
+
+.actions-play-pause {
+    height: inherit;
 }
 
 .actions-play-pause div {
-    height: var(--sz-icon);
+    height: inherit;
     transition: var(--transition);
 }
 

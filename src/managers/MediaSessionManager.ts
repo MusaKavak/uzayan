@@ -58,7 +58,7 @@ export default class MediaSessionManager {
         this.getSessionBody(session)
       ],
     })
-    this.container?.appendChild(element)
+    this.container?.insertAdjacentElement(session.isPlaying ? "afterbegin" : "beforeend", element)
   }
 
   private getSessionBody(session: MediaSession): HTMLElement {
@@ -134,12 +134,18 @@ export default class MediaSessionManager {
   }
 
   private getImage(art: string | undefined, albumName: string | undefined, token: string): HTMLElement | undefined {
+    const isArtOk = art && art.length > 1
     const image = Public.createElement({
       clss: "session-image",
       id: "session-image-" + token,
-      type: "img", title: albumName
+      type: isArtOk ? "img" : "div",
+      title: albumName
     })
-    image.setAttribute("src", art ? Public.base64head + art : "")
+
+    isArtOk
+      ? image.setAttribute("src", Public.base64head + art)
+      : IconProvider.get("image_unavailable").then(i => image.innerHTML = i)
+
     return image
   }
 
