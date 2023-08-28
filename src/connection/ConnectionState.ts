@@ -6,6 +6,7 @@ import { NetworkMessage } from "../types/network/NetworkMessage"
 import Public from "../utils/Public"
 import DialogManager from "../managers/DialogManager"
 import IconProvider from "../utils/IconProvider"
+import Socket from "./Socket"
 
 export default class ConnectionState {
     static connectedAddress?: string
@@ -235,10 +236,11 @@ export default class ConnectionState {
 
     private async connect(address: string, name: string, secure: boolean, showError: boolean = false): Promise<boolean> {
         const isConnected = await invoke<number>("connect", { address, secure })
-        console.log(isConnected)
         if (isConnected != 0) {
             ConnectionState.connectedAddress = address
             ConnectionState.connectedDeviceName = name
+            const deviceName = await invoke<string>("get_device_name")
+            Socket.send("DeviceInfo", { name: deviceName })
             this.headerManager.sync()
             localStorage.setItem("ConnectedAddress", address)
             localStorage.setItem("ConnectedDeviceName", name)

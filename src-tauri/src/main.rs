@@ -6,6 +6,7 @@
 mod file_transfer;
 mod main_stream;
 mod stream;
+mod tools;
 mod udp;
 
 extern crate json;
@@ -19,6 +20,7 @@ fn main() {
             main_stream::emit_message,
             file_transfer::receive::receive_files,
             file_transfer::send::send_files,
+            tools::get_device_name
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
