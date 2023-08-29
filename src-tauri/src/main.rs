@@ -20,7 +20,8 @@ fn main() {
             main_stream::emit_message,
             file_transfer::receive::receive_files,
             file_transfer::send::send_files,
-            tools::get_device_name
+            tools::get_device_name,
+            tools::run_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

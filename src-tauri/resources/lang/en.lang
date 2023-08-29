@@ -66,5 +66,10 @@
             "--gap": "Gap",
             "--box-shadow": "Box Shadow"
         }
+    },
+    "Commands": {
+        "Self": "Remote Commands",
+        "CommandName": "Command Name",
+        "CommandValue": "Command"
     }
 }

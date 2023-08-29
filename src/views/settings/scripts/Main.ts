@@ -6,6 +6,7 @@ import { createAppearanceSettings } from "./AppearanceSettings"
 import { SettingsStore } from "./SettingsStore"
 import { emit } from "@tauri-apps/api/event"
 import IconProvider from "../../../utils/IconProvider"
+import { createCommandsSection } from "./CommandsList"
 
 SettingsStore.appSettings = await getAppSettings()
 SettingsStore.appearanceSettings = await getAppearanceSettings()
@@ -13,7 +14,7 @@ await loadAppearanceSettings(SettingsStore.appSettings)
 const lang = await getLanguageFile(SettingsStore.appSettings.LanguageCode)
 createAppearanceSettings(lang.Appearance)
 createAppSettings(lang.AppSettings)
-
+await createCommandsSection(lang.Commands)
 
 const icon = document.getElementById("icon")
 if (icon) icon.innerHTML = await IconProvider.get("app")

@@ -21,6 +21,7 @@ export type Language = {
             NotificationDuration: SettingCardContent
             TransitionDuration: SettingCardContent
         }
+
     }
     Appearance: {
         Self: string
@@ -40,6 +41,11 @@ export type Language = {
             "--box-shadow": string
             [key: string]: string
         }
+    }
+    Commands: {
+        Self: string
+        CommandName: string
+        CommandValue: string
     }
 }
 
