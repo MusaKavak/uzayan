@@ -1,12 +1,15 @@
 import { createDir, exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { Command } from "../types/local/Command";
 import { appConfigDir, join } from "@tauri-apps/api/path";
+import { invoke } from "@tauri-apps/api";
+import Socket from "../connection/Socket";
 
 export async function newCommand(command: Command) {
     const newCommands = (await getAllCommands()) || []
 
     newCommands.push(command)
     await writeCommands(newCommands)
+    Socket.send("RemoteCommands", { commands: newCommands.map(c => c.name) })
 }
 
 export async function getAllCommands(): Promise<Command[] | null> {
@@ -40,4 +43,17 @@ async function writeCommands(commands: Command[]) {
     if (!(await exists(configDir))) await createDir(configDir)
 
     await writeTextFile(await join(configDir, "commands"), JSON.stringify(commands))
+}
+
+export async function getCommandNameList(): Promise<string[] | undefined> {
+    return (await getAllCommands())?.map(c => c.name)
+}
+
+export async function invokeCommand(name: string): Promise<unknown> {
+    const command = await getCommandByName(name)
+    console.log(name)
+    if (command) {
+        return await invoke("run_command", { command: command.value })
+    }
+    return
 }
