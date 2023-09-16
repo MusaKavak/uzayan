@@ -18,6 +18,7 @@ export type AppSettings = {
 
     }
     LanguageCode: string
+    ScreencastCommand: string
 }
 
 export const DefaultAppSettings: AppSettings = {
@@ -38,7 +39,16 @@ export const DefaultAppSettings: AppSettings = {
         NotificationDuration: 8000,
         TransitionDuration: 500,
     },
-    LanguageCode: "en"
+    LanguageCode: "en",
+    ScreencastCommand: `
+        ffmpeg -f x11grab -s {width}x{height} \
+        -r {framerate} -i :0+{x},{y} -pix_fmt yuv420p \
+        -c:v libx264 -crf 40 -b 3M -g 30 \
+        -preset ultrafast -tune zerolatency \
+        -profile:v baseline -threads 1 \
+        -max_delay 50 \
+        -f mpegts udp://{host}:{port}
+    `
 }
 
 export type AppearanceSettings = {

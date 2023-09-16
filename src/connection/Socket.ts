@@ -6,6 +6,7 @@ import NotificationManager from '../managers/NotificationManager'
 import ImageManager from '../managers/ImageManager'
 import FileManager from '../managers/FileManager'
 import { invokeCommand } from '../utils/Commands'
+import { castScreen } from '../utils/Screencast'
 
 export default class Socket {
 
@@ -35,6 +36,7 @@ export default class Socket {
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.payload); break }
             case "FileSystem": { this.fileManager.createFiles(message.payload); break }
             case "RemoteCommand": { await invokeCommand(message.payload); break }
+            case "Screencast": { await castScreen(message.payload); break }
             default: break;
         }
     }
