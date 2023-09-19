@@ -6,3 +6,9 @@ export type ScreenCastOptions = {
     framerate: string,
     port: string
 }
+
+export type Screen = {
+    name: string,
+    width: string,
+    height: string,
+}

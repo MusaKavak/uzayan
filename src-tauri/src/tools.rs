@@ -22,3 +22,11 @@ pub fn run_command(command: String) {
         }
     });
 }
+
+#[command]
+pub fn run_command_and_return(command: String) -> String {
+    match Command::new("sh").arg("-c").arg(command).output() {
+        Ok(out) => String::from_utf8(out.stdout).unwrap(),
+        Err(_) => "***ERROR***".to_string(),
+    }
+}

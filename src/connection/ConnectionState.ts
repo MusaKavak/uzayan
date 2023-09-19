@@ -8,6 +8,7 @@ import DialogManager from "../managers/DialogManager"
 import IconProvider from "../utils/IconProvider"
 import Socket from "./Socket"
 import { getCommandNameList } from "../utils/Commands"
+import { sendScreenInfo } from "../utils/Screencast"
 
 export default class ConnectionState {
     static connectedAddress?: string
@@ -243,6 +244,7 @@ export default class ConnectionState {
             const deviceName = await invoke<string>("get_device_name")
             Socket.send("DeviceInfo", { name: deviceName })
             Socket.send("RemoteCommands", { commands: await getCommandNameList() })
+            await sendScreenInfo()
             this.headerManager.sync()
             localStorage.setItem("ConnectedAddress", address)
             localStorage.setItem("ConnectedDeviceName", name)
