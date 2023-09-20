@@ -12,13 +12,15 @@ export async function castScreen(options: ScreenCastOptions) {
         catch (e) { console.error(e) }
     }
 
+    rep("{screen}", options.screen)
     rep("{width}", options.width)
     rep("{height}", options.height)
     rep("{x}", options.x)
     rep("{y}", options.y)
-    rep("{framerate}", options.framerate)
     rep("{port}", options.port)
-    rep("{host}", ConnectionState.connectedAddress!!)
+
+    const address = ConnectionState.connectedAddress!!
+    rep("{host}", address.substring(0, address.lastIndexOf(":")))
 
     console.log(command)
 }

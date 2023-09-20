@@ -42,7 +42,7 @@ export const DefaultAppSettings: AppSettings = {
     LanguageCode: "en",
     ScreencastCommand: `
         ffmpeg -f x11grab -s {width}x{height} \
-        -r {framerate} -i :0+{x},{y} -pix_fmt yuv420p \
+        -r 20 -i {screen}+{x},{y} -pix_fmt yuv420p \
         -c:v libx264 -crf 40 -b 3M -g 30 \
         -preset ultrafast -tune zerolatency \
         -profile:v baseline -threads 1 \

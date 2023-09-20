@@ -1,9 +1,9 @@
 export type ScreenCastOptions = {
+    screen: string
     width: string,
     height: string,
     x: string,
     y: string,
-    framerate: string,
     port: string
 }
 
