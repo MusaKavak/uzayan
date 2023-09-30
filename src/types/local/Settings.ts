@@ -41,14 +41,17 @@ export const DefaultAppSettings: AppSettings = {
     },
     LanguageCode: "en",
     ScreencastCommand: `
-        ffmpeg -f x11grab -s {width}x{height} \
-        -r 20 -i {screen}+{x},{y} -pix_fmt yuv420p \
-        -c:v libx264 -crf 40 -b 3M -g 30 \
-        -preset ultrafast -tune zerolatency \
-        -profile:v baseline -threads 1 \
-        -max_delay 50 \
-        -f mpegts udp://{host}:{port}
+        ffmpeg -f gdigrab -framerate 20 -offset_x {x} -offset_y {y} -video_size {width}x{height}  -i desktop -pix_fmt yuv420p -c:v libx264 -crf 40 -b 3M -g 30  -preset ultrafast -tune zerolatency -profile:v baseline -threads 1 -max_delay 50 -f mpegts udp://{host}:{port}
     `
+    // ScreencastCommand: `
+    //     ffmpeg -f x11grab -s {width}x{height} \
+    //     -r 20 -i {screen}+{x},{y} -pix_fmt yuv420p \
+    //     -c:v libx264 -crf 40 -b 3M -g 30 \
+    //     -preset ultrafast -tune zerolatency \
+    //     -profile:v baseline -threads 1 \
+    //     -max_delay 50 \
+    //     -f mpegts udp://{host}:{port}
+    // `
 }
 
 export type AppearanceSettings = {

@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api";
+import { invoke, os } from "@tauri-apps/api";
 import ConnectionState from "../connection/ConnectionState";
 import { ScreenCastOptions, Screen } from "../types/network/ScreenCastOptions";
 import Public from "./Public";
@@ -22,11 +22,24 @@ export async function castScreen(options: ScreenCastOptions) {
     const address = ConnectionState.connectedAddress!!
     rep("{host}", address.substring(0, address.lastIndexOf(":")))
 
-    console.log(command)
+    const output = await invoke("run_command", { os: await os.type(), command: command.trim() })
+    console.log(output)
 }
 
 export async function sendScreenInfo() {
-    const output = await invoke<string>("run_command_and_return", { command: `xdpyinfo | grep -E "name of display| dimensions:"` })
+    const osName = await os.type()
+
+    if (osName == "Linux") sendScreenInfoLinux(osName)
+    if (osName == "Windows_NT") sendScreenInfoWindows()
+}
+
+async function sendScreenInfoWindows() {
+    //TODO Change Example
+    Socket.send("ScreenInfo", { screens: [{ name: "Main", width: "1920", height: "1080" }] })
+}
+
+async function sendScreenInfoLinux(osName: string) {
+    const output = await invoke<string>("run_command", { os: osName, command: `xdpyinfo | grep -E "name of display| dimensions:"` })
 
     const lines = output.split("\n")
 

@@ -243,7 +243,7 @@ export default class ConnectionState {
             ConnectionState.connectedDeviceName = name
             const deviceName = await invoke<string>("get_device_name")
             Socket.send("DeviceInfo", { name: deviceName })
-            Socket.send("RemoteCommands", { commands: await getCommandNameList() })
+            //  Socket.send("RemoteCommands", { commands: await getCommandNameList() })
             await sendScreenInfo()
             this.headerManager.sync()
             localStorage.setItem("ConnectedAddress", address)
