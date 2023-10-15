@@ -22,6 +22,7 @@ fn main() {
             file_transfer::send::send_files,
             tools::get_device_name,
             tools::run_command,
+            tools::start_screencast,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

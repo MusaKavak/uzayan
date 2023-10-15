@@ -3,9 +3,10 @@ import ConnectionState from "../connection/ConnectionState";
 import { ScreenCastOptions, Screen } from "../types/network/ScreenCastOptions";
 import Public from "./Public";
 import Socket from "../connection/Socket";
+import { appWindow } from "@tauri-apps/api/window";
 
-export async function castScreen(options: ScreenCastOptions) {
-    let command = Public.settings.ScreencastCommand
+export async function startScreencast(options: ScreenCastOptions) {
+    let command = Public.settings.ScreencastCommand.trim()
 
     const rep = (k: string, v: string) => {
         try { command = command.replace(k, v) }
@@ -22,8 +23,12 @@ export async function castScreen(options: ScreenCastOptions) {
     const address = ConnectionState.connectedAddress!!
     rep("{host}", address.substring(0, address.lastIndexOf(":")))
 
-    const output = await invoke("run_command", { os: await os.type(), command: command.trim() })
-    console.log(output)
+
+    await invoke("start_screencast", { command })
+}
+
+export async function stopScreencast() {
+    console.log(await appWindow.emit("stop_screencast"))
 }
 
 export async function sendScreenInfo() {

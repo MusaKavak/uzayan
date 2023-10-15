@@ -1,6 +1,11 @@
-use std::{ffi::OsStr, process::Command};
+use std::{
+    ffi::OsStr,
+    io::Write,
+    process::{Child, Command, Stdio},
+    sync::Mutex,
+};
 
-use tauri::command;
+use tauri::{command, Window};
 
 #[command]
 pub fn get_device_name() -> String {
@@ -22,5 +27,25 @@ pub fn run_command(os: String, command: String) {
             Ok(out) => String::from_utf8(out.stdout).unwrap(),
             Err(_) => "***ERROR***".to_string(),
         }
+    });
+}
+
+#[command]
+pub fn start_screencast(window: Window, command: String) {
+    let progress: Mutex<Child> = Mutex::new(
+        Command::new("cmd")
+            .arg("/C")
+            .arg(command)
+            .stdin(Stdio::piped())
+            .spawn()
+            .unwrap(),
+    );
+
+    window.clone().listen("stop_screencast", move |event| {
+        let mut progress = progress.lock().unwrap();
+        progress.stdin.take().unwrap().write_all(b"q").unwrap();
+        progress.wait().unwrap();
+        progress.kill().unwrap();
+        window.unlisten(event.id());
     });
 }
