@@ -45,8 +45,8 @@ async function writeCommands(commands: Command[]) {
     await writeTextFile(await join(configDir, "commands"), JSON.stringify(commands))
 }
 
-export async function getCommandNameList(): Promise<string[] | undefined> {
-    return (await getAllCommands())?.map(c => c.name)
+export async function getCommandNameList(): Promise<string[]> {
+    return ((await getAllCommands())?.map(c => c.name)) || []
 }
 
 export async function invokeCommand(name: string): Promise<unknown> {

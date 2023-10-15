@@ -243,14 +243,19 @@ export default class ConnectionState {
             ConnectionState.connectedDeviceName = name
             const deviceName = await invoke<string>("get_device_name")
             Socket.send("DeviceInfo", { name: deviceName })
-            //  Socket.send("RemoteCommands", { commands: await getCommandNameList() })
+            Socket.send("RemoteCommands", { commands: await getCommandNameList() })
             await sendScreenInfo()
             this.headerManager.sync()
             localStorage.setItem("ConnectedAddress", address)
             localStorage.setItem("ConnectedDeviceName", name)
             localStorage.setItem("ConnectedDeviceSecurity", secure ? "SECURE" : "NOT")
             await this.initConnectionState("DeviceActions")
-        } else if (showError) this.connectionError()
+        } else {
+            localStorage.removeItem("ConnectedAddress")
+            localStorage.removeItem("ConnectedDeviceName")
+            localStorage.removeItem("ConnectedDeviceSecurity")
+            if (showError) this.connectionError()
+        }
 
         return isConnected == 0 ? false : true
     }
@@ -275,7 +280,7 @@ export default class ConnectionState {
     private generatePairCode() {
         this.pairCode = ''
         for (let i = 0; i < 6; i++) {
-            this.pairCode += Math.floor(Math.random() * 10)
+            this.pairCode += Math.floor(Math.random() * 9 + 1)
         }
     }
 }
