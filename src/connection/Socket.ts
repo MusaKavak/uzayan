@@ -7,6 +7,7 @@ import ImageManager from '../managers/ImageManager'
 import FileManager from '../managers/FileManager'
 import { invokeCommand } from '../utils/Commands'
 import { startScreencast, sendScreenInfo, stopScreencast } from '../utils/Screencast'
+import { mouseClick, mouseMove } from '../utils/RemoteInput'
 
 export default class Socket {
 
@@ -35,10 +36,12 @@ export default class Socket {
             case "Notifications": { this.notificationManger.syncNotifications(message.payload); break }
             case "ImageThumbnail": { this.imageManager.setThumbnail(message.payload); break }
             case "FileSystem": { this.fileManager.createFiles(message.payload); break }
-            case "RemoteCommand": { await invokeCommand(message.payload); break }
-            case "StartScreencast": { await startScreencast(message.payload); break }
-            case "StopScreencast": { await stopScreencast(); break }
-            case "ScreenInfo": { await sendScreenInfo(); break }
+            case "RemoteCommand": { invokeCommand(message.payload); break }
+            case "StartScreencast": { startScreencast(message.payload); break }
+            case "StopScreencast": { stopScreencast(); break }
+            case "ScreenInfo": { sendScreenInfo(); break }
+            case "MouseClick": { mouseClick(message.payload); break }
+            case "MouseMove": { mouseMove(message.payload); break }
             default: break;
         }
     }
