@@ -7,8 +7,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "uzayan",
-    "version": "0.0.0"
+    "productName": "Uzayan",
+    "version": "0.1.0"
   },
   "tauri": {
     "allowlist": {
@@ -19,7 +19,7 @@
           "$RESOURCE/resources/lang/*",
           "$RESOURCE/resources/icons/*",
           "$APPCONFIG/**/*",
-          "$CONFIG/com.tauri.dev"
+          "$CONFIG/dev.musakavak.uzayan"
         ]
       }
     },
@@ -39,7 +39,7 @@
         "icons/icon.ico",
         "icons/icon.png"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "dev.musakavak.uzayan",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -71,7 +71,7 @@
         "label": "mai",
         "fullscreen": false,
         "height": 7,
-        "title": "uzayan",
+        "title": "Uzayan",
         "width": 500,
         "alwaysOnTop": true,
         "decorations": false,

@@ -14,7 +14,7 @@ import DialogManager from "./managers/DialogManager";
 import Public from "./utils/Public";
 
 async function Main() {
-    //document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('contextmenu', event => event.preventDefault());
 
     Public.settings = await getAppSettings()
     await loadAppearanceSettings(Public.settings)

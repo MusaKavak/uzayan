@@ -1,14 +1,12 @@
-import { basename, extname, join } from "@tauri-apps/api/path";
+import { join } from "@tauri-apps/api/path";
 import Socket from "../connection/Socket";
 import { File } from "../types/network/File";
 import DialogManager from "./DialogManager";
 import FileTransferManager from "./FileTransferManager";
 import Public from "../utils/Public";
 import { open } from "@tauri-apps/api/dialog";
-import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { UnlistenFn } from "@tauri-apps/api/event";
-import ConnectionState from "../connection/ConnectionState";
 import IconProvider from "../utils/IconProvider";
 
 export default class FileManager {

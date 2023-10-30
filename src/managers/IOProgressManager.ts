@@ -1,4 +1,3 @@
-import { open } from "@tauri-apps/api/shell"
 import { listen } from "@tauri-apps/api/event"
 import Public from "../utils/Public"
 import IconProvider from "../utils/IconProvider"
