@@ -37,7 +37,7 @@ export default class WindowManager {
         this.position.y = y
         if (Public.settings.Position.IsWindowCentered) {
             const size = (await currentMonitor())?.size
-            if (size != null) this.position.x = size.width - Public.settings.Size.BarWidth
+            if (size != null) this.position.x = (size.width / 2) - (Public.settings.Size.BarWidth / 2)
         }
 
         //This feature is not working sometimes at first run. So run it two times (Tauri version: 1.2)

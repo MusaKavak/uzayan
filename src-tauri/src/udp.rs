@@ -1,5 +1,10 @@
 use if_addrs::get_if_addrs;
-use std::{net::UdpSocket, thread, time::Duration};
+use std::{
+    io::Read,
+    net::{TcpListener, UdpSocket},
+    thread,
+    time::Duration,
+};
 use tauri::{command, Window};
 
 #[derive(Clone, serde::Serialize)]
@@ -28,7 +33,7 @@ pub fn listen_for_pair(window: Window) -> SocketAddress {
 
     match get_ip_address() {
         Ok(ip) => {
-            match UdpSocket::bind(ip.clone() + ":0") {
+            match TcpListener::bind(ip.clone() + ":0") {
                 Ok(socket) => {
                     let port = socket.local_addr().unwrap().port();
                     println!("{}:{}", ip, port);
@@ -64,7 +69,7 @@ pub fn listen_for_pair(window: Window) -> SocketAddress {
     };
 }
 
-fn listen(window: Window, socket: UdpSocket) {
+fn listenn(window: Window, socket: UdpSocket) {
     let mut buf = [0; 200];
 
     socket
@@ -109,6 +114,50 @@ fn listen(window: Window, socket: UdpSocket) {
                 .unwrap();
         }
     };
+}
+
+fn listen(window: Window, listener: TcpListener) {
+    match listener.accept() {
+        Ok((mut stream, addr)) => {
+            let mut buf = [0; 4096];
+            loop {
+                let mut received_data = Vec::new();
+                match stream.read(&mut buf) {
+                    Ok(amt) if amt > 0 => {
+                        received_data.extend_from_slice(&buf[..amt]);
+                        let received_message = String::from_utf8(received_data.clone()).unwrap();
+                        let address = addr.ip().to_string();
+                        window
+                            .emit(
+                                "UdpMessage",
+                                Payload {
+                                    message: received_message,
+                                    address,
+                                },
+                            )
+                            .unwrap();
+                    }
+                    Ok(_) => break,
+                    Err(e) => {
+                        println!("Error While Receiving TCP Message:\n{}", e.to_string());
+                        window
+                            .emit(
+                                "UdpMessage",
+                                Payload {
+                                    message: "!!!!!Error".to_string(),
+                                    address: "".to_string(),
+                                },
+                            )
+                            .unwrap();
+                        break;
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            println!("Error Accepting Connection: {}", e);
+        }
+    }
 }
 
 fn get_ip_address() -> Result<String, String> {
